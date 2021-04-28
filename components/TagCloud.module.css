@@ -1,0 +1,4 @@
+.tag {
+    @apply inline-block px-2 py-1 bg-gray-100 m-1;
+    @apply leading-normal whitespace-nowrap text-center;
+}

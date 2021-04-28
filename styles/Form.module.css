@@ -1,0 +1,7 @@
+.label {
+    @apply text-base leading-loose my-2 font-bold;
+}
+
+.input {
+    @apply px-4 py-1 border mb-5
+}

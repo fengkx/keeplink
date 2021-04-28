@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Bookmark {
+  id         Int   @id @default(autoincrement())
+  user_id    String   @db.Uuid
+  link_id    Int
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  link      Link    @relation(fields: [link_id], references: [id])
+  user      User    @relation(fields: [user_id], references: [id])
+
+  @@map("bookmarks")
+  @@index([user_id, link_id], name: "bookmark_user_link_id")
+  @@index([link_id], name: "link_id")
+}
+
+model Link {
+  id           Int       @id @default(autoincrement())
+  url          String       @unique
+  title        String?
+  favicon      String?
+  description  String?
+  archive_stat archive_stat @default(pending)
+  archive      String?
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  bookmarks    Bookmark[]  @ignore
+
+  @@map("links")
+}
+
+model User {
+  id        String      @id @db.Uuid
+  bookmarks Bookmark[] @ignore
+
+  @@map("pusers")
+}
+
+enum archive_stat {
+  pending
+  archived
+}
