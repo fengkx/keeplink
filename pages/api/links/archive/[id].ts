@@ -4,8 +4,9 @@ import metascraperUrl from 'metascraper-url';
 import metascraperDescription from 'metascraper-description';
 import metascraperTitle from 'metascraper-title';
 import execa from 'execa';
-import {getIdFromQuery, restful, RestfulApiHandler} from '@/utils/rest-helper';
+import {restful, RestfulApiHandler} from '@/utils/rest-helper';
 import {prisma} from '@/db/prisma';
+import {getOneParamFromQuery} from "@/utils/query-param";
 
 const metascraper = metaParser([
   metascraperUrl(),
@@ -18,7 +19,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 }
 
 const create: RestfulApiHandler = async (req, res) => {
-  const id = getIdFromQuery(req.query);
+  const id = getOneParamFromQuery<number>(req.query);
   const link = await prisma.link.findUnique({
     where: {id}
   });
@@ -70,7 +71,7 @@ const create: RestfulApiHandler = async (req, res) => {
 };
 
 const read: RestfulApiHandler = async (req, res) => {
-  const id = getIdFromQuery(req.query);
+  const id = getOneParamFromQuery<number>(req.query);
   const link = await prisma.link.findUnique({
     where: {
       id

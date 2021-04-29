@@ -1,6 +1,6 @@
 import {supabase} from '@/db/supabase';
 import {User} from '@supabase/supabase-js';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Layout} from '@/components/Layout';
 import {GetServerSideProps} from 'next';
 import QuickAdd from '@/components/QuickAdd';
@@ -16,7 +16,7 @@ import {useRouter} from 'next/router';
 import {useToasts} from 'react-toast-notifications';
 
 function useTagCloud() {
-  const {data, error} = useSWR(`/api/tags`, async (key: string) => {
+  const {data, error} = useSWR(`/api/tags?tagcloud=1`, async (key: string) => {
     const resp = await apiCall(key);
     return resp.json();
   });
@@ -26,8 +26,11 @@ function useTagCloud() {
   };
 }
 
-const Home: React.FC<Props> = ({bookmarks}) => {
+const Home: React.FC<Props> = ({bookmarks, user}) => {
   const [bookmarkList, setBookmarkList] = useState(bookmarks);
+  useEffect(() => {
+    setBookmarkList(bookmarks);
+  }, [bookmarks]);
   const {tags, error} = useTagCloud();
   const router = useRouter();
   const toast = useToasts();
@@ -38,12 +41,12 @@ const Home: React.FC<Props> = ({bookmarks}) => {
   }
 
   return (
-    <Layout>
+    <Layout userRole={user.user_metadata.role}>
       <div className="max-w-5xl mx-auto">
         <QuickAdd
           onSuccess={({bookmark}) => {
             setBookmarkList([bookmark, ...bookmarkList]);
-            void router.push('/');
+            void router.push('/', {query: ''});
           }}
         />
       </div>
@@ -66,6 +69,7 @@ const Home: React.FC<Props> = ({bookmarks}) => {
 };
 
 export type BookMark = {
+  created_at?: string;
   id: number;
   link_id?: number;
   title: string | null;
@@ -85,11 +89,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   query
 }) => {
   const {user} = await supabase.auth.api.getUserByCookie(req);
-  const {page, size} = getPagination(query);
 
   if (!user) {
     return {props: {}, redirect: {destination: '/signin', permanent: false}};
   }
+
+  const {page, size} = getPagination(query);
 
   const data = await prisma.bookmark.findMany({
     take: size,

@@ -12,10 +12,10 @@ export const ConfirmDelete: React.FC<{onDelete: () => void}> = ({onDelete}) => {
 
   return (
     <span>
-      <a className="mr-1 cursor-pointer" onClick={toggle}>
+      <a className="mr-3 cursor-pointer" onClick={toggle}>
         Cancel
       </a>
-      <a className="cursor-pointer" onClick={onDelete}>
+      <a className="cursor-pointer text-red-600" onClick={onDelete}>
         Confirm
       </a>
     </span>

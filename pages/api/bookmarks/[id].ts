@@ -1,14 +1,15 @@
 import {NextApiRequest, NextApiResponse} from 'next';
-import {getIdFromQuery, restful, RestfulApiHandler} from '@/utils/rest-helper';
+import {restful, RestfulApiHandler} from '@/utils/rest-helper';
 import {prisma} from '@/db/prisma';
 import {Tag} from '../../../types/model';
+import {getOneParamFromQuery} from '@/utils/query-param';
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   return restful({req, res}, {update, del});
 }
 
 const del: RestfulApiHandler = async (req, res) => {
-  const id = getIdFromQuery(req.query);
+  const id = getOneParamFromQuery<number>(req.query, 'id');
   const deleted = await prisma.bookmark.delete({
     where: {
       id
@@ -18,7 +19,7 @@ const del: RestfulApiHandler = async (req, res) => {
 };
 
 const update: RestfulApiHandler = async (req, res) => {
-  const id = getIdFromQuery(req.query);
+  const id = getOneParamFromQuery<number>(req.query);
   const payload = req.body;
   if (payload.tags.length > 5) {
     res.status(400).json({error: 'too many tag'});

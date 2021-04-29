@@ -47,7 +47,7 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
       bookmarks: results.map((bm: BookMark) => ({
         ...bm,
         description: htmlDecode(bm.description ?? ''),
-        createdAt: 1,
+        createdAt: new Date(bm.created_at!).getTime() / 1000,
         tags: bm.cached_tags_name?.split(',') ?? []
       }))
     }

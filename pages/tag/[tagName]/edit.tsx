@@ -17,85 +17,64 @@ import type {Tag} from '@prisma/client';
 import {User} from '@supabase/supabase-js';
 import {useToasts} from 'react-toast-notifications';
 
-const Edit: React.FC<Props> = ({bookmark, user}) => {
+const Edit: React.FC<Props> = ({tag, user}) => {
   type FormInput = {
-    title: string;
-    description: string;
-    tags: string;
+    tag: string;
+    alias: string;
   };
   const form = useForm<FormInput>({
     defaultValues: {
-      title: bookmark?.title ?? '',
-      description: bookmark?.description ?? '',
-      tags: JSON.stringify(bookmark?.tags.map((t) => t.tag))
+      tag: tag?.tag ?? '',
+      alias: JSON.stringify(tag?.alias.map((item: string) => ({value: item})))
     }
   });
   const router = useRouter();
   const toast = useToasts();
   const {register, handleSubmit, control} = form;
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data.tags);
     try {
-      const payload = {
-        ...data,
-        tags: Array.isArray(data.tags)
-          ? data.tags
-          : JSON.parse(data.tags).map((t: {value: any} | string) =>
-              typeof t === 'string' ? t : t.value
-            )
-      };
-      console.log(payload);
-      await apiCall(`/api/bookmarks/${bookmark?.id}`, {
+      const alias = JSON.parse(data.alias).map((v: {value: string}) => v.value);
+      const payload = {tag: data.tag, alias};
+      const resp = await apiCall(`/api/tags/${tag!.tag}`, {
         method: 'PUT',
         body: JSON.stringify(payload)
       });
-      router.back();
-    } catch (error: any) {
+      console.log(await resp.json());
+    } catch (error) {
       toast.addToast(error.message, {appearance: 'error'});
     }
   });
-  if (!bookmark) {
+  if (!tag) {
     return <div>Not Found</div>;
   }
 
-  if (bookmark) {
+  if (tag) {
     return (
       <Layout userRole={user.user_metadata.role}>
         <form
           onSubmit={onSubmit}
-          className="form flex flex-col h-96 justify-between"
+          className="form flex flex-col h-96 justify-between min-h-screen"
         >
           <div className="flex flex-col max-w-5xl mx-auto w-full">
-            <div className={styles.label}>URL</div>
-            <p className={`${styles.input} bg-gray-100`} id="url">
-              {bookmark.url}
-            </p>
-            <label htmlFor="title" className={styles.label}>
-              Title
+            <label htmlFor="tag" className={styles.label}>
+              Tag
             </label>
-            <input className={styles.input} {...register('title')} />
-            <label htmlFor="description" className={styles.label}>
-              Description
-            </label>
-            <textarea
-              className={`h-28 ${styles.input}`}
-              {...register('description')}
-            />
-            <label htmlFor="tags" className={styles.label}>
-              Tags
+            <input className={styles.input} {...register('tag')} />
+            <label htmlFor="alias" className={styles.label}>
+              Alias Names
             </label>
             <Controller
               control={control}
               render={({field}) => {
                 return (
                   <Tags
+                    className="mb-8"
                     onChange={(ev: {detail: {value: any}}) => {
                       field.onChange(ev.detail.value);
                     }}
                     onBlur={field.onBlur}
                     name={field.name}
                     value={field.value}
-                    className={styles.input}
                     settings={{
                       maxTags: 5,
                       whitelist: ['111', '222'],
@@ -108,7 +87,7 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
                   />
                 );
               }}
-              name="tags"
+              name="alias"
             />
             <div>
               <Button type="primary" className="mr-2" role="submit">
@@ -135,81 +114,39 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
 
 type Props = {
   user: User;
-  bookmark?: {
-    id: number;
-    user_id: string;
-    link_id: number;
-    createdAt: number;
-    title: string | null;
-    description: string | null;
-    url: string;
-    tags: Array<Partial<Tag>>;
-  };
+  tag?: Tag;
 };
 type Query = {
   id: string;
 };
-export const getServerSideProps: GetServerSideProps<Props, Query> = async ({
-  req,
-  params
-}) => {
+export const getServerSideProps: GetServerSideProps<Props, Query> = async (
+  ctx
+) => {
+  const {req, query} = ctx;
   const {user} = await supabase.auth.api.getUserByCookie(req);
-  const id = Number.parseInt(params!.id, 10);
+  const tagName = Array.isArray(query.tagName)
+    ? query.tagName[0]
+    : query.tagName;
   if (!user) {
     return {props: {}, redirect: {destination: '/signin', permanent: false}};
   }
 
-  const data = await prisma.bookmark.findUnique({
+  const tag = await prisma.tag.findUnique({
     where: {
-      id
-    },
-    select: {
-      id: true,
-      user_id: true,
-      link_id: true,
-      title: true,
-      description: true,
-      createdAt: true,
-      link: {
-        select: {
-          title: true,
-          url: true,
-          description: true
-        }
-      },
-      tags: {
-        select: {
-          tag: {
-            select: {
-              id: true,
-              tag: true
-            }
-          }
-        }
-      }
+      tag: tagName
     }
   });
-  if (data) {
-    const bookmark = {
-      id: data.id,
-      user_id: data.user_id,
-      link_id: data.link_id,
-      createdAt: data.createdAt.getTime() / 1000,
-      title: data.title ?? data.link.title,
-      description: data.description ?? data.link.description,
-      url: data.link.url,
-      tags: data.tags.map((t) => ({tag: t.tag.tag, id: t.tag.id}))
-    };
+  if (tag) {
     return {
       props: {
         user,
-        bookmark
+        tag
       }
     };
   }
 
   return {
-    props: {user}
+    props: {user},
   };
 };
 

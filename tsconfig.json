@@ -22,7 +22,8 @@
       "@/components/*": ["components/*"],
       "@/db/*": ["db/*"],
       "@/styles/*": ["styles/*"],
-      "@/utils/*": ["utils/*"]
+      "@/utils/*": ["utils/*"],
+      "@/pages/*": ["pages/*"]
     }
   },
   "include": [

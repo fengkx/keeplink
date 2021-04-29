@@ -1,6 +1,5 @@
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["selectRelationCount"]
 }
 
 datasource db {
@@ -14,19 +13,18 @@ model Bookmark {
   link_id                     Int
   createdAt                   DateTime                 @default(now()) @map("created_at")
   updatedAt                   DateTime                 @default(now()) @updatedAt @map("updated_at")
+  title                       String?
+  description                 String?
+  cached_tags_name            String?
+  cached_tags_with_alias_name String?
+  tsv                         Unsupported("tsvector")?
   link                        Link                     @relation(fields: [link_id], references: [id])
   user                        User                     @relation(fields: [user_id], references: [id])
   tags                        Tagging[]
-  title                       String?
-  description                 String?
-  tsv                         Unsupported("tsvector")?
-  cached_tags_name            String?
-  cached_tags_with_alias_name String?
-
 
   @@unique([user_id, link_id], name: "bookmark_user_link_id")
-  @@index([link_id], name: "link_id")
   @@index([tsv], name: "bookmark_tsv_search")
+  @@index([link_id], name: "link_id")
   @@map("bookmarks")
 }
 
@@ -40,9 +38,8 @@ model Link {
   archive      String?
   createdAt    DateTime                 @default(now()) @map("created_at")
   updatedAt    DateTime                 @default(now()) @updatedAt @map("updated_at")
-  bookmarks    Bookmark[]
   tsv          Unsupported("tsvector")?
-
+  bookmarks    Bookmark[]
 
   @@index([tsv], name: "link_tsv_search")
   @@map("links")
@@ -50,29 +47,19 @@ model Link {
 
 model User {
   id        String     @id @db.Uuid
-  role user_role @default(user)
-  settings  Json @default("{}")
+  role      user_role  @default(user)
+  settings  Json       @default("{}")
   bookmarks Bookmark[]
-
 
   @@map("pusers")
 }
 
-enum user_role {
-  admin
-  user
-}
-enum archive_stat {
-  pending
-  archived
-}
-
 model Tag {
-  id    Int      @id @default(autoincrement())
-  tag   String   @unique
-  alias String[]
-
+  id      Int       @id @default(autoincrement())
+  tag     String    @unique
+  alias   String[]
   Tagging Tagging[]
+
   @@map("tags")
 }
 
@@ -80,9 +67,19 @@ model Tagging {
   id          Int      @id @default(autoincrement())
   tag_id      Int
   bookmark_id Int
-  tag         Tag      @relation(fields: [tag_id], references: [id])
   bookmark    Bookmark @relation(fields: [bookmark_id], references: [id])
+  tag         Tag      @relation(fields: [tag_id], references: [id])
 
   @@unique([tag_id, bookmark_id], name: "tag_bookmark_id")
   @@map("taggings")
+}
+
+enum user_role {
+  admin
+  user
+}
+
+enum archive_stat {
+  pending
+  archived
 }

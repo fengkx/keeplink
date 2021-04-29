@@ -14,8 +14,8 @@ services:
     container_name: supabase-auth
     image: supabase/gotrue:latest
     environment:
-      GOTRUE_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
-      GOTRUE_JWT_EXP: 3600
+      GOTRUE_JWT_SECRET: 1513f583-979d-4f6a-9705-00635b34cc47
+      GOTRUE_JWT_EXP: 86400
       GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
       GOTRUE_DB_DRIVER: postgres
       DB_NAMESPACE: auth
@@ -40,7 +40,7 @@ services:
       PGRST_DB_URI: postgres://postgres:postgres@db:5432/postgres
       PGRST_DB_SCHEMA: public
       PGRST_DB_ANON_ROLE: postgres
-      PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      PGRST_JWT_SECRET: 1513f583-979d-4f6a-9705-00635b34cc47
   realtime:
     container_name: supabase-realtime
     image: supabase/realtime:latest
@@ -57,7 +57,7 @@ services:
       HOSTNAME: localhost
       # Disable JWT Auth locally. The JWT_SECRET will be ignored.
       SECURE_CHANNELS: 'false'
-      JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      JWT_SECRET: 1513f583-979d-4f6a-9705-00635b34cc47
   db:
     container_name: supabase-db
     build:

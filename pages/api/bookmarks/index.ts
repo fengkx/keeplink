@@ -6,7 +6,7 @@ import {getPagination} from '@/utils/get-pagination';
 import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {create, read});
+  await restful({req, res}, {create, read});
 }
 
 const read: RestfulApiHandler = async (req, res, user) => {
@@ -119,31 +119,32 @@ const create: RestfulApiHandler = async (req, res, user) => {
       }
     );
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError) {
-      if (error.code === 'P2002') {
-        const link = await prisma.link.findUnique({
-          where: {
-            url
-          },
-          select: {id: true}
-        });
-        const bookmark = await prisma.bookmark.findUnique({
-          where: {
-            bookmark_user_link_id: {
-              user_id: user.id,
-              link_id: link!.id
-            }
-          },
-          select: {
-            id: true
+    if (
+      error instanceof PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      const link = await prisma.link.findUnique({
+        where: {
+          url
+        },
+        select: {id: true}
+      });
+      const bookmark = await prisma.bookmark.findUnique({
+        where: {
+          bookmark_user_link_id: {
+            user_id: user.id,
+            link_id: link!.id
           }
-        });
-        res.status(400).json({
-          code: error.code,
-          reason: reason(error),
-          data: {bookmark_id: bookmark!.id}
-        });
-      }
+        },
+        select: {
+          id: true
+        }
+      });
+      res.status(400).json({
+        code: error.code,
+        reason: reason(error),
+        data: {bookmark_id: bookmark!.id}
+      });
     } else {
       throw error;
     }

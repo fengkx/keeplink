@@ -3,26 +3,26 @@ import {Layout} from '@/components/Layout';
 import {GetServerSideProps} from 'next';
 import {supabase} from '@/db/supabase';
 import {prisma} from '@/db/prisma';
-import type {User} from '@prisma/client';
+import type {User as PUser} from '@prisma/client';
 import {useForm} from 'react-hook-form';
 
 import styles from '@/styles/Form.module.css';
 import {Button} from '@supabase/ui';
 import {apiCall} from '@/utils/api-call';
 import {useToasts} from 'react-toast-notifications';
+import {User} from "@supabase/supabase-js";
 
 type Props = {
+  userData: PUser;
   user: User;
 };
 type FormInput = {
-  size: number;
   password?: string;
   password_confirm?: string;
 };
-const defaultSettings = {
-  size: 50
-};
-const Settings: React.FC<Props> = () => {
+const defaultSettings = {};
+
+const Settings: React.FC<Props> = ({user}) => {
   const form = useForm<FormInput>({defaultValues: defaultSettings});
   const {register, handleSubmit} = form;
   const toast = useToasts();
@@ -44,7 +44,7 @@ const Settings: React.FC<Props> = () => {
   });
   const onSubmit = handleSubmit(
     async (data) => {
-      const {password, password_confirm, ...rest} = data;
+      const {password, password_confirm, ...settings} = data;
       if (password || password_confirm) {
         if (password_confirm === password) {
           try {
@@ -58,22 +58,27 @@ const Settings: React.FC<Props> = () => {
         }
       }
 
-      try {
-        await apiCall('/api/pusers', {
-          method: 'PUT',
-          body: JSON.stringify(rest)
-        });
-        toast.addToast('Settings saved');
-      } catch (error) {
-        toast.addToast(error.message, {appearance: 'error'});
+      if (Object.keys(settings).length > 0) {
+        try {
+          await apiCall('/api/pusers', {
+            method: 'PUT',
+            body: JSON.stringify({settings})
+          });
+          toast.addToast('Settings saved');
+        } catch (error) {
+          toast.addToast(error.message, {appearance: 'error'});
+        }
       }
     },
     (err) => {
-      console.error(err);
+      const message = err.password?.message ?? err.password_confirm?.message;
+      if (message) {
+        toast.addToast(message);
+      }
     }
   );
   return (
-    <Layout>
+    <Layout userRole={user.user_metadata.role}>
       <form onSubmit={onSubmit}>
         <style jsx>{`
           input[type='password'] {
@@ -137,7 +142,9 @@ export const getServerSideProps: GetServerSideProps = async ({req}) => {
       settings: true
     }
   });
-  return {props: {user: userData}};
+  return {
+    props: {userData, user}
+  };
 };
 
 export default Settings;

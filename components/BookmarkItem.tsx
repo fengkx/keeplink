@@ -32,7 +32,7 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
     <article className="h-full text-sm sm:text-base p-2 flex justify-between flex-col overflow-hidden">
       <style jsx>{`
         .item-meta li {
-          margin-right: 8px;
+          margin-right: 0.75rem;
         }
         .item-tags li:before {
           content: '#';
@@ -58,7 +58,9 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
             {bookmark.tags.map((tag: string) => {
               return (
                 <li className="inline-block bg-gray-100 p-0.5 mr-2" key={tag}>
-                  {tag}
+                  <Link href={`/tag/${tag}`}>
+                    <a>{tag}</a>
+                  </Link>
                 </li>
               );
             })}

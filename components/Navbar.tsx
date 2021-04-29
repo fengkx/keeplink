@@ -1,22 +1,18 @@
-import React, {useMemo, useRef} from 'react';
+import React, {useRef} from 'react';
 import {useClickAway} from 'react-use';
 import Link from 'next/link';
 import styles from '@/components/Navbar.module.css';
-import {LogOut, Menu, Plus, Search, Settings} from 'react-feather';
-import {Input} from '@supabase/ui';
-import {useRouter} from 'next/router';
+import {LogOut, Menu, Settings, User} from 'react-feather';
+import type {user_role} from '@prisma/client';
+import MainSearch from '@/components/Search';
 
-export const Navbar: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
-  className
-}) => {
+export const Navbar: React.FC<
+  React.HTMLAttributes<HTMLDivElement> & {
+    userRole: user_role;
+  }
+> = ({userRole, className}) => {
   const dropdownRef = useRef(null);
   const menuToggler = useRef<HTMLInputElement>(null);
-  const router = useRouter();
-  const serachDefault = useMemo(() => {
-    const q = router.query.q;
-    const query = Array.isArray(q) ? q[0] : q;
-    return query ?? '';
-  }, []);
   useClickAway(
     dropdownRef,
     () => {
@@ -26,7 +22,6 @@ export const Navbar: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
     },
     ['click']
   );
-
   return (
     <nav className={`flex flex-row justify-between ${className ?? ''}`}>
       <style jsx>{`
@@ -45,34 +40,22 @@ export const Navbar: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
           </a>
         </Link>
       </div>
-      <form
-        className="pl-2 lg:pl-3 flex items-center flex-1"
-        action="/bookmark"
-        method="GET"
-      >
-        <div className="relative flex items-center w-full">
-          <Search className="absolute" size={'1rem'} style={{zIndex: 1000}} />
-          <Input
-            placeholder="Search"
-            size={'small'}
-            type="search"
-            name="q"
-            className={styles.searchInput}
-            defaultValue={serachDefault}
-          />
-        </div>
-      </form>
+      <MainSearch />
       <div className="nav-items hidden sm:flex flex-row justify-end">
-        {/* <a className={styles.navItem}> */}
-        {/*  <Plus className="inline mr-1" size={'1em'} /> */}
-        {/*  Add Bookmark */}
-        {/* </a> */}
         <Link href="/user/settings">
           <a className={styles.navItem}>
             <Settings className="inline mr-1" size={'1em'} />
             Setting
           </a>
         </Link>
+        {userRole === 'admin' && (
+          <Link href="/admin/users">
+            <a className={styles.navItem}>
+              <User className="inline mr-1" size={'1em'} />
+              Admin
+            </a>
+          </Link>
+        )}
         <Link href="/logout">
           <a className={styles.navItem}>
             <LogOut className="inline mr-1" size={'1em'} />
@@ -81,9 +64,11 @@ export const Navbar: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
         </Link>
       </div>
       <div className="nav-items flex sm:hidden flex-row justify-end">
-        <a className={`${styles.navItem} cursor-pointer`}>
-          <Plus className="inline" size={'1em'} />
-        </a>
+        <Link href="/user/setting">
+          <a className={`${styles.navItem} cursor-pointer`}>
+            <Settings className="inline" size={'1em'} />
+          </a>
+        </Link>
         <div
           className={`nav-dropdown ${styles.navItem} relative`}
           style={{padding: 0}}
@@ -103,22 +88,24 @@ export const Navbar: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
               <Menu className="inline" size={'1em'} />
             </a>
           </label>
-          <div className="dropdown hidden">
-            <ul className="menu absolute right-2 top-10 shadow-md w-40">
+          <ul className="dropdown hidden menu absolute right-2 top-14 shadow-md w-40 z-20 bg-white">
+            {userRole === 'admin' && (
               <li>
-                <a className={`${styles.navItem} ${styles.dropdownItem}`}>
-                  Setting
-                </a>
-              </li>
-              <li>
-                <Link href={'/logout'}>
+                <Link href={'/admin/users'}>
                   <a className={`${styles.navItem} ${styles.dropdownItem}`}>
-                    Logout
+                    Admin
                   </a>
                 </Link>
               </li>
-            </ul>
-          </div>
+            )}
+            <li>
+              <Link href={'/logout'}>
+                <a className={`${styles.navItem} ${styles.dropdownItem}`}>
+                  Logout
+                </a>
+              </Link>
+            </li>
+          </ul>
         </div>
       </div>
     </nav>

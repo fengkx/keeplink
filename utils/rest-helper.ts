@@ -3,7 +3,6 @@ import {supabase} from '@/db/supabase';
 import type {User as SupabaseUser} from '@supabase/supabase-js';
 import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 import type {User as PUser} from '@prisma/client';
-import {ParsedUrlQuery} from 'querystring';
 import {prisma} from '@/db/prisma';
 
 type HttpHandler<T = any> = {
@@ -78,10 +77,4 @@ export function reason(err: PrismaClientKnownRequestError): ClientSideError {
     default:
       return 'UNKNOWN_ERROR';
   }
-}
-
-export function getIdFromQuery(query: ParsedUrlQuery): number {
-  let id = query.id!;
-  id = Array.isArray(id) ? id[0] : id;
-  return Number.parseInt(id, 10);
 }

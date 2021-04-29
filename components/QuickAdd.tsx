@@ -31,6 +31,7 @@ const QuickAdd: React.FC<Props> = ({className, onSuccess}) => {
           });
           const data = await resp.json();
           onSuccess(data);
+          setUrlInput('');
         } catch (error: any) {
           const {data} = await error.response.json();
           console.log(data);
