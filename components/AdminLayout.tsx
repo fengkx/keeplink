@@ -12,7 +12,7 @@ export const AdminLayout: React.FC<React.PropsWithChildren<Props>> = ({
 }) => {
   return (
     <Layout userRole={userRole}>
-      <div className="max-w-4xl mx-auto text-brand-800 mb-2 border-b pb-6 px-8">
+      <div className="max-w-4xl mx-auto text-brand-800 mb-2 border-b pb-4 sm:pb-6 px-8">
         <Link href="/admin/users">
           <a className="mr-8">Users</a>
         </Link>

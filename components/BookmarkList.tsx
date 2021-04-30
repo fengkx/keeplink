@@ -25,6 +25,14 @@ export const BookmarkList: React.FC<Props> = ({
     },
     [onDelete]
   );
+  if (bookmarks.length <= 0) {
+    return (
+      <div className="text-center font-semibold text-3xl flex justify-center items-center mt-4 text-gray-600">
+        <p>No bookmark found</p>
+      </div>
+    );
+  }
+
   return (
     <BookMarkListContext.Provider value={{formatTime, onDelete: deleteHandler}}>
       <ul className={['bookmark-list', className].join(' ')}>

@@ -7,7 +7,7 @@ import {Button} from '@supabase/ui';
 import {Controller, useForm} from 'react-hook-form';
 import {apiCall} from '@/utils/api-call';
 import {useRouter} from 'next/router';
-import {decode as decodeHtml} from 'he'
+import {decode as decodeHtml} from 'he';
 
 // @ts-expect-error
 import Tags from '@yaireo/tagify/dist/react.tagify';
@@ -17,6 +17,7 @@ import styles from '@/styles/Form.module.css';
 import type {Tag} from '@prisma/client';
 import {User} from '@supabase/supabase-js';
 import {useToasts} from 'react-toast-notifications';
+import Error from 'next/error';
 
 const Edit: React.FC<Props> = ({bookmark, user}) => {
   type FormInput = {
@@ -35,7 +36,6 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
   const toast = useToasts();
   const {register, handleSubmit, control} = form;
   const onSubmit = handleSubmit(async (data) => {
-    console.log(data.tags);
     try {
       const payload = {
         ...data,
@@ -56,82 +56,78 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
     }
   });
   if (!bookmark) {
-    return <div>Not Found</div>;
+    return <Error statusCode={404} />;
   }
 
-  if (bookmark) {
-    return (
-      <Layout userRole={user.user_metadata.role}>
-        <form
-          onSubmit={onSubmit}
-          className="form flex flex-col h-96 justify-between"
-        >
-          <div className="flex flex-col max-w-5xl mx-auto w-full">
-            <div className={styles.label}>URL</div>
-            <p className={`${styles.input} bg-gray-100`} id="url">
-              {bookmark.url}
-            </p>
-            <label htmlFor="title" className={styles.label}>
-              Title
-            </label>
-            <input className={styles.input} {...register('title')} />
-            <label htmlFor="description" className={styles.label}>
-              Description
-            </label>
-            <textarea
-              className={`h-28 ${styles.input}`}
-              {...register('description')}
-            />
-            <label htmlFor="tags" className={styles.label}>
-              Tags
-            </label>
-            <Controller
-              control={control}
-              render={({field}) => {
-                return (
-                  <Tags
-                    onChange={(ev: {detail: {value: any}}) => {
-                      field.onChange(ev.detail.value);
-                    }}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    value={field.value}
-                    className={styles.input}
-                    settings={{
-                      maxTags: 5,
-                      whitelist: ['111', '222'],
-                      dropdown: {
-                        maxItems: 20,
-                        enabled: 0
-                      },
-                      placeholder: 'Add Tags'
-                    }}
-                  />
-                );
+  return (
+    <Layout userRole={user.user_metadata.role}>
+      <form
+        onSubmit={onSubmit}
+        className="form flex flex-col h-96 justify-between"
+      >
+        <div className="flex flex-col max-w-5xl mx-auto w-full">
+          <div className={styles.label}>URL</div>
+          <p className={`${styles.input} bg-gray-100`} id="url">
+            {bookmark.url}
+          </p>
+          <label htmlFor="title" className={styles.label}>
+            Title
+          </label>
+          <input className={styles.input} {...register('title')} />
+          <label htmlFor="description" className={styles.label}>
+            Description
+          </label>
+          <textarea
+            className={`h-28 ${styles.input}`}
+            {...register('description')}
+          />
+          <label htmlFor="tags" className={styles.label}>
+            Tags
+          </label>
+          <Controller
+            control={control}
+            render={({field}) => {
+              return (
+                <Tags
+                  onChange={(ev: {detail: {value: any}}) => {
+                    field.onChange(ev.detail.value);
+                  }}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  value={field.value}
+                  className={styles.input}
+                  settings={{
+                    maxTags: 5,
+                    whitelist: ['111', '222'],
+                    dropdown: {
+                      maxItems: 20,
+                      enabled: 0
+                    },
+                    placeholder: 'Add Tags'
+                  }}
+                />
+              );
+            }}
+            name="tags"
+          />
+          <div>
+            <Button type="primary" className="mr-2" role="submit">
+              Submit
+            </Button>
+            <Button
+              onClick={(event) => {
+                event.preventDefault();
+                router.back();
               }}
-              name="tags"
-            />
-            <div>
-              <Button type="primary" className="mr-2" role="submit">
-                Submit
-              </Button>
-              <Button
-                onClick={(event) => {
-                  event.preventDefault();
-                  router.back();
-                }}
-                type="secondary"
-              >
-                Cancel
-              </Button>
-            </div>
+              type="secondary"
+            >
+              Cancel
+            </Button>
           </div>
-        </form>
-      </Layout>
-    );
-  }
-
-  return <div>Not Found</div>;
+        </div>
+      </form>
+    </Layout>
+  );
 };
 
 type Props = {

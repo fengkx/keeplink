@@ -11,6 +11,8 @@ import {useRouter} from 'next/router';
 import {getPagination} from '@/utils/get-pagination';
 import {Pagination} from '@/components/Pagination';
 import {AdminLayout} from '@/components/AdminLayout';
+import Error from 'next/error';
+import 'placeholder-loading/dist/css/placeholder-loading.css';
 
 function useTagList() {
   const router = useRouter();
@@ -32,11 +34,29 @@ const TagsAdmin: React.FC<Props> = ({user}) => {
   const {data, error, page, size} = useTagList();
 
   if (!data) {
-    return <div>Loading</div>;
+    return (
+      <AdminLayout userRole={user.user_metadata.role}>
+        {[...Array.from({length: 4}).keys()].map((key) => (
+          <div key={key} className="h-1/3 overflow-hidden">
+            <div className="ph-picture" />
+            <div className="ph-row my-6">
+              <div className="ph-col-6 big" />
+              <div className="ph-col-4 empty big" />
+              <div className="ph-col-2 big" />
+              <div className="ph-col-4" />
+              <div className="ph-col-8 empty" />
+              <div className="ph-col-6" />
+              <div className="ph-col-6 empty" />
+              <div className="ph-col-12" />
+            </div>
+          </div>
+        ))}
+      </AdminLayout>
+    );
   }
 
   if (error) {
-    return <div>Error</div>;
+    return <Error title={error.message} statusCode={0} />;
   }
 
   return (
@@ -50,14 +70,14 @@ const TagsAdmin: React.FC<Props> = ({user}) => {
         `}</style>
         {(data ?? []).map((tag) => (
           <li key={tag.id} className="py-3.5 border-b">
-            <div className="flex">
+            <div className="flex leading-10">
               <Link href={`/tag/${tag.tag}`}>
                 <a className="inline-block tag font-bold hover:text-brand-800">
                   {tag.tag}
                 </a>
               </Link>
               <div className="alias flex justify-between flex-1">
-                <div className="ml-4">
+                <div className="ml-4 break-words flex-wrap flex">
                   {tag.alias.map((alias) => (
                     <a
                       className="leading-relaxed bg-gray-100 m-1 px-2 py-1"

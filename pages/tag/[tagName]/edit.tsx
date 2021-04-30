@@ -16,6 +16,7 @@ import styles from '@/styles/Form.module.css';
 import type {Tag} from '@prisma/client';
 import {User} from '@supabase/supabase-js';
 import {useToasts} from 'react-toast-notifications';
+import Error from 'next/error';
 
 const Edit: React.FC<Props> = ({tag, user}) => {
   type FormInput = {
@@ -34,7 +35,7 @@ const Edit: React.FC<Props> = ({tag, user}) => {
   const onSubmit = handleSubmit(async (data) => {
     try {
       const alias = JSON.parse(data.alias).map((v: {value: string}) => v.value);
-      const payload = {tag: data.tag, alias};
+      const payload = {tag: data.tag, alias: [...new Set(alias)]};
       await apiCall(`/api/tags/${tag!.tag}`, {
         method: 'PUT',
         body: JSON.stringify(payload)
@@ -45,7 +46,7 @@ const Edit: React.FC<Props> = ({tag, user}) => {
     }
   });
   if (!tag) {
-    return <div>Not Found</div>;
+    return <Error statusCode={404} />;
   }
 
   if (tag) {
@@ -76,7 +77,7 @@ const Edit: React.FC<Props> = ({tag, user}) => {
                     name={field.name}
                     value={field.value}
                     settings={{
-                      maxTags: 5,
+                      maxTags: 100,
                       whitelist: ['111', '222'],
                       dropdown: {
                         maxItems: 20,
