@@ -3,6 +3,7 @@ import {Auth, Card} from '@supabase/ui';
 import {supabase} from '@/db/supabase';
 import React, {useEffect, useState} from 'react';
 import {useRouter} from 'next/router';
+import Head from 'next/head';
 
 const AuthBasic: React.FC<{error: Error}> = () => {
   const router = useRouter();
@@ -56,6 +57,9 @@ const AuthBasic: React.FC<{error: Error}> = () => {
 
   return (
     <div className="container mx-auto flex justify-center items-center h-screen">
+      <Head>
+        <title>Signin | KeepLink</title>
+      </Head>
       <main className="mx-auto max-w-3xl w-full lg:w-10/12 p-5">
         <Card>
           <Auth

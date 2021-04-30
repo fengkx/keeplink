@@ -33,7 +33,7 @@ export const Navbar: React.FC<
           margin-right: -0.5rem;
         }
         h1 {
-            font-family: 'Work Sans', sans-serif;
+          font-family: 'Work Sans', sans-serif;
         }
       `}</style>
       <div className="heading flex items-center">

@@ -41,7 +41,7 @@ const Home: React.FC<Props> = ({bookmarks, user}) => {
   }
 
   return (
-    <Layout userRole={user.user_metadata.role}>
+    <Layout title="Bookmarks" userRole={user.user_metadata.role}>
       <div className="max-w-5xl mx-auto">
         <QuickAdd
           onSuccess={({bookmark}) => {
