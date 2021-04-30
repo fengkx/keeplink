@@ -6,7 +6,7 @@ import {getOneParamFromQuery} from '@/utils/query-param';
 import * as z from 'zod';
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {update, del});
+  return restful({req, res}, {update, del, read});
 }
 
 const del: RestfulApiHandler = async (req, res) => {
@@ -18,6 +18,16 @@ const del: RestfulApiHandler = async (req, res) => {
   });
   res.status(200).json(deleted);
 };
+
+const read: RestfulApiHandler = async (req, res, user) => {
+  const id = getOneParamFromQuery<number>(req.query, 'id');
+  const result = await prisma.bookmark.findUnique({
+    where: {
+      id
+    }
+  })
+  res.status(200).json(result);
+}
 
 const update: RestfulApiHandler = async (req, res) => {
   const id = getOneParamFromQuery<number>(req.query);
@@ -75,12 +85,6 @@ const update: RestfulApiHandler = async (req, res) => {
       ...Object.values(existedTags).map((t) => t[0].tag)
     ])
   ];
-  console.log(existedTags, needNewTags);
-  const allAlias = payload.tags
-    .map((t: string) =>
-      existedTags[t] ? existedTags[t].map((et) => et.alias) : t
-    )
-    .flat(2);
   await prisma.tag.createMany({
     data: needNewTags.map((tag) => ({tag}))
   });

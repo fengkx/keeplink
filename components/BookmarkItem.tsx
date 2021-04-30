@@ -5,6 +5,7 @@ import {BookMarkListContext} from '@/components/BookMarkListContext';
 import {supabase} from '@/db/supabase';
 import {RealtimeSubscription} from '@supabase/supabase-js';
 import {BookMark} from '../pages';
+import {apiCall} from "@/utils/api-call";
 
 export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
   const {onDelete, formatTime} = useContext(BookMarkListContext);
@@ -17,10 +18,11 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
     if (bookmark.archive_stat === 'pending') {
       subscription = supabase
         .from(`links:id=eq.${bookmark.link_id}`)
-        .on('UPDATE', (payload) => {
-          console.log(payload);
-
+        .on('UPDATE', async (payload) => {
+          const resp = await apiCall(`/api/bookmarks/${bookmark.id}`);
+          const data = await resp.json();
           setData((bookmark) => {
+            bookmark.tags = data.cached_tags_name.split(',')
             bookmark.archive_stat = payload.new.archive_stat;
             bookmark.title = payload.new.title;
             bookmark.description = payload.new.description;
@@ -37,7 +39,7 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
     };
   }, []);
   return (
-    <article className="h-full text-sm sm:text-base p-2 flex justify-between flex-col overflow-hidden">
+    <article className="h-full text-sm sm:text-base p-3 flex justify-between flex-col overflow-hidden">
       <style jsx>{`
         .item-meta li {
           margin-right: 0.75rem;
