@@ -146,7 +146,7 @@ export const getServerSideProps: GetServerSideProps<Props, Query> = async (
   }
 
   return {
-    props: {user},
+    props: {user}
   };
 };
 

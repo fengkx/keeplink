@@ -36,11 +36,6 @@ const AuthBasic: React.FC<{error: Error}> = () => {
           });
       }
     );
-    return () => {
-      authListener?.unsubscribe();
-    };
-  }, []);
-  useEffect(() => {
     if (session) {
       void fetch('/api/auth', {
         method: 'POST',
@@ -53,7 +48,11 @@ const AuthBasic: React.FC<{error: Error}> = () => {
           void router.push('/');
         });
     }
-  }, [session]);
+
+    return () => {
+      authListener?.unsubscribe();
+    };
+  }, []);
 
   return (
     <div className="container mx-auto flex justify-center items-center h-screen">

@@ -10,7 +10,7 @@ import styles from '@/styles/Form.module.css';
 import {Button} from '@supabase/ui';
 import {apiCall} from '@/utils/api-call';
 import {useToasts} from 'react-toast-notifications';
-import {User} from "@supabase/supabase-js";
+import {User} from '@supabase/supabase-js';
 
 type Props = {
   userData: PUser;
@@ -41,7 +41,7 @@ const Settings: React.FC<Props> = ({user}) => {
     return () => {
       authListener?.unsubscribe();
     };
-  });
+  }, []);
   const onSubmit = handleSubmit(
     async (data) => {
       const {password, password_confirm, ...settings} = data;

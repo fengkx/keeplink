@@ -16,19 +16,12 @@ export type RestfulApiHandler<T = any> = (
   user: User
 ) => void | Promise<void>;
 type RestfulHandlerMap = {
-  create: RestfulApiHandler;
-  update: RestfulApiHandler;
-  read: RestfulApiHandler;
-  del: RestfulApiHandler;
+  create?: RestfulApiHandler;
+  update?: RestfulApiHandler;
+  read?: RestfulApiHandler;
+  del?: RestfulApiHandler;
 };
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-const noop = () => {};
-const defaultRest: RestfulHandlerMap = {
-  create: noop,
-  update: noop,
-  read: noop,
-  del: noop
-};
+
 export async function restful(
   {req, res}: HttpHandler,
   rest: Partial<RestfulHandlerMap>
@@ -38,30 +31,26 @@ export async function restful(
   );
   if (error || !supabaseUser) {
     console.error(error);
-    res.status(401).json({error: error?.message ?? 'Auth error'});
+    res.status(401).json({error: error?.message ?? 'Not Auth'});
     return;
   }
 
   const puser = await prisma.user.findUnique({where: {id: supabaseUser.id}});
   const user: User = {...supabaseUser, ...puser!};
-  const handlers: RestfulHandlerMap = {...defaultRest, ...rest};
+  const methodToHandler: Record<string, RestfulApiHandler | undefined> = {
+    GET: rest.read,
+    POST: rest.create,
+    PUT: rest.update,
+    DELETE: rest.del
+  };
   try {
-    switch (req.method) {
-      case 'POST':
-        await handlers.create(req, res, user);
-        break;
-      case 'PUT':
-        await handlers.update(req, res, user);
-        break;
-      case 'DELETE':
-        await handlers.del(req, res, user);
-        break;
-      case 'GET':
-        await handlers.read(req, res, user);
-        break;
-      default:
-        res.status(405).send('Method Not Allow');
+    const handler = methodToHandler[req.method?.toUpperCase() ?? 'NOT'];
+    if (!handler) {
+      res.status(405).send('Method Not Allow');
+      return;
     }
+
+    await handler(req, res, user);
   } catch (error) {
     console.log(error);
     res.status(500).json({code: error.code, reason: reason(error)});

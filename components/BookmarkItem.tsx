@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Link from 'next/link';
 import {ConfirmDelete} from '@/components/ConfirmDelete';
 import {BookMarkListContext} from '@/components/BookMarkListContext';
@@ -8,6 +8,10 @@ import {BookMark} from '../pages';
 
 export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
   const {onDelete, formatTime} = useContext(BookMarkListContext);
+  const [data, setData] = useState(bookmark);
+  useEffect(() => {
+    setData(bookmark);
+  }, [bookmark]);
   useEffect(() => {
     let subscription: RealtimeSubscription;
     if (bookmark.archive_stat === 'pending') {
@@ -15,9 +19,13 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
         .from(`links:id=eq.${bookmark.link_id}`)
         .on('UPDATE', (payload) => {
           console.log(payload);
-          bookmark.archive_stat = payload.new.archive_stat;
-          bookmark.title = payload.new.title;
-          bookmark.description = payload.new.description;
+
+          setData((bookmark) => {
+            bookmark.archive_stat = payload.new.archive_stat;
+            bookmark.title = payload.new.title;
+            bookmark.description = payload.new.description;
+            return bookmark;
+          });
         })
         .subscribe();
     }
@@ -42,20 +50,20 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
       `}</style>
       <div className="item-content flex flex-col">
         <div className="item-title font-bold align-middle leading-normal mb-1 whitespace-nowrap overflow-hidden overflow-ellipsis">
-          <Link href={bookmark.url}>
+          <Link href={data.url}>
             <a className="inline ml-1 text-lg" target="_blank" rel="nofollow">
-              {bookmark.title ?? bookmark.url}
+              {data.title ?? data.url}
             </a>
           </Link>
         </div>
         <p className="item-description overflow-ellipsis whitespace-nowrap overflow-hidden">
-          {bookmark.description ?? bookmark.title}
+          {data.description ?? data.title}
         </p>
       </div>
-      {bookmark.tags.length > 0 && (
+      {data.tags.length > 0 && (
         <div className="item-tags my-2">
           <ul className="flex items-center">
-            {bookmark.tags.map((tag: string) => {
+            {data.tags.map((tag: string) => {
               return (
                 <li className="inline-block bg-gray-100 p-0.5 mr-2" key={tag}>
                   <Link href={`/tag/${tag}`}>
@@ -69,11 +77,11 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
       )}
       <div className="item-meta flex justify-between">
         <ul className="item-meta-info flex items-center">
-          <li>{formatTime(bookmark.createdAt as number)}</li>
+          <li>{formatTime(data.createdAt as number)}</li>
         </ul>
         <ul className="item-meta-actions flex items-center">
           <li>
-            <Link href={`/bookmark/edit/${bookmark.id}`}>
+            <Link href={`/bookmark/edit/${data.id}`}>
               <a>Edit</a>
             </Link>
           </li>
@@ -81,12 +89,12 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
             <ConfirmDelete
               onDelete={() => {
                 console.log('delete', bookmark.id);
-                onDelete(bookmark.id);
+                onDelete(data.id);
               }}
             />
           </li>
           <li>
-            <Link href={`/archive/${bookmark.link_id}`}>
+            <Link href={`/archive/${data.link_id}`}>
               <a>Archive</a>
             </Link>
           </li>

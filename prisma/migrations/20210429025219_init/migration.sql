@@ -18,6 +18,16 @@ CREATE TEXT SEARCH CONFIGURATION chinese_zh (PARSER = zhparser);
 ALTER TEXT SEARCH CONFIGURATION chinese_zh ADD MAPPING FOR n,v,a,i,e,l,t WITH simple;
 CREATE EXTENSION IF NOT EXISTS rum;
 
+-- Remove data uri(base64), src/srcset attr style tag and inline style with REGEXP
+CREATE OR REPLACE FUNCTION clean_html_for_search(text) RETURNS TEXT AS
+$$
+    DECLARE clean_html TEXT;
+    BEGIN
+       SELECT REGEXP_REPLACE($1, '(data:[^,]+,)[^"]+|(<style[^>+]>[^<]+</style>)|style="[^"]+"|src(?:set)?="[^"]+"', '', 'g') INTO clean_html;
+       RETURN clean_html;
+    END;
+$$ IMMUTABLE LANGUAGE plpgsql;
+
 -- CreateTable
 CREATE TABLE "bookmarks"
 (
@@ -47,6 +57,11 @@ CREATE TABLE "bookmarks"
     PRIMARY KEY ("id")
 );
 
+ALTER TABLE bookmarks
+    ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "bookmark_only_self" ON bookmarks
+    FOR ALL USING (auth.uid() = user_id);
+
 -- CreateTable
 CREATE TABLE "links"
 (
@@ -63,7 +78,7 @@ CREATE TABLE "links"
                                (setweight(to_tsvector('public.chinese_zh'::regconfig, COALESCE(title, '')), 'A')
                                    || setweight(to_tsvector('public.chinese_zh'::regconfig, COALESCE(url, '')), 'A'))
                                || setweight(to_tsvector('public.chinese_zh'::regconfig, COALESCE(description, '')), 'B')
-                           || setweight(to_tsvector('public.chinese_zh'::regconfig, COALESCE(archive, '')), 'D')
+                           || setweight(to_tsvector('public.chinese_zh'::regconfig, clean_html_for_search(COALESCE(archive, ''))), 'D')
                        ) STORED,
 
     PRIMARY KEY ("id")
@@ -210,6 +225,6 @@ create publication supabase_realtime;
 commit;
 
 -- add tables to the publication
-alter publication supabase_realtime add table bookmarks;
+-- alter publication supabase_realtime add table bookmarks;
 alter publication supabase_realtime add table links;
 alter publication supabase_realtime add table tags;

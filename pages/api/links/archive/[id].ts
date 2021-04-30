@@ -6,7 +6,7 @@ import metascraperTitle from 'metascraper-title';
 import execa from 'execa';
 import {restful, RestfulApiHandler} from '@/utils/rest-helper';
 import {prisma} from '@/db/prisma';
-import {getOneParamFromQuery} from "@/utils/query-param";
+import {getOneParamFromQuery} from '@/utils/query-param';
 
 const metascraper = metaParser([
   metascraperUrl(),
@@ -44,7 +44,7 @@ const create: RestfulApiHandler = async (req, res) => {
     }
 
     const metadata = await metascraper({html: singlePage, url});
-    res.status(200).json(metadata);
+    res.status(200).json({metadata, html: singlePage});
     const updated: Partial<typeof link> = {};
     if (!link.title) {
       updated.title = metadata.title;

@@ -31,7 +31,8 @@
     "react-toast-notifications": "^2.4.4",
     "react-use": "^17.2.4",
     "single-file": "github:gildas-lormeau/SingleFile",
-    "swr": "^0.5.5"
+    "swr": "^0.5.5",
+    "zod": "^1.11.16"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",

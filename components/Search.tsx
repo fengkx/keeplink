@@ -1,25 +1,31 @@
 import {Input} from '@supabase/ui';
 import {Search} from 'react-feather';
-import React, {useMemo, useState} from 'react';
+import React, {useEffect, useMemo, useState} from 'react';
 import styles from '@/components/Navbar.module.css';
 import {useRouter} from 'next/router';
 import {getOneParamFromQuery} from '@/utils/query-param';
 
 const MainSearch: React.FC<React.HTMLAttributes<HTMLInputElement>> = () => {
-  const [serach, setSearch] = useState('');
+  const [search, setSearch] = useState('');
   const router = useRouter();
-  const searchDefault = useMemo(() => {
+  useEffect(() => {
     const query = getOneParamFromQuery(router.query, 'q');
-    return query ?? '';
+    setSearch(query);
   }, []);
+  const searchPath = useMemo((): string => {
+    let path = `${router.pathname === '/' ? '/bookmark' : router.pathname}`;
+    if (search) {
+      path += '?';
+      path += new URLSearchParams({q: search}).toString();
+    }
+
+    return path;
+  }, [search, router]);
   return (
     <form
       onSubmit={(ev) => {
         ev.preventDefault();
-        void router.push(
-          `${router.pathname} === '/` ? '/bookmark' : router.pathname,
-          {query: {q: 'css'}}
-        );
+        void router.push(searchPath);
       }}
       className="pl-2 lg:pl-3 flex items-center flex-1"
       action={`${router.pathname} === '/` ? '/bookmark' : router.pathname}
@@ -28,7 +34,7 @@ const MainSearch: React.FC<React.HTMLAttributes<HTMLInputElement>> = () => {
       <div className="relative flex items-center w-full">
         <Search className="absolute" size={'1rem'} style={{zIndex: 1000}} />
         <Input
-          value={serach}
+          value={search}
           onChange={(ev) => {
             setSearch(ev.target.value);
           }}
@@ -37,7 +43,6 @@ const MainSearch: React.FC<React.HTMLAttributes<HTMLInputElement>> = () => {
           type="search"
           name="q"
           className={styles.searchInput}
-          defaultValue={searchDefault}
         />
       </div>
     </form>

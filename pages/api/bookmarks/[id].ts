@@ -3,6 +3,7 @@ import {restful, RestfulApiHandler} from '@/utils/rest-helper';
 import {prisma} from '@/db/prisma';
 import {Tag} from '../../../types/model';
 import {getOneParamFromQuery} from '@/utils/query-param';
+import * as z from 'zod';
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   return restful({req, res}, {update, del});
@@ -20,7 +21,18 @@ const del: RestfulApiHandler = async (req, res) => {
 
 const update: RestfulApiHandler = async (req, res) => {
   const id = getOneParamFromQuery<number>(req.query);
-  const payload = req.body;
+  const schema = z.object({
+    tags: z.array(z.string()),
+    title: z.string(),
+    description: z.string()
+  });
+  const validation = schema.safeParse(req.body);
+  if (!validation.success) {
+    res.status(400).json(validation.error);
+    return;
+  }
+
+  const payload = validation.data;
   if (payload.tags.length > 5) {
     res.status(400).json({error: 'too many tag'});
     return;
@@ -69,50 +81,43 @@ const update: RestfulApiHandler = async (req, res) => {
       existedTags[t] ? existedTags[t].map((et) => et.alias) : t
     )
     .flat(2);
-  try {
-    // Await prisma.$executeRaw(`BEGIN;`)
-    await prisma.tag.createMany({
-      data: needNewTags.map((tag) => ({tag}))
-    });
-    const tagIds = await prisma.tag.findMany({
-      where: {
-        tag: {
-          in: allTags
-        }
-      },
-      select: {
-        id: true
+  await prisma.tag.createMany({
+    data: needNewTags.map((tag) => ({tag}))
+  });
+  const tagIds = await prisma.tag.findMany({
+    where: {
+      tag: {
+        in: allTags
       }
-    });
-    const updated = await prisma.bookmark.update({
-      where: {
-        id
-      },
-      data: {
-        title: payload.title,
-        description: payload.description,
-        cached_tags_name: allTags.join(','),
-        cached_tags_with_alias_name: allAlias.join(','),
-        tags: {
-          createMany: {
-            data: tagIds.map((t: {id: number}) => ({tag_id: t.id})),
-            skipDuplicates: true
-          }
-        }
-      },
-      select: {
-        id: true,
-        tags: {
-          select: {
-            tag: true
-          }
+    },
+    select: {
+      id: true
+    }
+  });
+  const updated = await prisma.bookmark.update({
+    where: {
+      id
+    },
+    data: {
+      title: payload.title,
+      description: payload.description,
+      cached_tags_name: allTags.join(','),
+      cached_tags_with_alias_name: allAlias.join(','),
+      tags: {
+        createMany: {
+          data: tagIds.map((t: {id: number}) => ({tag_id: t.id})),
+          skipDuplicates: true
         }
       }
-    });
-    res.status(200).json(updated);
-  } catch (error) {
-    console.error(error);
-  } finally {
-    // Await prisma.$executeRaw(`COMMIT;`)
-  }
+    },
+    select: {
+      id: true,
+      tags: {
+        select: {
+          tag: true
+        }
+      }
+    }
+  });
+  res.status(200).json(updated);
 };

@@ -1,9 +1,9 @@
 import React, {useCallback} from 'react';
 import {BookMark} from '../pages';
-import {useNow} from '../utils/useNow';
-import {formatDistance} from 'date-fns';
+
 import {BookMarkListContext} from '@/components/BookMarkListContext';
 import {BookmarkItem} from '@/components/BookmarkItem';
+import {useFormatTime} from '@/utils/hooks';
 
 type Props = {
   bookmarks: BookMark[];
@@ -15,10 +15,7 @@ export const BookmarkList: React.FC<Props> = ({
   onDelete,
   className
 }) => {
-  const now = useNow();
-  const formatTime = useCallback((timestamp) => {
-    return formatDistance(new Date(timestamp * 1000), now, {addSuffix: true});
-  }, []);
+  const formatTime = useFormatTime();
   const deleteHandler = useCallback(
     async (id: number) => {
       const resp = await fetch(`/api/bookmarks/${id}`, {method: 'DELETE'});

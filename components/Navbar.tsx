@@ -64,7 +64,7 @@ export const Navbar: React.FC<
         </Link>
       </div>
       <div className="nav-items flex sm:hidden flex-row justify-end">
-        <Link href="/user/setting">
+        <Link href="/user/settings">
           <a className={`${styles.navItem} cursor-pointer`}>
             <Settings className="inline" size={'1em'} />
           </a>
