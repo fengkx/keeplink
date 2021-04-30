@@ -18,14 +18,25 @@ CREATE TEXT SEARCH CONFIGURATION chinese_zh (PARSER = zhparser);
 ALTER TEXT SEARCH CONFIGURATION chinese_zh ADD MAPPING FOR n,v,a,i,e,l,t WITH simple;
 CREATE EXTENSION IF NOT EXISTS rum;
 
--- Remove data uri(base64), src/srcset attr style tag and inline style with REGEXP
+-- Remove
+-- data uri(base64),
+-- src/srcset attr style tag and its content,
+-- div|span|path|defs|svg|li open and close tag(only tag)
+-- and inline style with REGEXP
 CREATE OR REPLACE FUNCTION clean_html_for_search(text) RETURNS TEXT AS
 $$
-    DECLARE clean_html TEXT;
-    BEGIN
-       SELECT REGEXP_REPLACE($1, '(data:[^,]+,)[^"]+|(<style[^>+]>[^<]+</style>)|style="[^"]+"|src(?:set)?="[^"]+"', '', 'g') INTO clean_html;
-       RETURN clean_html;
-    END;
+DECLARE
+    clean_html TEXT;
+BEGIN
+    SELECT REGEXP_REPLACE(
+                   $1,
+                   '(data:[^,]+,)[^"]+|(<style[^>]*>[^<]+</style>)|style="[^"]+"|src(?:set)?="[^"]+"|class="[^"]+"|</?(?:div|span|path|defs|svg|li|tr|th|td|math|mtd|mtr|mtable|mn|mfenced|)[^>]*>',
+                   '',
+                   'g'
+               )
+    INTO clean_html;
+    RETURN clean_html;
+END;
 $$ IMMUTABLE LANGUAGE plpgsql;
 
 -- CreateTable
@@ -78,7 +89,8 @@ CREATE TABLE "links"
                                (setweight(to_tsvector('public.chinese_zh'::regconfig, COALESCE(title, '')), 'A')
                                    || setweight(to_tsvector('public.chinese_zh'::regconfig, COALESCE(url, '')), 'A'))
                                || setweight(to_tsvector('public.chinese_zh'::regconfig, COALESCE(description, '')), 'B')
-                           || setweight(to_tsvector('public.chinese_zh'::regconfig, clean_html_for_search(COALESCE(archive, ''))), 'D')
+                           || setweight(to_tsvector('public.chinese_zh'::regconfig,
+                                                    clean_html_for_search(COALESCE(archive, ''))), 'D')
                        ) STORED,
 
     PRIMARY KEY ("id")
@@ -160,8 +172,8 @@ CREATE TABLE "tags"
     PRIMARY KEY ("id")
 );
 REVOKE UPDATE, DELETE
-ON tags
-FROM anon, authenticated;
+    ON tags
+    FROM anon, authenticated;
 
 -- CreateTable
 CREATE TABLE "taggings"
