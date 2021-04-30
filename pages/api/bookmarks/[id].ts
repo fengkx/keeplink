@@ -101,8 +101,6 @@ const update: RestfulApiHandler = async (req, res) => {
     data: {
       title: payload.title,
       description: payload.description,
-      cached_tags_name: allTags.join(','),
-      cached_tags_with_alias_name: allAlias.join(','),
       tags: {
         createMany: {
           data: tagIds.map((t: {id: number}) => ({tag_id: t.id})),

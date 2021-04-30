@@ -39,7 +39,7 @@ const Edit: React.FC<Props> = ({tag, user}) => {
         method: 'PUT',
         body: JSON.stringify(payload)
       });
-      console.log(await resp.json());
+      router.back()
     } catch (error) {
       toast.addToast(error.message, {appearance: 'error'});
     }

@@ -110,7 +110,7 @@ const create: RestfulApiHandler = async (req, res, user) => {
       }
     });
     await fetch(
-      `${process.env.BASE_URL}/api/links/archive/${bookmark.link.id}`,
+      `${process.env.BASE_URL}/api/links/archive/${bookmark.link.id}?bookmark=${bookmark.id}`,
       {
         method: 'POST',
         headers: {

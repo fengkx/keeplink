@@ -49,9 +49,9 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
                  and (bookmarks.tsv @@ plainto_tsquery('chinese_zh', ${q})
                    or links.tsv @@ plainto_tsquery('chinese_zh', ${q}))
               ) as t1
-         order by ts_rank(t1.bookmark_tsv,
+         order by ts_rank_cd(t1.bookmark_tsv,
                           plainto_tsquery('chinese_zh', ${q})) desc ,
-                  ts_rank(t1.link_tsv, plainto_tsquery('chinese_zh', ${q})) desc 
+                  ts_rank_cd(t1.link_tsv, plainto_tsquery('chinese_zh', ${q})) desc 
          offset ${
                  (page - 1) * size
          } limit ${size};
