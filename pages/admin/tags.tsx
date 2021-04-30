@@ -1,4 +1,3 @@
-import {Layout} from '@/components/Layout';
 import {GetServerSideProps} from 'next';
 import {supabase} from '@/db/supabase';
 import {User} from '@supabase/supabase-js';

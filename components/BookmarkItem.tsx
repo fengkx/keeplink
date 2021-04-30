@@ -5,7 +5,7 @@ import {BookMarkListContext} from '@/components/BookMarkListContext';
 import {supabase} from '@/db/supabase';
 import {RealtimeSubscription} from '@supabase/supabase-js';
 import {BookMark} from '../pages';
-import {apiCall} from "@/utils/api-call";
+import {apiCall} from '@/utils/api-call';
 
 export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
   const {onDelete, formatTime} = useContext(BookMarkListContext);
@@ -22,7 +22,7 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
           const resp = await apiCall(`/api/bookmarks/${bookmark.id}`);
           const data = await resp.json();
           setData((bookmark) => {
-            bookmark.tags = data.cached_tags_name.split(',')
+            bookmark.tags = data.cached_tags_name.split(',');
             bookmark.archive_stat = payload.new.archive_stat;
             bookmark.title = payload.new.title;
             bookmark.description = payload.new.description;

@@ -35,11 +35,11 @@ const Edit: React.FC<Props> = ({tag, user}) => {
     try {
       const alias = JSON.parse(data.alias).map((v: {value: string}) => v.value);
       const payload = {tag: data.tag, alias};
-      const resp = await apiCall(`/api/tags/${tag!.tag}`, {
+      await apiCall(`/api/tags/${tag!.tag}`, {
         method: 'PUT',
         body: JSON.stringify(payload)
       });
-      router.back()
+      router.back();
     } catch (error) {
       toast.addToast(error.message, {appearance: 'error'});
     }

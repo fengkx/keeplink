@@ -11,12 +11,12 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 const update: RestfulApiHandler = async (req, res, user) => {
   const schema = z.object({
     role: z.literal('admin').or(z.literal('user')),
-    settings: z.record(z.string().or(z.number())),
-  })
-  const validation = schema.safeParse(req.body)
-  if(!validation.success) {
-    res.status(400).json(validation.error)
-    return
+    settings: z.record(z.string().or(z.number()))
+  });
+  const validation = schema.safeParse(req.body);
+  if (!validation.success) {
+    res.status(400).json(validation.error);
+    return;
   }
 
   const {settings, role} = validation.data;

@@ -1,6 +1,6 @@
 import Home, {
-    BookMark,
-    getServerSideProps as noSearchServerSideProps
+  BookMark,
+  getServerSideProps as noSearchServerSideProps
 } from '../index';
 import {supabase} from '@/db/supabase';
 import {getPagination} from '@/utils/get-pagination';
@@ -10,22 +10,21 @@ import {decode as htmlDecode} from 'he';
 export default Home;
 
 export const getServerSideProps: typeof noSearchServerSideProps = async (
-    ctx
+  ctx
 ) => {
-    const {req, query} = ctx;
-    const q = query.q;
-    if (!q) {
-        return noSearchServerSideProps(ctx);
-    }
+  const {req, query} = ctx;
+  const q = query.q;
+  if (!q) {
+    return noSearchServerSideProps(ctx);
+  }
 
-    const {user} = await supabase.auth.api.getUserByCookie(req);
-    if (!user) {
-        return {props: {}, redirect: {destination: '/signin', permanent: false}};
-    }
+  const {user} = await supabase.auth.api.getUserByCookie(req);
+  if (!user) {
+    return {props: {}, redirect: {destination: '/signin', permanent: false}};
+  }
 
-    const {page, size} = getPagination(query);
-    const results = await prisma.$queryRaw
-        `select id,
+  const {page, size} = getPagination(query);
+  const results = await prisma.$queryRaw`select id,
                 link_id,
                 title,
                 description,
@@ -52,20 +51,18 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
          order by ts_rank_cd(t1.bookmark_tsv,
                           plainto_tsquery('chinese_zh', ${q})) desc ,
                   ts_rank_cd(t1.link_tsv, plainto_tsquery('chinese_zh', ${q})) desc 
-         offset ${
-                 (page - 1) * size
-         } limit ${size};
+         offset ${(page - 1) * size} limit ${size};
         ;
-        `
-    return {
-        props: {
-            user,
-            bookmarks: results.map((bm: BookMark) => ({
-                ...bm,
-                description: htmlDecode(bm.description ?? ''),
-                createdAt: new Date(bm.created_at!).getTime() / 1000,
-                tags: bm.cached_tags_name?.split(',') ?? []
-            }))
-        }
-    };
+        `;
+  return {
+    props: {
+      user,
+      bookmarks: results.map((bm: BookMark) => ({
+        ...bm,
+        description: htmlDecode(bm.description ?? ''),
+        createdAt: new Date(bm.created_at!).getTime() / 1000,
+        tags: bm.cached_tags_name?.split(',') ?? []
+      }))
+    }
+  };
 };

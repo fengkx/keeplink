@@ -19,15 +19,15 @@ const del: RestfulApiHandler = async (req, res) => {
   res.status(200).json(deleted);
 };
 
-const read: RestfulApiHandler = async (req, res, user) => {
+const read: RestfulApiHandler = async (req, res) => {
   const id = getOneParamFromQuery<number>(req.query, 'id');
   const result = await prisma.bookmark.findUnique({
     where: {
       id
     }
-  })
+  });
   res.status(200).json(result);
-}
+};
 
 const update: RestfulApiHandler = async (req, res) => {
   const id = getOneParamFromQuery<number>(req.query);

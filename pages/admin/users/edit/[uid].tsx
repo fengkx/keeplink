@@ -1,12 +1,11 @@
+import React from 'react';
 import {GetServerSideProps} from 'next';
-import {getPagination} from '@/utils/get-pagination';
 import {prisma} from '@/db/prisma';
 import type {User as SupabaseUser} from '@supabase/supabase-js';
 import type {user_role} from '@prisma/client';
 import {getOneParamFromQuery} from '@/utils/query-param';
 import {useForm} from 'react-hook-form';
 import {useToasts} from 'react-toast-notifications';
-import React, {useEffect} from 'react';
 import {apiCall} from '@/utils/api-call';
 import {supabase} from '@/db/supabase';
 import {Button} from '@supabase/ui';
@@ -33,7 +32,7 @@ export default function EditUser({user, editedUser}: Props) {
   const onSubmit = handleSubmit(
     async (data) => {
       const {role} = data;
-      const payload: Omit<FormInput, 'password_confirm'> = {role};
+      const payload = {role};
       try {
         await apiCall(`/api/users/${editedUser.id}`, {
           method: 'PUT',

@@ -6,6 +6,7 @@ import {prisma} from '@/db/prisma';
 import {getPagination} from '@/utils/get-pagination';
 import {useFormatTime} from '@/utils/hooks';
 import Link from 'next/link';
+
 type Props = {
   user: SupabaseUser;
   users: User[];
