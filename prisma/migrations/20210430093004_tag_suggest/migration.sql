@@ -19,3 +19,37 @@ ALTER TABLE tags
 
 -- Create Index
 CREATE INDEX ON tags USING gin(alias);
+
+-- Cache tag trigger
+CREATE OR REPLACE FUNCTION cache_tag_to_bookmark_on_update()
+    RETURNS TRIGGER AS
+$$
+DECLARE tags_name text;
+    DECLARE tag_and_aliases text;
+BEGIN
+    SELECT
+        array_to_string(array_agg(tag), ','),
+        array_to_string(array_agg(array_to_string(alias, ',')), ',')
+    INTO tags_name, tag_and_aliases
+    FROM taggings
+             JOIN tags ON tags.id = taggings.tag_id
+    where bookmark_id = new.bookmark_id;
+
+
+    UPDATE bookmarks SET cached_tags_name=tags_name WHERE id=new.bookmark_id;
+    UPDATE bookmarks SET cached_tags_with_alias_name=tag_and_aliases WHERE id=new.bookmark_id;
+    RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER on_tagging_insert
+    AFTER INSERT
+    ON taggings
+    FOR EACH ROW
+EXECUTE PROCEDURE cache_tag_to_bookmark_on_update();
+
+CREATE TRIGGER on_tagging_update
+    AFTER UPDATE
+    ON taggings
+    FOR EACH ROW
+EXECUTE PROCEDURE cache_tag_to_bookmark_on_update();

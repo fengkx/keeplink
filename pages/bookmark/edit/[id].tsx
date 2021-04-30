@@ -7,6 +7,7 @@ import {Button} from '@supabase/ui';
 import {Controller, useForm} from 'react-hook-form';
 import {apiCall} from '@/utils/api-call';
 import {useRouter} from 'next/router';
+import {decode as decodeHtml} from 'he'
 
 // @ts-expect-error
 import Tags from '@yaireo/tagify/dist/react.tagify';
@@ -196,7 +197,7 @@ export const getServerSideProps: GetServerSideProps<Props, Query> = async ({
       link_id: data.link_id,
       createdAt: data.createdAt.getTime() / 1000,
       title: data.title ?? data.link.title,
-      description: data.description ?? data.link.description,
+      description: decodeHtml(data.description ?? data.link.description ?? ''),
       url: data.link.url,
       tags: data.tags.map((t) => ({tag: t.tag.tag, id: t.tag.id}))
     };
