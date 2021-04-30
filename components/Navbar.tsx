@@ -32,11 +32,14 @@ export const Navbar: React.FC<
         .dropdown .menu {
           margin-right: -0.5rem;
         }
+        h1 {
+            font-family: 'Work Sans', sans-serif;
+        }
       `}</style>
       <div className="heading flex items-center">
         <Link href="/">
           <a className="flex items-center">
-            <h1 className="ml-2">KeepLink</h1>
+            <h1 className="ml-2 text-2xl text-brand-800">KeepLink</h1>
           </a>
         </Link>
       </div>

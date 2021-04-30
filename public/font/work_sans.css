@@ -1,0 +1,7 @@
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/font/work_sans.ttf) format('truetype');
+}
