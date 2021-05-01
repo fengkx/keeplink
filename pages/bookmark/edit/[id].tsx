@@ -97,6 +97,7 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
                     maxTags: 5,
                     whitelist: [],
                     dropdown: {
+                      caseSensitive: true,
                       maxItems: 20,
                       enabled: 0
                     },

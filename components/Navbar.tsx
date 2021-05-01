@@ -10,7 +10,7 @@ export const Navbar: React.FC<
   React.HTMLAttributes<HTMLDivElement> & {
     userRole: user_role;
   }
-> = ({userRole, className}) => {
+> = ({userRole}) => {
   const dropdownRef = useRef(null);
   const menuToggler = useRef<HTMLInputElement>(null);
   useClickAway(
