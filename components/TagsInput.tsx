@@ -14,7 +14,6 @@ export function TagsInput({
   settings,
   onChange
 }: any) {
-  const [suggestList, setSuggestList] = useState(settings.whitelist ?? []);
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
   useDebounce(
@@ -29,7 +28,9 @@ export function TagsInput({
       try {
         const resp = await apiCall(`/api/tags?start=${debouncedInput}`);
         const tags = await resp.json();
-        setSuggestList(tags.map((t: Tag) => t.tag));
+        const tagify = tagifyRef.current;
+        const whitelist = tagify.settings.whitelist;
+        tagify.settings.whitelist.splice(0, whitelist.length, ...tags.map((t: Tag) => t.tag));
       } catch (error) {
         console.error(error);
       }
@@ -39,12 +40,6 @@ export function TagsInput({
       void fetcher();
     }
   }, [debouncedInput]);
-  useEffect(() => {
-    const tagify = tagifyRef.current;
-    const whitelist = tagify.settings.whitelist;
-    tagify.settings.whitelist.splice(0, whitelist.length, ...suggestList);
-    tagify.loading(false).dropdown.show.call(tagify, debouncedInput);
-  }, [suggestList]);
   const tagifyRef = useRef<any>();
   useEffect(() => {
     const onInput = (ev: CustomEvent) => {
@@ -61,6 +56,7 @@ export function TagsInput({
     <Tags
       className={className}
       onChange={onChange}
+      settings={settings}
       onBlur={onBlur}
       name={name}
       value={value}

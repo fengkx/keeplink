@@ -95,7 +95,7 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
                   className={styles.input}
                   settings={{
                     maxTags: 5,
-                    whitelist: ['111', '222'],
+                    whitelist: [],
                     dropdown: {
                       maxItems: 20,
                       enabled: 0
