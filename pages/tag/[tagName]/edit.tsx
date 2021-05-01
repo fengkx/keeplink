@@ -1,4 +1,4 @@
-import React, {useCallback, useState} from 'react';
+import React from 'react';
 import {Layout} from '@/components/Layout';
 import {GetServerSideProps} from 'next';
 import {supabase} from '@/db/supabase';
@@ -13,8 +13,8 @@ import type {Tag} from '@prisma/client';
 import {User} from '@supabase/supabase-js';
 import {useToasts} from 'react-toast-notifications';
 import Error from 'next/error';
-import {TagsInput} from '../../../components/TagsInput';
-import {ConfirmDelete} from '../../../components/ConfirmDelete';
+import {TagsInput} from '@/components/TagsInput';
+import {ConfirmDelete} from '@/components/ConfirmDelete';
 
 const Edit: React.FC<Props> = ({tag, user}) => {
   type FormInput = {
@@ -31,7 +31,7 @@ const Edit: React.FC<Props> = ({tag, user}) => {
   const toast = useToasts();
   const onDelete = async () => {
     await apiCall(`/api/tags/${tag!.tag}`, {method: 'DELETE'});
-    router.back()
+    router.back();
   };
 
   const {register, handleSubmit, control} = form;

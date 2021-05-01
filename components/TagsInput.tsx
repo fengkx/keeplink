@@ -5,7 +5,6 @@ import '@yaireo/tagify/dist/tagify.css';
 import {apiCall} from '@/utils/api-call';
 import {useDebounce} from 'react-use';
 import {Tag} from '@prisma/client';
-import {useToasts} from 'react-toast-notifications';
 
 export function TagsInput({
   className,
@@ -37,7 +36,7 @@ export function TagsInput({
     }
 
     if (debouncedInput.length > 0) {
-      fetcher();
+      void fetcher();
     }
   }, [debouncedInput]);
   useEffect(() => {
@@ -48,12 +47,12 @@ export function TagsInput({
   }, [suggestList]);
   const tagifyRef = useRef<any>();
   useEffect(() => {
-    if (tagifyRef.current) {
-      async function onInput(ev: CustomEvent) {
-        const input = ev.detail.value;
-        setInput(input);
-      }
+    const onInput = (ev: CustomEvent) => {
+      const input = ev.detail.value;
+      setInput(input);
+    };
 
+    if (tagifyRef.current) {
       tagifyRef.current.on('input', onInput);
     }
   }, [tagifyRef]);

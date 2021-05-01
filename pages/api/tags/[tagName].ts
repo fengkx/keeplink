@@ -37,6 +37,6 @@ const del: RestfulApiHandler = async (req, res, user) => {
   }
 
   const tagName = getOneParamFromQuery(req.query, 'tagName');
-  const deleted = await prisma.$executeRaw`DELETE FROM tags WHERE tag=${tagName}`
+  const deleted = await prisma.$executeRaw`DELETE FROM tags WHERE tag=${tagName}`;
   res.status(200).json(deleted);
 };

@@ -11,7 +11,7 @@ import {decode as decodeHtml} from 'he';
 import {User} from '@supabase/supabase-js';
 import {useToasts} from 'react-toast-notifications';
 import Error from 'next/error';
-import {TagsInput} from "../../../components/TagsInput";
+import {TagsInput} from '../../../components/TagsInput';
 
 import styles from '@/styles/Form.module.css';
 import type {Tag} from '@prisma/client';
