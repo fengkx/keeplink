@@ -1,10 +1,16 @@
-FROM node:lts
-RUN apt update
-RUN apt install -y git build-essential
+FROM node:lts AS builder
+RUN apt update && apt install -y git build-essential
 WORKDIR /app
-COPY . /app
+COPY package.json package-lock.json prisma /app/
 RUN npm i -g npm
 RUN npm ci
-RUN npx next build
+RUN npx prisma generate
+
+FROM node:lts AS app
+ENV NODE_PRODUCTION=true
+WORKDIR /app/
+RUN npm i -g npm
+COPY --from=builder /app/node_modules /app/node_modules
+COPY . /app/
 CMD ["sh", "/app/docker-entry.sh"]
 EXPOSE 3000

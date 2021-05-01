@@ -23,7 +23,7 @@ export const Layout: React.FC<Props> = ({children, userRole, title}) => {
         <meta name="keywords" content="KeepLink,bookmark,archive" />
       </Head>
       <header>
-        <Navbar className="mb-10" userRole={userRole} />
+        <Navbar userRole={userRole} />
       </header>
       <main className="application-main px-3 h-full">{children}</main>
     </div>
