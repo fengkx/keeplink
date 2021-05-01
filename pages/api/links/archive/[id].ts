@@ -84,7 +84,7 @@ const create: RestfulApiHandler = async (req, res) => {
               from tags,
                    bookmarks
                      join links ON links.id = bookmarks.link_id
-              where bookmarks.id = 1
+              where bookmarks.id = ${bookmarkId}
                 and (
                   bookmarks.tsv @@ tags.tsq
                   or
