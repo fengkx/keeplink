@@ -33,5 +33,5 @@ jobs:
           context: .
           platforms: linux/amd64
           push: true
-          tags: fengkx/node_rssbot:${{steps.docker-tag.outputs.DOCKER_BRANCH_TAG}},${{ secrets.DOCKERHUB_USERNAME }}/keeplink:${{steps.docker-tag.outputs.DOCKER_SHA_TAG}}
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/keeplink:${{steps.docker-tag.outputs.DOCKER_BRANCH_TAG}},${{ secrets.DOCKERHUB_USERNAME }}/keeplink:${{steps.docker-tag.outputs.DOCKER_SHA_TAG}}
 
