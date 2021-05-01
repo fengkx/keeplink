@@ -5,7 +5,6 @@ services:
     build:
       context: .
     env_file:
-      - .env.local
       - .env.production
       - .env
     ports:
@@ -13,7 +12,7 @@ services:
     links:
       - chrome
   chrome:
-    container_name: chrome
+    container_name: keeplink-chrome
     image: browserless/chrome
 networks:
   default:
