@@ -71,27 +71,32 @@ const create: RestfulApiHandler = async (req, res) => {
         tag: string;
         tag_id: number;
       }> = await prisma.$queryRaw`
-                select tag,
-                       tag_id
-                from (select distinct tags.tag,
-                                      tags.id       as tag_id,
-                                      tags.tsq      as tsq,
-                                      bookmarks.tsv as bookmarks_tsv,
-                                      links.tsv     as links_tsv
-                      from tags,
-                           bookmarks
-                               join links ON links.id = bookmarks.link_id
-                      where bookmarks.id = ${bookmarkId}
-                        and (
-                              bookmarks.tsv @@ tags.tsq
-                              or
-                              links.tsv @@ tags.tsq
-                          )) as t1
-                order by ts_rank_cd(bookmarks_tsv, tsq) desc,
-                         ts_rank_cd(links_tsv, tsq) desc
-                limit 5;
-                ;
-            `;
+        select tag,
+               tag_id
+        from (select distinct tags.tag,
+                              tags.id                        as tag_id,
+                              tags.tsq                       as tsq,
+                              bookmarks.tsv                  as bookmarks_tsv,
+                              links.tsv                      as links_tsv,
+                              ts_rank_cd(links.tsv, tsq)     as link_score,
+                              ts_rank_cd(bookmarks.tsv, tsq) as bookmark_score
+
+              from tags,
+                   bookmarks
+                     join links ON links.id = bookmarks.link_id
+              where bookmarks.id = 1
+                and (
+                  bookmarks.tsv @@ tags.tsq
+                  or
+                  links.tsv @@ tags.tsq
+                )
+                and (ts_rank_cd(links.tsv, tsq) + ts_rank_cd(bookmarks.tsv, tsq) > 1)
+             ) as t1
+        order by ts_rank_cd(bookmarks_tsv, tsq) desc,
+                 ts_rank_cd(links_tsv, tsq) desc
+        limit 5;
+        ;
+      `;
       await prisma.tagging.createMany({
         data: suggestedTags.map((t) => {
           return {
