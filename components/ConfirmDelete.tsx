@@ -1,8 +1,16 @@
 import {useBoolean} from 'react-use';
+import React from 'react';
 
-export const ConfirmDelete: React.FC<{onDelete: () => void}> = ({onDelete}) => {
+export const ConfirmDelete: React.FC<{
+  onDelete: () => void;
+  Component?: React.FC<any>;
+}> = ({onDelete, Component}) => {
   const [isOpen, toggle] = useBoolean(false);
   if (!isOpen) {
+    if (Component) {
+      return <Component onClick={toggle} />;
+    }
+
     return (
       <a className="cursor-pointer" onClick={toggle}>
         Delete

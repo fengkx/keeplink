@@ -55,10 +55,12 @@ model User {
 }
 
 model Tag {
-  id      Int       @id @default(autoincrement())
-  tag     String    @unique
-  alias   String[]
-  Tagging Tagging[]
+  id        Int                     @id @default(autoincrement())
+  tag       String                  @unique
+  lower_tag String?
+  tsq       Unsupported("tsquery")?
+  alias     String[]
+  Tagging   Tagging[]
 
   @@map("tags")
 }

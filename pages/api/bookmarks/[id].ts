@@ -86,40 +86,52 @@ const update: RestfulApiHandler = async (req, res) => {
     ])
   ];
   await prisma.tag.createMany({
-    data: needNewTags.map((tag) => ({tag}))
+    data: needNewTags.map((tag) => ({tag})),
+    skipDuplicates: true
   });
-  const tagIds = await prisma.tag.findMany({
-    where: {
-      tag: {
-        in: allTags
+  const tagIds = (
+    await prisma.tag.findMany({
+      where: {
+        tag: {
+          in: allTags
+        }
+      },
+      select: {
+        id: true
       }
-    },
-    select: {
-      id: true
-    }
-  });
-  const updated = await prisma.bookmark.update({
-    where: {
-      id
-    },
-    data: {
-      title: payload.title,
-      description: payload.description,
-      tags: {
-        createMany: {
-          data: tagIds.map((t: {id: number}) => ({tag_id: t.id})),
-          skipDuplicates: true
+    })
+  ).map((t) => t.id);
+  const [updated] = await prisma.$transaction([
+    prisma.bookmark.update({
+      where: {
+        id
+      },
+      data: {
+        title: payload.title,
+        description: payload.description,
+        tags: {
+          createMany: {
+            data: tagIds.map((id: number) => ({tag_id: id})),
+            skipDuplicates: true
+          }
+        }
+      },
+      select: {
+        id: true,
+        tags: {
+          select: {
+            tag: true
+          }
         }
       }
-    },
-    select: {
-      id: true,
-      tags: {
-        select: {
-          tag: true
+    }),
+    prisma.tagging.deleteMany({
+      where: {
+        tag_id: {
+          notIn: tagIds
         }
       }
-    }
-  });
+    })
+  ]);
   res.status(200).json(updated);
 };

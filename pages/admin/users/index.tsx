@@ -68,8 +68,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   const {page, size} = getPagination(query);
   const usersData = await prisma.$queryRaw`
         SELECT pusers.id, raw_app_meta_data as app_metadata, last_sign_in_at, email, pusers.role
-        FROM auth.users
-        LEFT JOIN pusers ON auth.users.id = pusers.id
+        FROM pusers
+        LEFT JOIN auth.users ON auth.users.id = pusers.id
         LIMIT ${size} OFFSET ${(page - 1) * size}
     `;
 

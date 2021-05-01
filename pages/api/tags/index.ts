@@ -13,6 +13,7 @@ const read: RestfulApiHandler = async (req, res, user) => {
   const {page, size} = getPagination(req.query);
   const {tagcloud} = req.query;
   const q = getOneParamFromQuery(req.query, 'q');
+  const start = getOneParamFromQuery(req.query, 'start');
   if (tagcloud) {
     const result = await prisma.$queryRaw` select tags.tag,
                                                       count(*) as cnt
@@ -47,10 +48,29 @@ const read: RestfulApiHandler = async (req, res, user) => {
     };
   }
 
+  if (start) {
+    where.OR = where.OR ?? [];
+    if (!Array.isArray(where.OR)) {
+      where.OR = [where.OR];
+    }
+
+    where.OR.push({
+      lower_tag: {
+        startsWith: start.toLowerCase()
+      }
+    });
+  }
+
+  console.log(where, where.OR);
   const result = await prisma.tag.findMany({
     take: size,
     skip: (page - 1) * size,
-    where
+    where,
+    select: {
+      tag: true,
+      id: true,
+      alias: true
+    }
   });
   res.status(200).json(result);
 };

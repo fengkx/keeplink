@@ -8,16 +8,13 @@ import {Controller, useForm} from 'react-hook-form';
 import {apiCall} from '@/utils/api-call';
 import {useRouter} from 'next/router';
 import {decode as decodeHtml} from 'he';
-
-// @ts-expect-error
-import Tags from '@yaireo/tagify/dist/react.tagify';
-import '@yaireo/tagify/dist/tagify.css';
-
-import styles from '@/styles/Form.module.css';
-import type {Tag} from '@prisma/client';
 import {User} from '@supabase/supabase-js';
 import {useToasts} from 'react-toast-notifications';
 import Error from 'next/error';
+import {TagsInput} from "../../../components/TagsInput";
+
+import styles from '@/styles/Form.module.css';
+import type {Tag} from '@prisma/client';
 
 const Edit: React.FC<Props> = ({bookmark, user}) => {
   type FormInput = {
@@ -88,7 +85,7 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
             control={control}
             render={({field}) => {
               return (
-                <Tags
+                <TagsInput
                   onChange={(ev: {detail: {value: any}}) => {
                     field.onChange(ev.detail.value);
                   }}

@@ -68,7 +68,12 @@ const TagsAdmin: React.FC<Props> = ({user}) => {
             text-align: right;
           }
         `}</style>
-        {(data ?? []).map((tag) => (
+        {data.length === 0 && (
+          <div className="text-center mt-4 font-semibold text-xl">
+            Tags is Empty
+          </div>
+        )}
+        {data.map((tag) => (
           <li key={tag.id} className="py-3.5 border-b">
             <div className="flex leading-10">
               <Link href={`/tag/${tag.tag}`}>

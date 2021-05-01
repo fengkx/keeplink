@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useState} from 'react';
 import {Layout} from '@/components/Layout';
 import {GetServerSideProps} from 'next';
 import {supabase} from '@/db/supabase';
@@ -8,15 +8,13 @@ import {Controller, useForm} from 'react-hook-form';
 import {apiCall} from '@/utils/api-call';
 import {useRouter} from 'next/router';
 
-// @ts-expect-error
-import Tags from '@yaireo/tagify/dist/react.tagify';
-import '@yaireo/tagify/dist/tagify.css';
-
 import styles from '@/styles/Form.module.css';
 import type {Tag} from '@prisma/client';
 import {User} from '@supabase/supabase-js';
 import {useToasts} from 'react-toast-notifications';
 import Error from 'next/error';
+import {TagsInput} from '../../../components/TagsInput';
+import {ConfirmDelete} from '../../../components/ConfirmDelete';
 
 const Edit: React.FC<Props> = ({tag, user}) => {
   type FormInput = {
@@ -31,6 +29,11 @@ const Edit: React.FC<Props> = ({tag, user}) => {
   });
   const router = useRouter();
   const toast = useToasts();
+  const onDelete = async () => {
+    await apiCall(`/api/tags/${tag!.tag}`, {method: 'DELETE'});
+    router.back()
+  };
+
   const {register, handleSubmit, control} = form;
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -42,75 +45,85 @@ const Edit: React.FC<Props> = ({tag, user}) => {
       });
       router.back();
     } catch (error) {
-      toast.addToast(error.message, {appearance: 'error'});
+      const data = await error.response.json();
+      toast.addToast(data.reason, {appearance: 'error'});
     }
   });
   if (!tag) {
     return <Error statusCode={404} />;
   }
 
-  if (tag) {
-    return (
-      <Layout userRole={user.user_metadata.role}>
-        <form
-          onSubmit={onSubmit}
-          className="form flex flex-col h-96 justify-between min-h-screen"
-        >
-          <div className="flex flex-col max-w-5xl mx-auto w-full">
-            <label htmlFor="tag" className={styles.label}>
-              Tag
-            </label>
-            <input className={styles.input} {...register('tag')} />
-            <label htmlFor="alias" className={styles.label}>
-              Alias Names
-            </label>
-            <Controller
-              control={control}
-              render={({field}) => {
-                return (
-                  <Tags
-                    className="mb-8"
-                    onChange={(ev: {detail: {value: any}}) => {
-                      field.onChange(ev.detail.value);
-                    }}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    value={field.value}
-                    settings={{
-                      maxTags: 100,
-                      whitelist: ['111', '222'],
-                      dropdown: {
-                        maxItems: 20,
-                        enabled: 0
-                      },
-                      placeholder: 'Add Tags'
-                    }}
-                  />
-                );
+  return (
+    <Layout userRole={user.user_metadata.role}>
+      <form
+        onSubmit={onSubmit}
+        className="form flex flex-col h-96 justify-between min-h-screen"
+      >
+        <div className="flex flex-col max-w-5xl mx-auto w-full">
+          <label htmlFor="tag" className={styles.label}>
+            Tag
+          </label>
+          <input className={styles.input} {...register('tag')} />
+          <label htmlFor="alias" className={styles.label}>
+            Alias Names
+          </label>
+          <Controller
+            control={control}
+            render={({field}) => {
+              return (
+                <TagsInput
+                  className="mb-8"
+                  onChange={(ev: {detail: {value: any}}) => {
+                    field.onChange(ev.detail.value);
+                  }}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  value={field.value}
+                  settings={{
+                    maxTags: 100,
+                    dropdown: {
+                      maxItems: 20,
+                      enabled: 0
+                    },
+                    placeholder: 'Add Tags'
+                  }}
+                />
+              );
+            }}
+            name="alias"
+          />
+          <div>
+            <Button type="primary" className="mr-2" role="submit">
+              Submit
+            </Button>
+            <Button
+              className="mr-8"
+              onClick={(event) => {
+                event.preventDefault();
+                router.back();
               }}
-              name="alias"
+              type="secondary"
+            >
+              Cancel
+            </Button>
+            <ConfirmDelete
+              Component={({onClick}) => (
+                <Button
+                  onClick={onClick}
+                  type="primary"
+                  danger={true}
+                  className="mr-2"
+                >
+                  Delete
+                </Button>
+              )}
+              onDelete={onDelete}
             />
-            <div>
-              <Button type="primary" className="mr-2" role="submit">
-                Submit
-              </Button>
-              <Button
-                onClick={(event) => {
-                  event.preventDefault();
-                  router.back();
-                }}
-                type="secondary"
-              >
-                Cancel
-              </Button>
-            </div>
           </div>
-        </form>
-      </Layout>
-    );
-  }
-
-  return <div>Not Found</div>;
+        </div>
+      </form>
+    </Layout>
+  );
 };
 
 type Props = {
