@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  keeplink:
+    container_name: keeplink
+    build:
+      context: .
+    env_file:
+      - .env.local
+      - .env.production
+      - .env
+    ports:
+      - 3000:3000/tcp
+    links:
+      - chrome
+  chrome:
+    container_name: chrome
+    image: browserless/chrome
+networks:
+  default:
+    external:
+      name: supabase
