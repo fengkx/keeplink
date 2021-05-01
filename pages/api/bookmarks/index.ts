@@ -4,6 +4,7 @@ import {prisma} from '@/db/prisma';
 import {decode as htmlDecode} from 'he';
 import {getPagination} from '@/utils/get-pagination';
 import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
+import * as z from 'zod'
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   await restful({req, res}, {create, read});
@@ -52,7 +53,13 @@ const read: RestfulApiHandler = async (req, res, user) => {
 };
 
 const create: RestfulApiHandler = async (req, res, user) => {
-  const urlObj = new URL(req.body.url);
+  const schema = z.object({url: z.string().url()})
+  const validation = schema.safeParse(req.body)
+  if(!validation.success) {
+    res.status(400).json(validation.error)
+    return
+  }
+  const urlObj = new URL(validation.data.url);
   urlObj.hash = '';
   const url = urlObj.toString();
 

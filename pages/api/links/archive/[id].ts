@@ -45,6 +45,7 @@ const create: RestfulApiHandler = async (req, res) => {
 
     const metadata = await metascraper({html: singlePage, url});
     res.status(200).json({metadata, html: singlePage});
+    metadata.url = new URL(metadata.url).toString(); // normalize url
     const updated: Partial<typeof link> = {};
     if (!link.title) {
       updated.title = metadata.title;
