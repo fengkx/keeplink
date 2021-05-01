@@ -12,22 +12,13 @@ type Props = {
 const QuickAdd: React.FC<Props> = ({className, onSuccess}) => {
   const toast = useToasts();
   const [urlInput, setUrlInput] = useState('');
-  const [debounceedInput, setDebouncedInput] = useState('');
-  const [isReady] = useDebounce(
-    () => {
-      setDebouncedInput(urlInput);
-    },
-    500,
-    [urlInput]
-  );
   const quickAddHandler = useCallback(
     async (ev) => {
       ev.preventDefault();
-      if (isReady() !== false) {
         try {
           const resp = await apiCall('/api/bookmarks', {
             method: 'POST',
-            body: JSON.stringify({url: debounceedInput})
+            body: JSON.stringify({url: urlInput})
           });
           const data = await resp.json();
           onSuccess(data);
@@ -47,9 +38,9 @@ const QuickAdd: React.FC<Props> = ({className, onSuccess}) => {
             }
           );
         }
-      }
+
     },
-    [isReady, debounceedInput]
+    [urlInput]
   );
   return (
     <form onSubmit={quickAddHandler}>
