@@ -15,7 +15,7 @@ export default function AdminUsers({user, users}: Props) {
   const formatTime = useFormatTime();
   return (
     <AdminLayout userRole={user.user_metadata.role}>
-      <table className="table-fixed w-full leading-loose">
+      <table className="table-fixed w-full leading-loose break-words">
         <thead>
           <tr>
             <th className="w-2/6">Email</th>

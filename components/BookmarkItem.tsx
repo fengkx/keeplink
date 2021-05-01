@@ -90,7 +90,6 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
           <li>
             <ConfirmDelete
               onDelete={() => {
-                console.log('delete', bookmark.id);
                 onDelete(data.id);
               }}
             />

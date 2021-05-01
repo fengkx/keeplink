@@ -11,10 +11,10 @@ import {decode as decodeHtml} from 'he';
 import {User} from '@supabase/supabase-js';
 import {useToasts} from 'react-toast-notifications';
 import Error from 'next/error';
-import {TagsInput} from '../../../components/TagsInput';
+import {TagsInput} from '@/components/TagsInput';
+import type {Tag} from '@prisma/client';
 
 import styles from '@/styles/Form.module.css';
-import type {Tag} from '@prisma/client';
 
 const Edit: React.FC<Props> = ({bookmark, user}) => {
   type FormInput = {
@@ -38,7 +38,7 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
         ...data,
         tags: Array.isArray(data.tags)
           ? data.tags
-          : JSON.parse(data.tags).map((t: {value: any} | string) =>
+          : JSON.parse(data.tags || '[]').map((t: {value: any} | string) =>
               typeof t === 'string' ? t : t.value
             )
       };
