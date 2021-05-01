@@ -82,6 +82,7 @@ const Edit: React.FC<Props> = ({tag, user}) => {
                   settings={{
                     maxTags: 100,
                     dropdown: {
+                      caseSensitive: true,
                       maxItems: 20,
                       enabled: 0
                     },

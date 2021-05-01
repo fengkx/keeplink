@@ -5,7 +5,7 @@ services:
     build:
       context: .
     env_file:
-      - .env.production
+      - .env.local
     ports:
       - 3000:3000/tcp
     links:
