@@ -57,7 +57,7 @@ model User {
 model Tag {
   id        Int                     @id @default(autoincrement())
   tag       String                  @unique
-  lower_tag String?
+  lower_tag Unsupported("TEXT")?
   tsq       Unsupported("tsquery")?
   alias     String[]
   Tagging   Tagging[]

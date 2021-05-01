@@ -30,6 +30,33 @@ const read: RestfulApiHandler = async (req, res, user) => {
     return;
   }
 
+  if (q && start) {
+    const result = await prisma.$queryRaw`
+            select id,
+                   tag,
+                   alias
+            from tags
+            where tag = ${q}
+               or alias @> ARRAY [${q}]
+               or lower_tag LIKE ${start + '%'}
+            limit ${size} offset ${(page - 1) * size}
+        `;
+    res.status(200).json(result);
+    return;
+  }
+
+  if (start) {
+    const result = await prisma.$queryRaw`
+                select id,
+                       tag,
+                       alias
+                from tags
+                where lower_tag LIKE ${start + '%'}
+                limit ${size} offset ${(page - 1) * size}`;
+    res.status(200).json(result);
+    return;
+  }
+
   let where: Prisma.TagWhereInput = {};
   if (q) {
     where = {
@@ -48,20 +75,6 @@ const read: RestfulApiHandler = async (req, res, user) => {
     };
   }
 
-  if (start) {
-    where.OR = where.OR ?? [];
-    if (!Array.isArray(where.OR)) {
-      where.OR = [where.OR];
-    }
-
-    where.OR.push({
-      lower_tag: {
-        startsWith: start.toLowerCase()
-      }
-    });
-  }
-
-  console.log(where, where.OR);
   const result = await prisma.tag.findMany({
     take: size,
     skip: (page - 1) * size,
