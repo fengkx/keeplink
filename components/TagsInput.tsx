@@ -30,7 +30,11 @@ export function TagsInput({
         const tags = await resp.json();
         const tagify = tagifyRef.current;
         const whitelist = tagify.settings.whitelist;
-        tagify.settings.whitelist.splice(0, whitelist.length, ...tags.map((t: Tag) => t.tag));
+        tagify.settings.whitelist.splice(
+          0,
+          whitelist.length,
+          ...tags.map((t: Tag) => t.tag)
+        );
       } catch (error) {
         console.error(error);
       }
