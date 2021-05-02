@@ -7,7 +7,18 @@ import execa from 'execa';
 import {restful, RestfulApiHandler} from '@/utils/rest-helper';
 import {prisma} from '@/db/prisma';
 import {getOneParamFromQuery} from '@/utils/query-param';
+import UserAgent from 'user-agents';
+import {Link} from '@prisma/client';
 
+interface Metadata {
+  author: string;
+  date: string;
+  description: string;
+  image: string;
+  publisher: string;
+  title: string;
+  url: string;
+}
 const metascraper = metaParser([
   metascraperUrl(),
   metascraperDescription(),
@@ -16,6 +27,30 @@ const metascraper = metaParser([
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   return restful({req, res}, {create, read});
+}
+
+function extractUpdate(
+  metadata: Metadata,
+  link: Link,
+  url: string,
+  html: string
+) {
+  metadata.url = new URL(metadata.url).toString(); // Normalize url
+  const updated: Partial<typeof link> = {};
+  if (!link.title) {
+    updated.title = metadata.title;
+  }
+
+  if (!link.description) {
+    updated.description = metadata.description;
+  }
+
+  if (url !== metadata.url) {
+    updated.url = metadata.url;
+  }
+
+  updated.archive = html;
+  return updated;
 }
 
 const create: RestfulApiHandler = async (req, res) => {
@@ -29,6 +64,29 @@ const create: RestfulApiHandler = async (req, res) => {
   }
 
   const url = link.url;
+  try {
+    const resp = await fetch(url, {
+      headers: {
+        accept:
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        Host: new URL(url).host,
+        'user-agent': new UserAgent({deviceCategory: 'desktop'}).toString()
+      }
+    });
+    if (resp.ok) {
+      const html = await resp.text();
+      const metadata = await metascraper({html, url});
+      const updated = extractUpdate(metadata, link, url, html);
+
+      await prisma.link.update({
+        where: {id: link.id},
+        data: updated
+      });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
   console.log('archive', url);
   try {
     const {stdout: singlePage, failed, stderr} = await execa('npx', [
@@ -45,22 +103,9 @@ const create: RestfulApiHandler = async (req, res) => {
 
     const metadata = await metascraper({html: singlePage, url});
     res.status(200).json({metadata, html: singlePage});
-    metadata.url = new URL(metadata.url).toString(); // Normalize url
-    const updated: Partial<typeof link> = {};
-    if (!link.title) {
-      updated.title = metadata.title;
-    }
-
-    if (!link.description) {
-      updated.description = metadata.description;
-    }
-
-    if (url !== metadata.url) {
-      updated.url = metadata.url;
-    }
-
+    const updated = extractUpdate(metadata, link, url, singlePage);
     updated.archive_stat = 'archived';
-    updated.archive = singlePage;
+
     await prisma.link.update({
       where: {id: link.id},
       data: updated

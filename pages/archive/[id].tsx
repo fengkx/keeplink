@@ -5,6 +5,8 @@ import {useToggle} from 'react-use';
 
 import 'placeholder-loading/dist/css/placeholder-loading.css';
 import {useToasts} from 'react-toast-notifications';
+import {RealtimeSubscription} from '@supabase/supabase-js';
+import {supabase} from '@/db/supabase';
 
 type Props = {
   archive_stat: 'pending' | 'archived';
@@ -36,8 +38,10 @@ const Archive: React.FC<Props> = () => {
               method: 'POST'
             });
             const data = await resp.json();
-            toggleLoading(false);
-            setHTML(data.html);
+            if (loading) {
+              toggleLoading(false);
+              setHTML(data.html);
+            }
           } catch (error) {
             const data = await error.response.json();
             toast.addToast(data.error, {
@@ -56,6 +60,20 @@ const Archive: React.FC<Props> = () => {
     });
   }, [id]);
 
+  useEffect(() => {
+    const subscription: RealtimeSubscription = supabase
+      .from(`links:id=eq.${id}`)
+      .on('UPDATE', (payload) => {
+        toggleLoading(false);
+        setHTML(payload.new.archive);
+      })
+      .subscribe();
+    return () => {
+      if (subscription) {
+        void supabase.removeSubscription(subscription);
+      }
+    };
+  }, [id]);
   if (loading) {
     return (
       <div className="container h-screen mx-auto">
