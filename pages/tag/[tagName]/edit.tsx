@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Layout} from '@/components/Layout';
 import {GetServerSideProps} from 'next';
 import {supabase} from '@/db/supabase';
@@ -29,9 +29,23 @@ const Edit: React.FC<Props> = ({tag, user}) => {
   });
   const router = useRouter();
   const toast = useToasts();
+  const handleApiError = useCallback(async (error) => {
+    const data = await error.response.json();
+    if (data.reason) {
+      toast.addToast(data.reason, {appearance: 'error'});
+    } else if (data.errors) {
+      toast.addToast(data.errors[0].message, {appearance: 'error'});
+    } else {
+      toast.addToast(error.message, {appearance: 'error'});
+    }
+  }, []);
   const onDelete = async () => {
-    await apiCall(`/api/tags/${tag!.tag}`, {method: 'DELETE'});
-    router.back();
+    try {
+      await apiCall(`/api/tags/${tag!.tag}`, {method: 'DELETE'});
+      router.back();
+    } catch (error) {
+      await handleApiError(error);
+    }
   };
 
   const {register, handleSubmit, control} = form;
@@ -45,8 +59,7 @@ const Edit: React.FC<Props> = ({tag, user}) => {
       });
       router.back();
     } catch (error) {
-      const data = await error.response.json();
-      toast.addToast(data.reason, {appearance: 'error'});
+      await handleApiError(error);
     }
   });
   if (!tag) {

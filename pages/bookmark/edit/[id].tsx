@@ -49,7 +49,12 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
       });
       router.back();
     } catch (error: any) {
-      toast.addToast(error.message, {appearance: 'error'});
+      const data = await error.response.json();
+      if (data.errors) {
+        toast.addToast(data.errors[0].message, {appearance: 'error'});
+      } else {
+        toast.addToast(error.message, {appearance: 'error'});
+      }
     }
   });
   if (!bookmark) {

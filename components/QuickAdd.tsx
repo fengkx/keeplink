@@ -25,17 +25,23 @@ const QuickAdd: React.FC<Props> = ({className, onSuccess}) => {
       } catch (error: any) {
         const {data} = await error.response.json();
         console.log(data);
-        toast.addToast(
-          <div className="text-lg font-semibold">
-            Already existed in
-            <Link href={`/bookmark/edit/${data.bookmark_id}`}>
-              <a> Here</a>
-            </Link>
-          </div>,
-          {
-            appearance: 'error'
-          }
-        );
+        if (data.errors) {
+          toast.addToast(data.errors.message, {appearance: 'error'});
+        }
+
+        if (data.bookmark_id) {
+          toast.addToast(
+            <div className="text-lg font-semibold">
+              Already existed in
+              <Link href={`/bookmark/edit/${data.bookmark_id}`}>
+                <a> Here</a>
+              </Link>
+            </div>,
+            {
+              appearance: 'error'
+            }
+          );
+        }
       }
     },
     [urlInput]

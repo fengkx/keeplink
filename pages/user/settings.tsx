@@ -80,7 +80,13 @@ const Settings: React.FC<Props> = ({user}) => {
           });
           toast.addToast('Settings saved');
         } catch (error) {
-          toast.addToast(error.message, {appearance: 'error'});
+          const resp = error.response;
+          const data = await resp.json();
+          if (data.errors) {
+            toast.addToast(data.errors[0].message, {appearance: 'error'});
+          } else {
+            toast.addToast(error.message, {appearance: 'error'});
+          }
         }
       }
     },
