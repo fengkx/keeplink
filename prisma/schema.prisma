@@ -63,6 +63,7 @@ model Tag {
   Tagging   Tagging[]
 
   @@map("tags")
+  @@index([alias], name: "tags_alias_idx")
 }
 
 model Tagging {
