@@ -48,6 +48,20 @@ const Settings: React.FC<Props> = ({user}) => {
       if (password || password_confirm) {
         if (password_confirm === password) {
           try {
+            const user = supabase.auth.user();
+            if (
+              process.env.NEXT_PUBLIC_LOCK_ACCOUNT_FRONTEND &&
+              user &&
+              user.email &&
+              process.env.NEXT_PUBLIC_LOCK_ACCOUNT_FRONTEND.includes(user.email)
+            ) {
+              toast.addToast(
+                'This is account is locked cannot change password',
+                {appearance: 'info'}
+              );
+              return;
+            }
+
             await supabase.auth.update({password});
             toast.addToast('Password changed');
           } catch (error) {
