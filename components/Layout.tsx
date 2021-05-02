@@ -11,16 +11,6 @@ export const Layout: React.FC<Props> = ({children, userRole, title}) => {
     <div className="container mx-auto mt-4 h-screen">
       <Head>
         <title>{title ? `${title} | KeepLink` : 'KeepLink'}</title>
-        <link href="/font/work_sans.css" rel="stylesheet" />
-        <meta
-          name="description"
-          content="Simple bookmark Service with tags and archive"
-        />
-        <meta
-          name="og:description"
-          content="Simple bookmark Service with tags and archive"
-        />
-        <meta name="keywords" content="KeepLink,bookmark,archive" />
       </Head>
       <header>
         <Navbar userRole={userRole} />

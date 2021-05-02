@@ -38,3 +38,7 @@ yarn-error.log*
 
 # WebStorm
 .idea
+
+# PWA
+public/sw.js
+public/workbox-*.js
