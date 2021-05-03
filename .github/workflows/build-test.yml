@@ -20,6 +20,15 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm i -g npm
+      env:
+        NEXT_PUBLIC_SUPABASE_URL: http://localhost:8000
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: 'NEXT_PUBLIC_SUPABASE_ANON_KEY'
+        NEXT_PUBLIC_SUPABASE_PRIVATEKEY: 'NEXT_PUBLIC_SUPABASE_PRIVATEKEY'
+        SUPABASE_PRIVATEKEY: 'SUPABASE_PRIVATEKEY'
+        DATABASE_URL: 'postgres://postgres:postgres@localhost:5432/postgres?schema=public'
+        CHROME_WS_URL: ws://localhost:3000
+        BASE_URL: http://localhost:3000
+
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
