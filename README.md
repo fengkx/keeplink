@@ -27,7 +27,10 @@ It is not a admin account, some admin feature like tag alias management are miss
 
 KeepLink is build with Supabase stack and Next.js, But It cannot depoly directly on [vercel.com](https://vercel.com/) and [https://supabase.io](https://supabase.io) (at least for now) for two reason.
 
-1. KeepLink use [rum index](https://github.com/postgrespro/rum) and [zhparser](https://github.com/amutu/zhparser) for better serach support which is not currently exist in supabase's extensions list.
-2. Next.js's API route has [10 seconds runtime limit](https://vercel.com/docs/platform/limits?query=limit#general-limits) for its hobby plain. Archving page with headless chrome might reach this limit. Maybe it can be solved by [Supabase Workflows](https://supabase.io/blog/2021/04/02/supabase-workflows).
+1. KeepLink use [rum index](https://github.com/postgrespro/rum) and [zhparser](https://github.com/amutu/zhparser) for better search support which is not currently exist in supabase's extensions list.
+2. Vercel's API route has [10 seconds runtime limit](https://vercel.com/docs/platform/limits?query=limit#general-limits) for its hobby plain. Archiving page with headless chrome might reach this limit. Maybe it can be solved by [Supabase Workflows](https://supabase.io/blog/2021/04/02/supabase-workflows).
 
 [Detail Self Hosting Guide](https://github.com/fengkx/keeplink/wiki/Self-Hosting)
+
+
+More infomation is in https://github.com/fengkx/keeplink/wiki
