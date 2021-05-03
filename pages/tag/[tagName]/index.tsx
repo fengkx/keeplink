@@ -39,7 +39,9 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
                   left join bookmarks ON bookmarks.id = taggings.bookmark_id
                   left join links ON links.id = bookmarks.link_id
          where tags.tag = ${tagName}
-         offset ${(page - 1) * size} limit ${size}`;
+         order by bookmarks.created_at desc 
+         offset ${(page - 1) * size}
+         limit ${size}`;
   const bookmarks = results.map((bm: BookMark) => ({
     ...bm,
     description: htmlDecode(bm.description ?? ''),
