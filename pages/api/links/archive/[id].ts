@@ -5,7 +5,7 @@ import {prisma} from '@/db/prisma';
 import {getOneParamFromQuery} from '@/utils/query-param';
 import UserAgent from 'user-agents';
 import {Link} from '@prisma/client';
-// @ts-ignore
+// @ts-expect-error
 import {metascraper} from '@/utils/metascraper.mjs';
 import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 
@@ -124,7 +124,7 @@ const create: RestfulApiHandler = async (req, res, user) => {
     }
 
     const metadata = await metascraper({html: singlePage, url});
-    console.log(metadata, 123)
+    console.log(metadata, 123);
     res.status(200).json({metadata, html: singlePage});
     const updated = extractUpdate(metadata, link, url, singlePage);
     updated.archive_stat = 'archived';

@@ -88,7 +88,7 @@
     "not IE 11"
   ],
   "lint-staged": {
-    "*.{ts,tsx,js,jsx,css,md,json}": "xo --fix",
+    "*.{ts,tsx,js,jsx,css,md,json,mjs}": "xo --fix",
     "*.prisma": "prisma format"
   }
 }
