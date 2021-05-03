@@ -50,7 +50,7 @@ const Home: React.FC<Props> = ({bookmarks, user}) => {
           }}
         />
       </div>
-      <div className="w-full lg:flex flex-row mt-6 justify-evenly lg:max-w-7xl mx-auto">
+      <div className="w-full lg:flex flex-row mt-6 justify-evenly lg:max-w-7xl mx-auto pb-6">
         <section className="lg:w-2/3 xl:w-3/4 px-0 md:px-6 h-full">
           <BookmarkList
             onDelete={(id) => {
