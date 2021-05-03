@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "lint": "xo",
     "test": "xo",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@next/bundle-analyzer": "^10.2.0",
@@ -44,6 +46,8 @@
     "@types/user-agents": "^1.0.1",
     "autoprefixer": "^10.2.5",
     "duplicate-package-checker-webpack-plugin": "^3.0.0",
+    "husky": "^6.0.0",
+    "lint-staged": "^10.5.4",
     "postcss": "^8.2.12",
     "prettier": "^2.2.1",
     "prisma": "^2.21.2",
@@ -81,5 +85,9 @@
     "Firefox ESR",
     "not dead",
     "not IE 11"
-  ]
+  ],
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,css,md,json}": "xo --fix",
+    "*.prisma": "prisma format"
+  }
 }
