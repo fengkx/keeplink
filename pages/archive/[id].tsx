@@ -20,35 +20,41 @@ const Archive: React.FC<Props> = () => {
   const toast = useToasts();
   useEffect(() => {
     const fetcher = async () => {
-      if (id) {
-        const resp = await apiCall(`/api/links/archive/${id}`);
-        const text = await resp.text();
-        if (resp.status === 401) {
-          void router.push('/signin');
-          return;
-        }
+      if (!id) {
+        return;
+      }
 
-        if (text.length > 0) {
-          setHTML(text);
-          toggleLoading(false);
-        } else {
-          toggleLoading(true);
-          try {
-            const resp = await apiCall(`/api/links/archive/${id}`, {
-              method: 'POST'
-            });
-            const data = await resp.json();
-            if (loading) {
-              toggleLoading(false);
+      const resp = await apiCall(`/api/links/archive/${id}`);
+      const text = await resp.text();
+      if (resp.status === 401) {
+        void router.push('/signin');
+        return;
+      }
+
+      if (text.length > 0) {
+        setHTML(text);
+        toggleLoading(false);
+      } else {
+        toggleLoading(true);
+        try {
+          const resp = await apiCall(`/api/links/archive/${id}`, {
+            method: 'POST'
+          });
+          const data = await resp.json();
+          if (loading) {
+            toggleLoading(false);
+            if (data.redirect_link_id) {
+              await router.replace(`/archive/${data.redirect_link_id}`);
+            } else {
               setHTML(data.html);
             }
-          } catch (error) {
-            const data = await error.response.json();
-            toast.addToast(data.error, {
-              appearance: 'error',
-              autoDismiss: false
-            });
           }
+        } catch (error) {
+          const data = await error.response.json();
+          toast.addToast(data.error, {
+            appearance: 'error',
+            autoDismiss: false
+          });
         }
       }
     };

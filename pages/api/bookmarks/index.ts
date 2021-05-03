@@ -63,7 +63,6 @@ const create: RestfulApiHandler = async (req, res, user) => {
   const urlObj = new URL(validation.data.url);
   urlObj.hash = '';
   const url = urlObj.toString();
-
   try {
     const bookmark = await prisma.bookmark.create({
       data: {
@@ -120,10 +119,7 @@ const create: RestfulApiHandler = async (req, res, user) => {
     await fetch(
       `${process.env.BASE_URL}/api/links/archive/${bookmark.link.id}?bookmark=${bookmark.id}`,
       {
-        method: 'POST',
-        headers: {
-          cookie: req.headers.cookie!
-        }
+        method: 'POST'
       }
     );
   } catch (error) {

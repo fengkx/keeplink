@@ -1,14 +1,12 @@
 import {NextApiRequest, NextApiResponse} from 'next';
-import metaParser from 'metascraper';
-import metascraperUrl from 'metascraper-url';
-import metascraperDescription from 'metascraper-description';
-import metascraperTitle from 'metascraper-title';
 import execa from 'execa';
 import {restful, RestfulApiHandler} from '@/utils/rest-helper';
 import {prisma} from '@/db/prisma';
 import {getOneParamFromQuery} from '@/utils/query-param';
 import UserAgent from 'user-agents';
 import {Link} from '@prisma/client';
+import {metascraper} from '@/utils/metascraper';
+import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 
 interface Metadata {
   author: string;
@@ -19,11 +17,6 @@ interface Metadata {
   title: string;
   url: string;
 }
-const metascraper = metaParser([
-  metascraperUrl(),
-  metascraperDescription(),
-  metascraperTitle()
-]);
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
   return restful({req, res}, {create, read});
@@ -53,11 +46,12 @@ function extractUpdate(
   return updated;
 }
 
-const create: RestfulApiHandler = async (req, res) => {
+const create: RestfulApiHandler = async (req, res, user) => {
   const id = getOneParamFromQuery<number>(req.query);
   const link = await prisma.link.findUnique({
     where: {id}
   });
+
   if (!link) {
     res.status(404).json({error: 'link not found'});
     return;
@@ -78,10 +72,36 @@ const create: RestfulApiHandler = async (req, res) => {
       const metadata = await metascraper({html, url});
       const updated = extractUpdate(metadata, link, url, html);
 
-      await prisma.link.update({
-        where: {id: link.id},
-        data: updated
-      });
+      try {
+        await prisma.link.update({
+          where: {id: link.id},
+          data: updated
+        });
+      } catch (error) {
+        if (
+          error instanceof PrismaClientKnownRequestError &&
+          error.code === 'P2002' &&
+          ((error.meta as unknown) as any)?.target?.includes('url')
+        ) {
+          const existedLink = await prisma.link.findUnique({
+            where: {url: updated.url},
+            select: {id: true}
+          });
+          await prisma.$transaction([
+            prisma.bookmark.update({
+              where: {
+                bookmark_user_link_id: {
+                  user_id: user.id,
+                  link_id: id
+                }
+              },
+              data: {link_id: existedLink!.id}
+            }),
+            prisma.link.delete({where: {id}})
+          ]);
+          res.status(200).json({redirect_link_id: existedLink!.id});
+        }
+      }
     }
   } catch (error) {
     console.error(error);
