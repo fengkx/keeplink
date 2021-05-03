@@ -2,9 +2,10 @@ version: '3.8'
 services:
   keeplink:
     container_name: keeplink
-    image: fengkx/keeplink
+    build:
+      context: .
     env_file:
-      - .env
+      - .env.local
     ports:
       - 3000:3000/tcp
     links:
