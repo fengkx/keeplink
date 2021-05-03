@@ -1,34 +1,33 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# KeepLink
 
-## Getting Started
+KeepLink is a simple bookmark service with tags and archive build with Supabase and Next.js.
+It doesn't have any social sharing featrue and You can [host your own instance](#self-hosting)
 
-First, run the development server:
+## Features Hightlight
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+1. Automatically tag new bookmark based on existed tags
+2. Automatically fetch titles and descriptions with metascraper
+3. Page archive with SinglePage and headless chrome
+4. Fulltext search for url, title, description,tag and archived content
+5. Tagging alias for admin
+6. Database and restful API access thanks to Supabase stack
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ScreenShot
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+![Desktop ScreenShot](.github/images/keeplink-screenshot.png)
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Demo Site
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Site: https://app.keelink.cc  
+Account email and password is `demo@keelink.cc`
 
-## Learn More
+It is not a admin account, some admin feature like tag alias management are missing.
 
-To learn more about Next.js, take a look at the following resources:
+## Self hosting
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+KeepLink is build with Supabase stack and Next.js, But It cannot depoly directly on vercel.com and supabase.io (at least for now) for two reason.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+1. KeepLink use rum index and zhparser for better serach support which is not currently exist in supabase's extensions list.
+2. Next.js's API route has 10 seconds runtime limit for its hobby plain. Archving page with headless chrome might reach this limit. Maybe it can be solved by Supabase Workflows.
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+[Detail Self Hosting Guide](https://github.com/fengkx/keeplink/wiki/Self-Hosting)
