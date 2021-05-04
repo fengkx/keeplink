@@ -1,12 +1,14 @@
 import {Navbar} from '@/components/Navbar';
 import type {user_role} from '@prisma/client';
 import Head from 'next/head';
+import {useAutoRefreshToken} from '@/utils/hooks';
 
 type Props = {
   userRole: user_role;
   title?: string;
 };
 export const Layout: React.FC<Props> = ({children, userRole, title}) => {
+  useAutoRefreshToken();
   return (
     <div className="container mx-auto mt-4 h-screen">
       <Head>
