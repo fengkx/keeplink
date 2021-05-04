@@ -18,7 +18,7 @@ It doesn't have any social sharing featrue and You can [host your own instance](
 
 ## Demo Site
 
-Site: https://app.keelink.cc  
+Site: https://app.keeplink.cc  
 Account email and password is `demo@keelink.cc`
 
 It is not a admin account, some admin feature like tag alias management are missing.
