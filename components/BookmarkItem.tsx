@@ -6,6 +6,7 @@ import {supabase} from '@/db/supabase';
 import {RealtimeSubscription} from '@supabase/supabase-js';
 import {BookMark} from '../pages';
 import {apiCall} from '@/utils/api-call';
+import {formatISO} from 'date-fns';
 
 export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
   const {onDelete, formatTime} = useContext(BookMarkListContext);
@@ -79,7 +80,13 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
       )}
       <div className="item-meta flex justify-between">
         <ul className="item-meta-info flex items-center">
-          <li>{formatTime(data.createdAt as number)}</li>
+          <li>
+            <time
+              dateTime={formatISO(new Date((data.createdAt as number) * 1000))}
+            >
+              {formatTime(data.createdAt as number)}
+            </time>
+          </li>
         </ul>
         <ul className="item-meta-actions flex items-center">
           <li>
