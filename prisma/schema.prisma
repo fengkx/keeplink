@@ -50,6 +50,7 @@ model User {
   role      user_role  @default(user)
   settings  Json       @default("{}")
   bookmarks Bookmark[]
+  api_token String     @unique @default(uuid())
 
   @@map("pusers")
 }
@@ -62,8 +63,8 @@ model Tag {
   alias     String[]
   Tagging   Tagging[]
 
-  @@map("tags")
   @@index([alias], name: "tags_alias_idx")
+  @@map("tags")
 }
 
 model Tagging {

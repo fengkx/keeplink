@@ -22,21 +22,37 @@ type RestfulHandlerMap = {
   del?: RestfulApiHandler;
 };
 
+export const API_TOKEN_HEADER = 'x-keeplink-api-token';
+
 export async function restful(
   {req, res}: HttpHandler,
   rest: Partial<RestfulHandlerMap>
 ) {
-  const {user: supabaseUser, error} = await supabase.auth.api.getUserByCookie(
-    req
-  );
-  if (error || !supabaseUser) {
-    console.error(error);
-    res.status(401).json({error: error?.message ?? 'Not Auth'});
-    return;
+  let user: User | undefined;
+  if (req.headers[API_TOKEN_HEADER]) {
+    let token = req.headers[API_TOKEN_HEADER];
+    if (Array.isArray(token)) token = token[0];
+    const puser = await prisma.user.findUnique({where: {api_token: token}});
+    if (puser) {
+      const users = await prisma.$queryRaw`SELECT * FROM auth.users WHERE id=${puser.id}`;
+      user = {...users[0], ...puser};
+    }
   }
 
-  const puser = await prisma.user.findUnique({where: {id: supabaseUser.id}});
-  const user: User = {...supabaseUser, ...puser!};
+  if (!user) {
+    const {user: supabaseUser, error} = await supabase.auth.api.getUserByCookie(
+      req
+    );
+    if (error || !supabaseUser) {
+      console.error(error);
+      res.status(401).json({error: error?.message ?? 'Not Auth'});
+      return;
+    }
+
+    const puser = await prisma.user.findUnique({where: {id: supabaseUser.id}});
+    user = {...supabaseUser, ...puser!};
+  }
+
   const methodToHandler: Record<string, RestfulApiHandler | undefined> = {
     GET: rest.read,
     POST: rest.create,

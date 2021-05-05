@@ -19,15 +19,17 @@ type Props = {
 type FormInput = {
   password?: string;
   password_confirm?: string;
+  api_token: string;
 };
 const defaultSettings = {};
 
-const Settings: React.FC<Props> = ({user}) => {
-  const form = useForm<FormInput>({defaultValues: defaultSettings});
+const Settings: React.FC<Props> = ({user, userData}) => {
+  const form = useForm<FormInput>({
+    defaultValues: {...defaultSettings, api_token: userData.api_token}
+  });
   const {register, handleSubmit} = form;
   const toast = useToasts();
   useEffect(() => {
-    console.log(supabase.auth.session());
     const {data: authListener} = supabase.auth.onAuthStateChange(
       (event, session) => {
         void fetch('/api/auth', {
@@ -44,7 +46,7 @@ const Settings: React.FC<Props> = ({user}) => {
   }, []);
   const onSubmit = handleSubmit(
     async (data) => {
-      const {password, password_confirm, ...settings} = data;
+      const {password, password_confirm, api_token, ...settings} = data;
       if (password || password_confirm) {
         if (password_confirm === password) {
           try {
@@ -72,13 +74,13 @@ const Settings: React.FC<Props> = ({user}) => {
         }
       }
 
-      if (Object.keys(settings).length > 0) {
+      if (Object.keys(settings).length > 0 || api_token) {
         try {
           await apiCall('/api/pusers', {
             method: 'PUT',
-            body: JSON.stringify({settings})
+            body: JSON.stringify({settings, api_token})
           });
-          toast.addToast('Settings saved');
+          toast.addToast('API Token saved');
         } catch (error) {
           const resp = error.response;
           const data = await resp.json();
@@ -108,6 +110,10 @@ const Settings: React.FC<Props> = ({user}) => {
           input[name='size'] {
             width: 6rem;
           }
+          input[name='api_token'] {
+            overflow-wrap: break-word;
+            width: 20rem;
+          }
         `}</style>
         <div className="flex flex-col max-w-5xl mx-auto w-full">
           <label htmlFor="password" className={styles.label}>
@@ -128,10 +134,28 @@ const Settings: React.FC<Props> = ({user}) => {
             type="password"
             autoComplete="off"
           />
-          {/* <label className={styles.label}> */}
-          {/*    Entries Pre Page */}
-          {/* </label> */}
-          {/* <input type="number" min="1" className={styles.input} {...register('size', {required: true, valueAsNumber: true, min: 1})} /> */}
+          <label className={styles.label}>API Token</label>
+          <div className={`${styles.input} border-none`}>
+            <input readOnly {...register('api_token')} />
+            <Button
+              type="link"
+              className="mt-2 mt-0 md:ml-4 md:pt-1 md:-mb-1"
+              onClick={async (ev) => {
+                ev.preventDefault();
+                const {data, error} = await supabase.rpc('gen_random_uuid');
+                if (error) {
+                  toast.addToast(error.message, {appearance: 'error'});
+                  return;
+                }
+
+                form.setValue('api_token', data![0].gen_random_uuid, {
+                  shouldDirty: true
+                });
+              }}
+            >
+              RENEW
+            </Button>
+          </div>
           <div>
             <Button
               size={'medium'}
@@ -159,7 +183,8 @@ export const getServerSideProps: GetServerSideProps = async ({req}) => {
     select: {
       id: true,
       role: true,
-      settings: true
+      settings: true,
+      api_token: true
     }
   });
   return {
