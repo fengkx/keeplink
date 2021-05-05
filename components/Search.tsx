@@ -32,7 +32,7 @@ const MainSearch: React.FC<React.HTMLAttributes<HTMLInputElement>> = () => {
       method="GET"
     >
       <div className="relative flex items-center w-full">
-        <Search className="absolute" size={'1rem'} style={{zIndex: 1000}} />
+        <Search className="absolute" size={'1em'} style={{zIndex: 1000}} />
         <Input
           value={search}
           onChange={(ev) => {
