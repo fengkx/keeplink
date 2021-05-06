@@ -7,7 +7,7 @@ const Logout: React.FC = () => {
     supabase.auth
       .signOut()
       .then((res) => {
-        console.log(res, 123);
+        console.log(res);
       })
       .catch((error) => {
         console.log(error);

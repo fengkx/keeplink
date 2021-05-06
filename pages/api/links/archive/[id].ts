@@ -124,7 +124,6 @@ const create: RestfulApiHandler = async (req, res, user) => {
     }
 
     const metadata = await metascraper({html: singlePage, url});
-    console.log(metadata, 123);
     res.status(200).json({metadata, html: singlePage});
     const updated = extractUpdate(metadata, link, url, singlePage);
     updated.archive_stat = 'archived';
