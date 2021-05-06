@@ -80,6 +80,11 @@ const Archive: React.FC<Props> = () => {
       }
     };
   }, [id]);
+  useEffect(() => {
+    if(!loading) {
+      document.documentElement.innerHTML = html;
+    }
+  }, [html, loading])
   if (loading) {
     return (
       <div className="container h-screen mx-auto">
@@ -103,12 +108,6 @@ const Archive: React.FC<Props> = () => {
           </div>
         </div>
       </div>
-    );
-  }
-
-  if (html) {
-    return (
-      <div id="archive-content" dangerouslySetInnerHTML={{__html: html}} />
     );
   }
 
