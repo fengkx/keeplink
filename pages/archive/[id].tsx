@@ -81,10 +81,10 @@ const Archive: React.FC<Props> = () => {
     };
   }, [id]);
   useEffect(() => {
-    if(!loading) {
+    if (!loading) {
       document.documentElement.innerHTML = html;
     }
-  }, [html, loading])
+  }, [html, loading]);
   if (loading) {
     return (
       <div className="container h-screen mx-auto">
