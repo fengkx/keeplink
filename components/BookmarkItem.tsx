@@ -103,7 +103,7 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
           </li>
           <li>
             <Link href={`/archive/${data.link_id}`}>
-              <a>Archive</a>
+              <a target="_blank">Archive</a>
             </Link>
           </li>
         </ul>
