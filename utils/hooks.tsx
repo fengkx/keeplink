@@ -22,8 +22,8 @@ export const useAutoRefreshToken = () => {
   const timeoutMillSeconds = useMemo(() => {
     const timeNow = Date.now();
     const expiresAt = (value?.expiresAt ?? 0) * 1000;
-    const expriseIn = (value.currentSession.expires_in ?? 0) * 1000;
-    const refreshAhead = Math.floor(expriseIn * 0.75); // Refresh ahead 3 quarter of the token valid time
+    const expiresIn = (value?.currentSession.expires_in ?? 0) * 1000;
+    const refreshAhead = Math.floor(expiresIn * 0.75); // Refresh ahead 3 quarter of the token valid time
     return expiresAt - timeNow - refreshAhead;
   }, [value]);
 
