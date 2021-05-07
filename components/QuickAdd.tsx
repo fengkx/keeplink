@@ -26,7 +26,7 @@ const QuickAdd: React.FC<Props> = ({className, onSuccess}) => {
         const {data} = await error.response.json();
         console.log(data);
         if (data.errors) {
-          toast.addToast(data.errors.message, {appearance: 'error'});
+          toast.addToast(data.errors[0].message, {appearance: 'error'});
         }
 
         if (data.bookmark_id) {
