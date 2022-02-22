@@ -15,6 +15,7 @@ module.exports = withBundleAnalyzer(
     future: {
       webpack5: true
     },
+    swcMinify: true,
     pwa: {
       dest: 'public',
       runtimeCaching: require('./pwa-runtime-cache')
