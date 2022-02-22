@@ -19,12 +19,23 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "@/components/*": ["components/*"],
-      "@/db/*": ["db/*"],
-      "@/styles/*": ["styles/*"],
-      "@/utils/*": ["utils/*"],
-      "@/pages/*": ["pages/*"]
-    }
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/db/*": [
+        "db/*"
+      ],
+      "@/styles/*": [
+        "styles/*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ],
+      "@/pages/*": [
+        "pages/*"
+      ]
+    },
+    "incremental": true
   },
   "include": [
     "next-env.d.ts",
@@ -33,5 +44,5 @@
   ],
   "exclude": [
     "node_modules"
-  ],
+  ]
 }

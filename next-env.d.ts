@@ -1,10 +1,5 @@
 /// <reference types="next" />
-/// <reference types="next/types/global" />
+/// <reference types="next/image-types/global" />
 
-declare module '@metascraper/helpers' {
-  export function toUrl($: any): string;
-  export function title(): any;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  export function toRule<T>(mapper: Function): (a: any) => T;
-  export function $filter($: any, $$: any[]): any;
-}
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/basic-features/typescript for more information.

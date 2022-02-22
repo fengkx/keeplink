@@ -34,7 +34,8 @@ export async function restful(
     if (Array.isArray(token)) token = token[0];
     const puser = await prisma.user.findUnique({where: {api_token: token}});
     if (puser) {
-      const users = await prisma.$queryRaw`SELECT * FROM auth.users WHERE id=${puser.id}`;
+      const users =
+        await prisma.$queryRaw`SELECT * FROM auth.users WHERE id=${puser.id}`;
       user = {...users[0], ...puser};
     }
   }

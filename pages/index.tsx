@@ -14,7 +14,7 @@ import type {Tag} from '@/components/TagCloud';
 import {TagCloud} from '@/components/TagCloud';
 import {useRouter} from 'next/router';
 import {useToasts} from 'react-toast-notifications';
-import { Pagination } from '@/components/Pagination';
+import {Pagination} from '@/components/Pagination';
 
 function useTagCloud() {
   const {data, error} = useSWR(`/api/tags?tagcloud=1`, async (key: string) => {
@@ -40,6 +40,7 @@ const Home: React.FC<Props> = ({bookmarks, user}) => {
       appearance: 'error'
     });
   }
+
   const pagination = useMemo(() => getPagination(router.query), [router.query]);
   return (
     <Layout title="Bookmarks" userRole={user.user_metadata.role}>
@@ -60,7 +61,11 @@ const Home: React.FC<Props> = ({bookmarks, user}) => {
             bookmarks={bookmarkList}
           />
 
-          <Pagination currentLen={bookmarks.length} page={pagination.page} size={pagination.size} />
+          <Pagination
+            currentLen={bookmarks.length}
+            page={pagination.page}
+            size={pagination.size}
+          />
         </section>
         <section className="w-1/3 max-w-sm hidden lg:block pl-6">
           <h2 className="border-b mb-3 pb-3 font-bold">Tags: </h2>
