@@ -49,7 +49,7 @@ const Archive: React.FC<Props> = () => {
               setHTML(data.html);
             }
           }
-        } catch (error) {
+        } catch (error: any) {
           const data = await error.response.json();
           toast.addToast(data.error, {
             appearance: 'error',

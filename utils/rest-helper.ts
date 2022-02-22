@@ -67,7 +67,7 @@ export async function restful(
     }
 
     await handler(req, res, user);
-  } catch (error) {
+  } catch (error: any) {
     console.log(error);
     res.status(500).json({code: error.code, reason: reason(error)});
   }

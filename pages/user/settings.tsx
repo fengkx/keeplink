@@ -66,7 +66,7 @@ const Settings: React.FC<Props> = ({user, userData}) => {
 
             await supabase.auth.update({password});
             toast.addToast('Password changed');
-          } catch (error) {
+          } catch (error: any) {
             toast.addToast(error.message, {appearance: 'error'});
           }
         } else {
@@ -81,7 +81,7 @@ const Settings: React.FC<Props> = ({user, userData}) => {
             body: JSON.stringify({settings, api_token})
           });
           toast.addToast('API Token saved');
-        } catch (error) {
+        } catch (error: any) {
           const resp = error.response;
           const data = await resp.json();
           if (data.errors) {

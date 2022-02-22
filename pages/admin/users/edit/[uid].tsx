@@ -39,7 +39,7 @@ export default function EditUser({user, editedUser}: Props) {
           body: JSON.stringify(payload)
         });
         toast.addToast('Settings saved');
-      } catch (error) {
+      } catch (error: any) {
         const data = await error.response.json();
         if (data.errors) {
           toast.addToast(data.errors[0].message, {appearance: 'error'});
