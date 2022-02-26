@@ -15,7 +15,7 @@
     "@metascraper/helpers": "^5.25.8",
     "@next/bundle-analyzer": "^12.1.0",
     "@prisma/client": "^2.30.3",
-    "@supabase/supabase-js": "^1.30.6",
+    "@supabase/supabase-js": "^1.30.7",
     "@supabase/ui": "^0.24.3",
     "@tailwindcss/forms": "^0.3.4",
     "@yaireo/tagify": "^4.9.8",
@@ -40,7 +40,7 @@
     "react-use": "^17.3.2",
     "single-file": "github:gildas-lormeau/SingleFile",
     "swr": "^0.5.7",
-    "user-agents": "^1.0.935",
+    "user-agents": "^1.0.939",
     "zod": "^1.11.17"
   },
   "devDependencies": {
@@ -52,7 +52,7 @@
     "duplicate-package-checker-webpack-plugin": "^3.0.0",
     "husky": "^6.0.0",
     "lint-staged": "^10.5.4",
-    "postcss": "^8.4.6",
+    "postcss": "^8.4.7",
     "prettier": "^2.5.1",
     "prisma": "^3.10.0",
     "tailwindcss": "^2.2.19",
