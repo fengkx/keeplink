@@ -13,6 +13,8 @@ specifiers:
   '@types/user-agents': ^1.0.2
   '@yaireo/tagify': ^4.9.8
   autoprefixer: ^10.4.2
+  client@3: link:prisma/client@3
+  client@latest: link:prisma/client@latest
   cookie: ^0.4.2
   date-fns: ^2.28.0
   duplicate-package-checker-webpack-plugin: ^3.0.0
@@ -29,7 +31,7 @@ specifiers:
   placeholder-loading: ^0.4.0
   postcss: ^8.4.6
   prettier: ^2.5.1
-  prisma: ^2.30.3
+  prisma: ^3.10.0
   react: 17.0.2
   react-dom: 17.0.2
   react-feather: ^2.0.9
@@ -48,11 +50,13 @@ specifiers:
 dependencies:
   '@metascraper/helpers': 5.25.8
   '@next/bundle-analyzer': 12.1.0
-  '@prisma/client': 2.30.3_prisma@2.30.3
+  '@prisma/client': 2.30.3_prisma@3.10.0
   '@supabase/supabase-js': 1.30.6
   '@supabase/ui': 0.24.3_react-dom@17.0.2+react@17.0.2
   '@tailwindcss/forms': 0.3.4_tailwindcss@2.2.19
   '@yaireo/tagify': 4.9.8
+  client@3: link:prisma/client@3
+  client@latest: link:prisma/client@latest
   cookie: 0.4.2
   date-fns: 2.28.0
   execa: 5.1.1
@@ -70,7 +74,7 @@ dependencies:
   react-hook-form: 7.27.1_react@17.0.2
   react-toast-notifications: 2.5.1_react-dom@17.0.2+react@17.0.2
   react-use: 17.3.2_react-dom@17.0.2+react@17.0.2
-  single-file: github.com/gildas-lormeau/SingleFile/30b6b0476223317b48e0a3d1e85b2c2fd6f6173f
+  single-file: github.com/gildas-lormeau/SingleFile/c6638442af06b81e34cbfdc7e3b0803f1b501ef8
   swr: 0.5.7_react@17.0.2
   user-agents: 1.0.935
   zod: 1.11.17
@@ -86,7 +90,7 @@ devDependencies:
   lint-staged: 10.5.4
   postcss: 8.4.6
   prettier: 2.5.1
-  prisma: 2.30.3
+  prisma: 3.10.0
   tailwindcss: 2.2.19_ee03e48a381c1255dbb9f6cbdc8af250
   ts-node: 9.1.1_typescript@4.5.5
   typescript: 4.5.5
@@ -1548,7 +1552,7 @@ packages:
     resolution: {integrity: sha512-a5Sab1C4/icpTZVzZc5Ghpz88yQtGOyNqYXcZgOssB2uuAr+wF/MvN6bgtW32q7HHrvBki+BsZ0OuNv6EV3K9g==}
     dev: false
 
-  /@prisma/client/2.30.3_prisma@2.30.3:
+  /@prisma/client/2.30.3_prisma@3.10.0:
     resolution: {integrity: sha512-Ey2miZ+Hne12We3rA8XrlPoAF0iuKEhw5IK2nropaelSt0Ju3b2qSz9Qt50a/1Mx3+7yRSu/iSXt8y9TUMl/Yw==}
     engines: {node: '>=12.2'}
     requiresBuild: true
@@ -1559,15 +1563,15 @@ packages:
         optional: true
     dependencies:
       '@prisma/engines-version': 2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20
-      prisma: 2.30.3
+      prisma: 3.10.0
     dev: false
 
   /@prisma/engines-version/2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20:
     resolution: {integrity: sha512-/iDRgaoSQC77WN2oDsOM8dn61fykm6tnZUAClY+6p+XJbOEgZ9gy4CKuKTBgrjSGDVjtQ/S2KGcYd3Ring8xaw==}
     dev: false
 
-  /@prisma/engines/2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20:
-    resolution: {integrity: sha512-WPnA/IUrxDihrRhdP6+8KAVSwsc0zsh8ioPYsLJjOhzVhwpRbuFH2tJDRIAbc+qFh+BbTIZbeyBYt8fpNXaYQQ==}
+  /@prisma/engines/3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86:
+    resolution: {integrity: sha512-LjRssaWu9w2SrXitofnutRIyURI7l0veQYIALz7uY4shygM9nMcK3omXcObRm7TAcw3Z+9ytfK1B+ySOsOesxQ==}
     requiresBuild: true
     dev: true
 
@@ -3880,7 +3884,7 @@ packages:
     engines: {node: '>= 10.17.0'}
     hasBin: true
     dependencies:
-      debug: 4.3.2
+      debug: 4.3.3
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
@@ -6447,13 +6451,13 @@ packages:
     engines: {node: '>= 0.8'}
     dev: true
 
-  /prisma/2.30.3:
-    resolution: {integrity: sha512-48qYba2BIyUmXuosBZs0g3kYGrxKvo4VkSHYOuLlDdDirmKyvoY2hCYMUYHSx3f++8ovfgs+MX5KmNlP+iAZrQ==}
-    engines: {node: '>=12.2'}
+  /prisma/3.10.0:
+    resolution: {integrity: sha512-dAld12vtwdz9Rz01nOjmnXe+vHana5PSog8t0XGgLemKsUVsaupYpr74AHaS3s78SaTS5s2HOghnJF+jn91ZrA==}
+    engines: {node: '>=12.6'}
     hasBin: true
     requiresBuild: true
     dependencies:
-      '@prisma/engines': 2.30.1-2.b8c35d44de987a9691890b3ddf3e2e7effb9bf20
+      '@prisma/engines': 3.10.0-50.73e60b76d394f8d37d8ebd1f8918c79029f0db86
     dev: true
 
   /process-nextick-args/2.0.1:
@@ -8620,8 +8624,8 @@ packages:
     resolution: {integrity: sha512-UzIwO92D0dSFwIRyyqAfRXICITLjF0IP8tRbEK/un7adirMssWZx8xF/1hZNE7t61knWZ+lhEuUvxlu2MO8qqA==}
     dev: false
 
-  github.com/gildas-lormeau/SingleFile/30b6b0476223317b48e0a3d1e85b2c2fd6f6173f:
-    resolution: {tarball: https://codeload.github.com/gildas-lormeau/SingleFile/tar.gz/30b6b0476223317b48e0a3d1e85b2c2fd6f6173f}
+  github.com/gildas-lormeau/SingleFile/c6638442af06b81e34cbfdc7e3b0803f1b501ef8:
+    resolution: {tarball: https://codeload.github.com/gildas-lormeau/SingleFile/tar.gz/c6638442af06b81e34cbfdc7e3b0803f1b501ef8}
     name: single-file
     version: 0.3.32
     hasBin: true
