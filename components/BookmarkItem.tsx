@@ -1,12 +1,12 @@
 import React, {useContext, useEffect, useState} from 'react';
 import Link from 'next/link';
+import {RealtimeSubscription} from '@supabase/supabase-js';
+import {formatISO} from 'date-fns';
+import {BookMark} from '../pages';
 import {ConfirmDelete} from '@/components/ConfirmDelete';
 import {BookMarkListContext} from '@/components/BookMarkListContext';
 import {supabase} from '@/db/supabase';
-import {RealtimeSubscription} from '@supabase/supabase-js';
-import {BookMark} from '../pages';
 import {apiCall} from '@/utils/api-call';
-import {formatISO} from 'date-fns';
 
 export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
   const {onDelete, formatTime} = useContext(BookMarkListContext);
@@ -52,14 +52,14 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
         }
       `}</style>
       <div className="item-content flex flex-col">
-        <div className="item-title font-bold align-middle leading-normal mb-1 whitespace-nowrap overflow-hidden overflow-ellipsis">
+        <div className="item-title font-bold align-middle leading-normal mb-1 whitespace-nowrap overflow-hidden text-ellipsis">
           <Link href={data.url}>
             <a className="inline ml-1 text-lg" target="_blank" rel="nofollow">
               {data.title ?? data.url}
             </a>
           </Link>
         </div>
-        <p className="item-description overflow-ellipsis whitespace-nowrap overflow-hidden">
+        <p className="item-description text-ellipsis whitespace-nowrap overflow-hidden">
           {data.description ?? data.title}
         </p>
       </div>
