@@ -55,7 +55,6 @@ const AuthBasic: React.FC<{error: Error}> = () => {
       <main className="mx-auto max-w-3xl w-full lg:w-10/12 p-5">
         <Card>
           <Auth
-            onlyThirdPartyProviders={true}
             supabaseClient={supabase}
             providers={['google', 'github']}
           />
