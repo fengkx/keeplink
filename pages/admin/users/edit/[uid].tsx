@@ -1,14 +1,14 @@
 import React from 'react';
 import {GetServerSideProps} from 'next';
-import {prisma} from '@/db/prisma';
 import type {User as SupabaseUser} from '@supabase/supabase-js';
 import type {user_role} from '@prisma/client';
-import {getOneParamFromQuery} from '@/utils/query-param';
 import {useForm} from 'react-hook-form';
 import {useToasts} from 'react-toast-notifications';
+import {Button} from '@supabase/ui';
+import {getOneParamFromQuery} from '@/utils/query-param';
 import {apiCall} from '@/utils/api-call';
 import {supabase} from '@/db/supabase';
-import {Button} from '@supabase/ui';
+import {prisma} from '@/db/prisma';
 
 import styles from '@/styles/Form.module.css';
 import {AdminLayout} from '@/components/AdminLayout';
@@ -24,8 +24,8 @@ type Props = {
 export default function EditUser({user, editedUser}: Props) {
   const form = useForm<FormInput>({
     defaultValues: {
-      role: editedUser.role
-    }
+      role: editedUser.role,
+    },
   });
   const {register, handleSubmit} = form;
   const toast = useToasts();
@@ -36,7 +36,7 @@ export default function EditUser({user, editedUser}: Props) {
       try {
         await apiCall(`/api/users/${editedUser.id}`, {
           method: 'PUT',
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
         toast.addToast('Settings saved');
       } catch (error: any) {
@@ -53,7 +53,7 @@ export default function EditUser({user, editedUser}: Props) {
       if (message) {
         toast.addToast(message);
       }
-    }
+    },
   );
   return (
     <AdminLayout userRole={user.user_metadata.role}>
@@ -99,7 +99,7 @@ type User = {
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
-  params
+  params,
 }) => {
   const {user} = await supabase.auth.api.getUserByCookie(req);
   if (!user) {
@@ -111,25 +111,26 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   }
 
   const uid = getOneParamFromQuery(params!, 'uid');
-  const usersData = await prisma.$queryRaw`
+  const usersData = await prisma.$queryRaw<SupabaseUser[]>`
         SELECT pusers.id, raw_app_meta_data as app_metadata, last_sign_in_at, email, pusers.role
         FROM auth.users
                  LEFT JOIN pusers ON auth.users.id = pusers.id
         WHERE auth.users.id = ${uid}
     `;
-  const users: User[] = usersData.map((u: Partial<SupabaseUser>) => ({
+  const users: User[] = usersData.map((u: SupabaseUser) => ({
     id: u.id,
-    provider: u.app_metadata?.provider,
-    email: u.email,
+    provider: u.app_metadata?.provider ?? '',
+    email: u.email!,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     last_sign_in_at: Math.floor(
-      new Date(u.last_sign_in_at ?? '1970-01-01 00:00:00').getTime() / 1000
+      new Date(u.last_sign_in_at ?? '1970-01-01 00:00:00').getTime() / 1000,
     ),
-    role: u.role
+    role: u.role as user_role,
   }));
   return {
     props: {
       editedUser: users[0],
-      user
-    }
+      user,
+    },
   };
 };

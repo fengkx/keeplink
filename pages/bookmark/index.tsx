@@ -1,16 +1,14 @@
-import Home, {
+import {decode as htmlDecode} from 'he';
+import {
   BookMark,
-  getServerSideProps as noSearchServerSideProps
+  getServerSideProps as noSearchServerSideProps,
 } from '../index';
 import {supabase} from '@/db/supabase';
 import {getPagination} from '@/utils/get-pagination';
 import {prisma} from '@/db/prisma';
-import {decode as htmlDecode} from 'he';
-
-export default Home;
 
 export const getServerSideProps: typeof noSearchServerSideProps = async (
-  ctx
+  ctx,
 ) => {
   const {req, query} = ctx;
   const q = query.q;
@@ -24,7 +22,7 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
   }
 
   const {page, size} = getPagination(query);
-  const results = await prisma.$queryRaw`select id,
+  const results = await prisma.$queryRaw<BookMark[]>`select id,
                 link_id,
                 title,
                 description,
@@ -61,8 +59,10 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
         ...bm,
         description: htmlDecode(bm.description ?? ''),
         createdAt: new Date(bm.created_at!).getTime() / 1000,
-        tags: bm.cached_tags_name?.split(',') ?? []
-      }))
-    }
+        tags: bm.cached_tags_name?.split(',') ?? [],
+      })),
+    },
   };
 };
+
+export {default} from '../index';

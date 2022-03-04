@@ -1,12 +1,12 @@
 import {NextApiRequest, NextApiResponse} from 'next';
-import execa from 'execa';
+import {execa} from 'execa';
+import UserAgent from 'user-agents';
+import {Link} from '@prisma/client';
+import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 import {restful, RestfulApiHandler} from '@/utils/rest-helper';
 import {prisma} from '@/db/prisma';
 import {getOneParamFromQuery} from '@/utils/query-param';
-import UserAgent from 'user-agents';
-import {Link} from '@prisma/client';
 import {metascraper} from '@/utils/metascraper.mjs';
-import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 
 interface Metadata {
   author: string;
@@ -26,7 +26,7 @@ function extractUpdate(
   metadata: Metadata,
   link: Link,
   url: string,
-  html: string
+  html: string,
 ) {
   metadata.url = new URL(metadata.url).toString(); // Normalize url
   const updated: Partial<typeof link> = {};
@@ -49,7 +49,7 @@ function extractUpdate(
 const create: RestfulApiHandler = async (req, res, user) => {
   const id = getOneParamFromQuery<number>(req.query);
   const link = await prisma.link.findUnique({
-    where: {id}
+    where: {id},
   });
 
   if (!link) {
@@ -64,8 +64,8 @@ const create: RestfulApiHandler = async (req, res, user) => {
         accept:
           'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         Host: new URL(url).host,
-        'user-agent': new UserAgent({deviceCategory: 'desktop'}).toString()
-      }
+        'user-agent': new UserAgent({deviceCategory: 'desktop'}).toString(),
+      },
     });
     if (resp.ok) {
       const html = await resp.text();
@@ -75,7 +75,7 @@ const create: RestfulApiHandler = async (req, res, user) => {
       try {
         await prisma.link.update({
           where: {id: link.id},
-          data: updated
+          data: updated,
         });
       } catch (error) {
         if (
@@ -85,19 +85,19 @@ const create: RestfulApiHandler = async (req, res, user) => {
         ) {
           const existedLink = await prisma.link.findUnique({
             where: {url: updated.url},
-            select: {id: true}
+            select: {id: true},
           });
           await prisma.$transaction([
             prisma.bookmark.update({
               where: {
                 bookmark_user_link_id: {
                   user_id: user.id,
-                  link_id: id
-                }
+                  link_id: id,
+                },
               },
-              data: {link_id: existedLink!.id}
+              data: {link_id: existedLink!.id},
             }),
-            prisma.link.delete({where: {id}})
+            prisma.link.delete({where: {id}}),
           ]);
           res.status(200).json({redirect_link_id: existedLink!.id});
           return;
@@ -113,13 +113,13 @@ const create: RestfulApiHandler = async (req, res, user) => {
     const {
       stdout: singlePage,
       failed,
-      stderr
+      stderr,
     } = await execa('npx', [
       'single-file',
       url,
       '--browser-server',
       process.env.CHROME_WS_URL!,
-      '--dump-content'
+      '--dump-content',
     ]);
     if (failed || stderr.length > 0) {
       res.status(500).json({error: stderr});
@@ -133,7 +133,7 @@ const create: RestfulApiHandler = async (req, res, user) => {
 
     await prisma.link.update({
       where: {id: link.id},
-      data: updated
+      data: updated,
     });
     const bookmarkId = getOneParamFromQuery<number>(req.query, 'bookmark');
     if (bookmarkId) {
@@ -171,10 +171,10 @@ const create: RestfulApiHandler = async (req, res, user) => {
         data: suggestedTags.map((t) => {
           return {
             tag_id: t.tag_id,
-            bookmark_id: bookmarkId
+            bookmark_id: bookmarkId,
           };
         }),
-        skipDuplicates: true
+        skipDuplicates: true,
       });
     }
   } catch (error: any) {
@@ -187,12 +187,12 @@ const read: RestfulApiHandler = async (req, res) => {
   const id = getOneParamFromQuery<number>(req.query);
   const link = await prisma.link.findUnique({
     where: {
-      id
+      id,
     },
     select: {
       archive: true,
-      archive_stat: true
-    }
+      archive_stat: true,
+    },
   });
   if (!link) {
     res.status(404).send('link not found');

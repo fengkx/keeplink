@@ -1,11 +1,12 @@
 import {GetServerSideProps} from 'next';
-import {supabase} from '@/db/supabase';
 import {User as SupabaseUser} from '@supabase/supabase-js';
+import Link from 'next/link';
+import {user_role} from '@prisma/client';
+import {supabase} from '@/db/supabase';
 import {AdminLayout} from '@/components/AdminLayout';
 import {prisma} from '@/db/prisma';
 import {getPagination} from '@/utils/get-pagination';
 import {useFormatTime} from '@/utils/hooks';
-import Link from 'next/link';
 
 type Props = {
   user: SupabaseUser;
@@ -54,7 +55,7 @@ type User = {
 };
 export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
-  query
+  query,
 }) => {
   const {user} = await supabase.auth.api.getUserByCookie(req);
   if (!user) {
@@ -66,28 +67,29 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   }
 
   const {page, size} = getPagination(query);
-  const usersData = await prisma.$queryRaw`
+  const usersData = await prisma.$queryRaw<SupabaseUser[]>`
         SELECT pusers.id, raw_app_meta_data as app_metadata, last_sign_in_at, email, pusers.role
         FROM pusers
         LEFT JOIN auth.users ON auth.users.id = pusers.id
         LIMIT ${size} OFFSET ${(page - 1) * size}
     `;
 
+  // @ts-expect-error provider can be empty
   const users: User[] = usersData
-    .filter((u: Partial<SupabaseUser>) => u.id !== user.id)
-    .map((u: Partial<SupabaseUser>) => ({
+    .filter((u: SupabaseUser) => u.id !== user.id)
+    .map((u: SupabaseUser) => ({
       id: u.id,
       provider: u.app_metadata?.provider,
-      email: u.email,
+      email: u.email!,
       last_sign_in_at: Math.floor(
-        new Date(u.last_sign_in_at ?? '1970-01-01 00:00:00').getTime() / 1000
+        new Date(u.last_sign_in_at ?? '1970-01-01 00:00:00').getTime() / 1000,
       ),
-      role: u.role
+      role: u.role as user_role,
     }));
   return {
     props: {
       users,
-      user
-    }
+      user,
+    },
   };
 };

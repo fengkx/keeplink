@@ -1,8 +1,8 @@
 import {NextApiRequest, NextApiResponse} from 'next';
-import {supabase} from '@/db/supabase';
 import type {User as SupabaseUser} from '@supabase/supabase-js';
 import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 import type {User as PUser} from '@prisma/client';
+import {supabase} from '@/db/supabase';
 import {prisma} from '@/db/prisma';
 
 type HttpHandler<T = any> = {
@@ -13,7 +13,7 @@ export type User = SupabaseUser & PUser;
 export type RestfulApiHandler<T = any> = (
   req: NextApiRequest,
   res: NextApiResponse<T>,
-  user: User
+  user: User,
 ) => void | Promise<void>;
 type RestfulHandlerMap = {
   create?: RestfulApiHandler;
@@ -26,7 +26,7 @@ export const API_TOKEN_HEADER = 'x-keeplink-api-token';
 
 export async function restful(
   {req, res}: HttpHandler,
-  rest: Partial<RestfulHandlerMap>
+  rest: Partial<RestfulHandlerMap>,
 ) {
   let user: User | undefined;
   if (req.headers[API_TOKEN_HEADER]) {
@@ -34,15 +34,16 @@ export async function restful(
     if (Array.isArray(token)) token = token[0];
     const puser = await prisma.user.findUnique({where: {api_token: token}});
     if (puser) {
-      const users =
-        await prisma.$queryRaw`SELECT * FROM auth.users WHERE id=${puser.id}`;
+      const users = await prisma.$queryRaw<
+        User[]
+      >`SELECT * FROM auth.users WHERE id=${puser.id}`;
       user = {...users[0], ...puser};
     }
   }
 
   if (!user) {
     const {user: supabaseUser, error} = await supabase.auth.api.getUserByCookie(
-      req
+      req,
     );
     if (error || !supabaseUser) {
       console.error(error);
@@ -50,7 +51,9 @@ export async function restful(
       return;
     }
 
-    const puser = await prisma.user.findUnique({where: {id: supabaseUser.id}});
+    const puser = await prisma.user.findUnique({
+      where: {id: supabaseUser.id},
+    });
     user = {...supabaseUser, ...puser!};
   }
 
@@ -58,7 +61,7 @@ export async function restful(
     GET: rest.read,
     POST: rest.create,
     PUT: rest.update,
-    DELETE: rest.del
+    DELETE: rest.del,
   };
   try {
     const handler = methodToHandler[req.method?.toUpperCase() ?? 'NOT'];

@@ -49,6 +49,7 @@ model User {
   id        String     @id @db.Uuid
   role      user_role  @default(user)
   settings  Json       @default("{}")
+  api_token String     @unique @db.Uuid
   bookmarks Bookmark[]
 
   @@map("pusers")

@@ -74,7 +74,9 @@
       "no-restricted-imports": "off",
       "unicorn/prefer-module": "off",
       "@typescript-eslint/no-unsafe-assignment": "off",
-      "@typescript-eslint/no-unsafe-call": "off"
+      "@typescript-eslint/no-unsafe-call": "off",
+      "@typescript-eslint/naming-convention": "off",
+      "node/prefer-global/process": "off"
     },
     "envs": [
       "es2020",
