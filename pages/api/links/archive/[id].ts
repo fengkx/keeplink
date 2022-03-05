@@ -1,12 +1,12 @@
-import {NextApiRequest, NextApiResponse} from 'next';
-import {execa} from 'execa';
+import { prisma } from '@/db/prisma';
+import { metascraper } from '@/utils/metascraper.mjs';
+import { getOneParamFromQuery } from '@/utils/query-param';
+import { restful, RestfulApiHandler } from '@/utils/rest-helper';
+import { Link } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { execa } from 'execa';
+import { NextApiRequest, NextApiResponse } from 'next';
 import UserAgent from 'user-agents';
-import {Link} from '@prisma/client';
-import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
-import {restful, RestfulApiHandler} from '@/utils/rest-helper';
-import {prisma} from '@/db/prisma';
-import {getOneParamFromQuery} from '@/utils/query-param';
-import {metascraper} from '@/utils/metascraper.mjs';
 
 interface Metadata {
   author: string;
@@ -45,11 +45,11 @@ function extractUpdate(
 const create: RestfulApiHandler = async (req, res, user) => {
   const id = getOneParamFromQuery<number>(req.query);
   const link = await prisma.link.findUnique({
-    where: {id},
+    where: { id },
   });
 
   if (!link) {
-    res.status(404).json({error: 'link not found'});
+    res.status(404).json({ error: 'link not found' });
     return;
   }
 
@@ -57,20 +57,19 @@ const create: RestfulApiHandler = async (req, res, user) => {
   try {
     const resp = await fetch(url, {
       headers: {
-        accept:
-          'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
         Host: new URL(url).host,
-        'user-agent': new UserAgent({deviceCategory: 'desktop'}).toString(),
+        'user-agent': new UserAgent({ deviceCategory: 'desktop' }).toString(),
       },
     });
     if (resp.ok) {
       const html = await resp.text();
-      const metadata = await metascraper({html, url});
+      const metadata = await metascraper({ html, url });
       const updated = extractUpdate(metadata, link, url, html);
 
       try {
         await prisma.link.update({
-          where: {id: link.id},
+          where: { id: link.id },
           data: updated,
         });
       } catch (error) {
@@ -80,8 +79,8 @@ const create: RestfulApiHandler = async (req, res, user) => {
           && (error.meta as unknown as any)?.target?.includes('url')
         ) {
           const existedLink = await prisma.link.findUnique({
-            where: {url: updated.url},
-            select: {id: true},
+            where: { url: updated.url },
+            select: { id: true },
           });
           await prisma.$transaction([
             prisma.bookmark.update({
@@ -91,11 +90,11 @@ const create: RestfulApiHandler = async (req, res, user) => {
                   link_id: id,
                 },
               },
-              data: {link_id: existedLink!.id},
+              data: { link_id: existedLink!.id },
             }),
-            prisma.link.delete({where: {id}}),
+            prisma.link.delete({ where: { id } }),
           ]);
-          res.status(200).json({redirect_link_id: existedLink!.id});
+          res.status(200).json({ redirect_link_id: existedLink!.id });
           return;
         }
       }
@@ -118,17 +117,17 @@ const create: RestfulApiHandler = async (req, res, user) => {
       '--dump-content',
     ]);
     if (failed || stderr.length > 0) {
-      res.status(500).json({error: stderr});
+      res.status(500).json({ error: stderr });
       return;
     }
 
-    const metadata = await metascraper({html: singlePage, url});
-    res.status(200).json({metadata, html: singlePage});
+    const metadata = await metascraper({ html: singlePage, url });
+    res.status(200).json({ metadata, html: singlePage });
     const updated = extractUpdate(metadata, link, url, singlePage);
     updated.archive_stat = 'archived';
 
     await prisma.link.update({
-      where: {id: link.id},
+      where: { id: link.id },
       data: updated,
     });
     const bookmarkId = getOneParamFromQuery<number>(req.query, 'bookmark');
@@ -175,7 +174,7 @@ const create: RestfulApiHandler = async (req, res, user) => {
     }
   } catch (error: any) {
     console.error(error);
-    res.status(500).json({error: error.message});
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -201,5 +200,5 @@ const read: RestfulApiHandler = async (req, res) => {
 };
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {create, read});
+  return restful({ req, res }, { create, read });
 }

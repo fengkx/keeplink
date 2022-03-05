@@ -1,24 +1,24 @@
 // Import Head from 'next/head';
-import {Auth, Card} from '@supabase/ui';
-import React, {useEffect} from 'react';
-import {useRouter} from 'next/router';
+import { supabase } from '@/db/supabase';
+import { Auth, Card } from '@supabase/ui';
 import Head from 'next/head';
-import {supabase} from '@/db/supabase';
+import { useRouter } from 'next/router';
+import React, { useEffect } from 'react';
 
-const AuthBasic: React.FC<{error: Error}> = () => {
+const AuthBasic: React.FC<{ error: Error }> = () => {
   const router = useRouter();
-  const {session} = Auth.useUser();
+  const { session } = Auth.useUser();
 
   useEffect(() => {
-    const {data: authListener} = supabase.auth.onAuthStateChange(
+    const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
         // Send session to /api/auth route to set the auth cookie.
         // NOTE: this is only needed if you're doing SSR (getServerSideProps)!
         fetch('/api/auth', {
           method: 'POST',
-          headers: new Headers({'Content-Type': 'application/json'}),
+          headers: new Headers({ 'Content-Type': 'application/json' }),
           credentials: 'same-origin',
-          body: JSON.stringify({event, session}),
+          body: JSON.stringify({ event, session }),
         })
           .then(async (res) => res.json())
           .then(() => {
@@ -32,9 +32,9 @@ const AuthBasic: React.FC<{error: Error}> = () => {
     if (session) {
       void fetch('/api/auth', {
         method: 'POST',
-        headers: new Headers({'Content-Type': 'application/json'}),
+        headers: new Headers({ 'Content-Type': 'application/json' }),
         credentials: 'same-origin',
-        body: JSON.stringify({event: 'SIGN_IN', session}),
+        body: JSON.stringify({ event: 'SIGN_IN', session }),
       })
         .then(async (res) => res.json())
         .then(() => {
@@ -48,11 +48,11 @@ const AuthBasic: React.FC<{error: Error}> = () => {
   }, []);
 
   return (
-    <div className="container mx-auto flex justify-center items-center h-screen">
+    <div className='container mx-auto flex justify-center items-center h-screen'>
       <Head>
         <title>Signin | KeepLink</title>
       </Head>
-      <main className="mx-auto max-w-3xl w-full lg:w-10/12 p-5">
+      <main className='mx-auto max-w-3xl w-full lg:w-10/12 p-5'>
         <Card>
           <Auth
             supabaseClient={supabase}

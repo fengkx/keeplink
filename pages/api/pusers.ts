@@ -1,8 +1,8 @@
-import {NextApiRequest, NextApiResponse} from 'next';
-import {User} from '@prisma/client';
+import { prisma } from '@/db/prisma';
+import { restful, RestfulApiHandler } from '@/utils/rest-helper';
+import { User } from '@prisma/client';
+import { NextApiRequest, NextApiResponse } from 'next';
 import * as z from 'zod';
-import {restful, RestfulApiHandler} from '@/utils/rest-helper';
-import {prisma} from '@/db/prisma';
 
 const update: RestfulApiHandler = async (req, res, user) => {
   const schema = z.object({
@@ -16,8 +16,8 @@ const update: RestfulApiHandler = async (req, res, user) => {
     return;
   }
 
-  const {settings, role, api_token} = validation.data;
-  const data: Partial<User> & {api_token?: string} = {
+  const { settings, role, api_token } = validation.data;
+  const data: Partial<User> & { api_token?: string } = {
     settings,
     role: 'user',
     api_token,
@@ -28,7 +28,7 @@ const update: RestfulApiHandler = async (req, res, user) => {
 
   console.log(data);
   const updated = await prisma.user.update({
-    where: {id: user.id},
+    where: { id: user.id },
     // @ts-expect-error null is not inputJSONValue
     data,
   });
@@ -36,5 +36,5 @@ const update: RestfulApiHandler = async (req, res, user) => {
 };
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {update});
+  return restful({ req, res }, { update });
 }

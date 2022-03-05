@@ -1,41 +1,41 @@
-import {GetServerSideProps} from 'next';
-import {User as SupabaseUser} from '@supabase/supabase-js';
+import { AdminLayout } from '@/components/AdminLayout';
+import { prisma } from '@/db/prisma';
+import { supabase } from '@/db/supabase';
+import { getPagination } from '@/utils/get-pagination';
+import { useFormatTime } from '@/utils/hooks';
+import { user_role } from '@prisma/client';
+import { User as SupabaseUser } from '@supabase/supabase-js';
+import { GetServerSideProps } from 'next';
 import Link from 'next/link';
-import {user_role} from '@prisma/client';
-import {supabase} from '@/db/supabase';
-import {AdminLayout} from '@/components/AdminLayout';
-import {prisma} from '@/db/prisma';
-import {getPagination} from '@/utils/get-pagination';
-import {useFormatTime} from '@/utils/hooks';
 
 type Props = {
   user: SupabaseUser;
   users: User[];
 };
-export default function AdminUsers({user, users}: Props) {
+export default function AdminUsers({ user, users }: Props) {
   const formatTime = useFormatTime();
   return (
     <AdminLayout userRole={user.user_metadata.role}>
-      <table className="table-fixed w-full leading-loose break-words">
+      <table className='table-fixed w-full leading-loose break-words'>
         <thead>
           <tr>
-            <th className="w-2/6">Email</th>
-            <th className="w-1/6 hidden sm:table-cell">Provider</th>
-            <th className="w-1/6">Role</th>
-            <th className="w-2/6">Last Sign In</th>
-            <th className="w-1/6">Actions</th>
+            <th className='w-2/6'>Email</th>
+            <th className='w-1/6 hidden sm:table-cell'>Provider</th>
+            <th className='w-1/6'>Role</th>
+            <th className='w-2/6'>Last Sign In</th>
+            <th className='w-1/6'>Actions</th>
           </tr>
         </thead>
-        <tbody className="text-center">
+        <tbody className='text-center'>
           {users.map((u) => (
             <tr key={u.id}>
               <td>{u.email}</td>
-              <td className="hidden sm:table-cell">{u.provider}</td>
+              <td className='hidden sm:table-cell'>{u.provider}</td>
               <td>{u.role}</td>
               <td>{formatTime(u.last_sign_in_at)}</td>
               <td>
                 <Link href={`/admin/users/edit/${u.id}`}>
-                  <a className="text-brand-800">Edit</a>
+                  <a className='text-brand-800'>Edit</a>
                 </Link>
               </td>
             </tr>
@@ -57,16 +57,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
   query,
 }) => {
-  const {user} = await supabase.auth.api.getUserByCookie(req);
+  const { user } = await supabase.auth.api.getUserByCookie(req);
   if (!user) {
-    return {props: {}, redirect: {destination: '/signin', permanent: false}};
+    return { props: {}, redirect: { destination: '/signin', permanent: false } };
   }
 
   if (user.user_metadata.role !== 'admin') {
-    return {props: {}, redirect: {destination: '/', permanent: false}};
+    return { props: {}, redirect: { destination: '/', permanent: false } };
   }
 
-  const {page, size} = getPagination(query);
+  const { page, size } = getPagination(query);
   const usersData = await prisma.$queryRaw<SupabaseUser[]>`
         SELECT pusers.id, raw_app_meta_data as app_metadata, last_sign_in_at, email, pusers.role
         FROM pusers

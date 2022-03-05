@@ -1,15 +1,15 @@
-import React, {useContext, useEffect, useState} from 'react';
+import { BookMarkListContext } from '@/components/BookMarkListContext';
+import { ConfirmDelete } from '@/components/ConfirmDelete';
+import { supabase } from '@/db/supabase';
+import { apiCall } from '@/utils/api-call';
+import { RealtimeSubscription } from '@supabase/supabase-js';
+import { formatISO } from 'date-fns';
 import Link from 'next/link';
-import {RealtimeSubscription} from '@supabase/supabase-js';
-import {formatISO} from 'date-fns';
-import {BookMark} from '../pages';
-import {ConfirmDelete} from '@/components/ConfirmDelete';
-import {BookMarkListContext} from '@/components/BookMarkListContext';
-import {supabase} from '@/db/supabase';
-import {apiCall} from '@/utils/api-call';
+import React, { useContext, useEffect, useState } from 'react';
+import { BookMark } from '../pages';
 
-export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
-  const {onDelete, formatTime} = useContext(BookMarkListContext);
+export const BookmarkItem: React.FC<{ bookmark: BookMark }> = ({ bookmark }) => {
+  const { onDelete, formatTime } = useContext(BookMarkListContext);
   const [data, setData] = useState(bookmark);
   useEffect(() => {
     setData(bookmark);
@@ -40,8 +40,9 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
     };
   }, []);
   return (
-    <article className="h-full text-sm sm:text-base p-3 flex justify-between flex-col overflow-hidden">
-      <style jsx>{`
+    <article className='h-full text-sm sm:text-base p-3 flex justify-between flex-col overflow-hidden'>
+      <style jsx>
+        {`
         .item-meta li {
           margin-right: 0.75rem;
         }
@@ -50,25 +51,26 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
           display: inline;
           margin-right: 1px;
         }
-      `}</style>
-      <div className="item-content flex flex-col">
-        <div className="item-title font-bold align-middle leading-normal mb-1 whitespace-nowrap overflow-hidden text-ellipsis">
+      `}
+      </style>
+      <div className='item-content flex flex-col'>
+        <div className='item-title font-bold align-middle leading-normal mb-1 whitespace-nowrap overflow-hidden text-ellipsis'>
           <Link href={data.url}>
-            <a className="inline ml-1 text-lg" target="_blank" rel="nofollow">
+            <a className='inline ml-1 text-lg' target='_blank' rel='nofollow'>
               {data.title ?? data.url}
             </a>
           </Link>
         </div>
-        <p className="item-description text-ellipsis whitespace-nowrap overflow-hidden">
+        <p className='item-description text-ellipsis whitespace-nowrap overflow-hidden'>
           {data.description ?? data.title}
         </p>
       </div>
       {data.tags.length > 0 && (
-        <div className="item-tags my-2">
-          <ul className="flex items-center">
+        <div className='item-tags my-2'>
+          <ul className='flex items-center'>
             {data.tags.map((tag: string) => {
               return (
-                <li className="inline-block bg-gray-100 p-0.5 mr-2" key={tag}>
+                <li className='inline-block bg-gray-100 p-0.5 mr-2' key={tag}>
                   <Link href={`/tag/${tag}`}>
                     <a>{tag}</a>
                   </Link>
@@ -78,8 +80,8 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
           </ul>
         </div>
       )}
-      <div className="item-meta flex justify-between">
-        <ul className="item-meta-info flex items-center">
+      <div className='item-meta flex justify-between'>
+        <ul className='item-meta-info flex items-center'>
           <li>
             <time
               dateTime={formatISO(new Date((data.createdAt as number) * 1000))}
@@ -88,7 +90,7 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
             </time>
           </li>
         </ul>
-        <ul className="item-meta-actions flex items-center">
+        <ul className='item-meta-actions flex items-center'>
           <li>
             <Link href={`/bookmark/edit/${data.id}`}>
               <a>Edit</a>
@@ -103,7 +105,7 @@ export const BookmarkItem: React.FC<{bookmark: BookMark}> = ({bookmark}) => {
           </li>
           <li>
             <Link href={`/archive/${data.link_id}`}>
-              <a target="_blank">Archive</a>
+              <a target='_blank'>Archive</a>
             </Link>
           </li>
         </ul>

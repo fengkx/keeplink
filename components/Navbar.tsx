@@ -1,16 +1,16 @@
-import React, {useRef} from 'react';
-import {useClickAway} from 'react-use';
-import Link from 'next/link';
 import styles from '@/components/Navbar.module.css';
-import {LogOut, Menu, Settings, User} from 'react-feather';
-import type {user_role} from '@prisma/client';
 import MainSearch from '@/components/Search';
+import type { user_role } from '@prisma/client';
+import Link from 'next/link';
+import React, { useRef } from 'react';
+import { LogOut, Menu, Settings, User } from 'react-feather';
+import { useClickAway } from 'react-use';
 
 export const Navbar: React.FC<
   React.HTMLAttributes<HTMLDivElement> & {
     userRole: user_role;
   }
-> = ({userRole}) => {
+> = ({ userRole }) => {
   const dropdownRef = useRef(null);
   const menuToggler = useRef<HTMLInputElement>(null);
   useClickAway(
@@ -20,11 +20,12 @@ export const Navbar: React.FC<
         menuToggler.current.checked = false;
       }
     },
-    ['click']
+    ['click'],
   );
   return (
     <nav className={'flex flex-row justify-between mb-10'}>
-      <style jsx>{`
+      <style jsx>
+        {`
         #nav-menu-toggler:checked ~ .dropdown {
           display: block;
         }
@@ -35,63 +36,64 @@ export const Navbar: React.FC<
         h1 {
           font-family: 'Work Sans', sans-serif;
         }
-      `}</style>
-      <div className="heading flex items-center">
-        <Link href="/">
-          <a className="flex items-center">
-            <h1 className="ml-2 text-2xl text-brand-800">KeepLink</h1>
+      `}
+      </style>
+      <div className='heading flex items-center'>
+        <Link href='/'>
+          <a className='flex items-center'>
+            <h1 className='ml-2 text-2xl text-brand-800'>KeepLink</h1>
           </a>
         </Link>
       </div>
       <MainSearch />
-      <div className="nav-items hidden sm:flex flex-row justify-end">
-        <Link href="/user/settings">
+      <div className='nav-items hidden sm:flex flex-row justify-end'>
+        <Link href='/user/settings'>
           <a className={styles.navItem}>
-            <Settings className="inline mr-1" size={'1em'} />
+            <Settings className='inline mr-1' size={'1em'} />
             Setting
           </a>
         </Link>
         {userRole === 'admin' && (
-          <Link href="/admin/users">
+          <Link href='/admin/users'>
             <a className={styles.navItem}>
-              <User className="inline mr-1" size={'1em'} />
+              <User className='inline mr-1' size={'1em'} />
               Admin
             </a>
           </Link>
         )}
-        <Link href="/logout">
+        <Link href='/logout'>
           <a className={styles.navItem}>
-            <LogOut className="inline mr-1" size={'1em'} />
+            <LogOut className='inline mr-1' size={'1em'} />
             Logout
           </a>
         </Link>
       </div>
-      <div className="nav-items flex sm:hidden flex-row justify-end">
-        <Link href="/user/settings">
+      <div className='nav-items flex sm:hidden flex-row justify-end'>
+        <Link href='/user/settings'>
           <a className={`${styles.navItem} cursor-pointer`}>
-            <Settings className="inline" size={'1em'} />
+            <Settings className='inline' size={'1em'} />
           </a>
         </Link>
         <div
           className={`nav-dropdown ${styles.navItem} relative`}
-          style={{padding: 0}}
+          style={{ padding: 0 }}
           ref={dropdownRef}
         >
           <input
-            className="hidden"
-            type="checkbox"
-            id="nav-menu-toggler"
+            className='hidden'
+            type='checkbox'
+            id='nav-menu-toggler'
             ref={menuToggler}
           />
           <label
-            className="px-2 py-0.5 cursor-pointer"
-            htmlFor="nav-menu-toggler"
+            className='px-2 py-0.5 cursor-pointer'
+            htmlFor='nav-menu-toggler'
           >
             <a>
-              <Menu className="inline" size={'1em'} />
+              <Menu className='inline' size={'1em'} />
             </a>
           </label>
-          <ul className="dropdown hidden menu absolute right-2 top-14 shadow-md w-40 z-20 bg-white">
+          <ul className='dropdown hidden menu absolute right-2 top-14 shadow-md w-40 z-20 bg-white'>
             {userRole === 'admin' && (
               <li>
                 <Link href={'/admin/users'}>

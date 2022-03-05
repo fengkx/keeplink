@@ -1,12 +1,12 @@
-import {useNow} from '@/utils/useNow';
-import {useCallback, useEffect, useMemo, useRef} from 'react';
-import {formatDistance} from 'date-fns';
-import {useLocalStorage} from 'react-use';
+import { useNow } from '@/utils/useNow';
+import { formatDistance } from 'date-fns';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useLocalStorage } from 'react-use';
 
 export const useFormatTime = () => {
   const now = useNow();
   return useCallback((timestamp) => {
-    return formatDistance(new Date(timestamp * 1000), now, {addSuffix: true});
+    return formatDistance(new Date(timestamp * 1000), now, { addSuffix: true });
   }, []);
 };
 
@@ -16,7 +16,7 @@ export const useAutoRefreshToken = () => {
   const [value, setValue] = useLocalStorage('supabase.auth.token', undefined, {
     raw: false,
     serializer: JSON.stringify,
-    deserializer: JSON.parse
+    deserializer: JSON.parse,
   });
 
   const timeoutMillSeconds = useMemo(() => {
@@ -28,7 +28,7 @@ export const useAutoRefreshToken = () => {
   }, [value]);
 
   const doRefresh = useCallback(async () => {
-    const {refresh_token: refreshToken} = value.currentSession;
+    const { refresh_token: refreshToken } = value.currentSession;
     if (!refreshToken) {
       throw new Error('No current session.');
     }
@@ -38,13 +38,13 @@ export const useAutoRefreshToken = () => {
       headers: {
         'Content-Type': 'text/plain;charset=UTF-8',
         apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`
+        authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`,
       },
-      body: JSON.stringify({refresh_token: refreshToken})
+      body: JSON.stringify({ refresh_token: refreshToken }),
     });
     const data = await resp.json();
 
-    const session = {...data};
+    const session = { ...data };
     if (session.expires_in) {
       const timeNow = Math.round(Date.now() / 1000);
 
@@ -53,13 +53,13 @@ export const useAutoRefreshToken = () => {
 
     fetch('/api/auth', {
       method: 'POST',
-      headers: new Headers({'Content-Type': 'application/json'}),
+      headers: new Headers({ 'Content-Type': 'application/json' }),
       credentials: 'same-origin',
-      body: JSON.stringify({event: 'SIGNED_IN', session})
+      body: JSON.stringify({ event: 'SIGNED_IN', session }),
     }).catch((error) => {
       console.error(error);
     });
-    setValue({currentSession: session, expiresAt: session.expires_at});
+    setValue({ currentSession: session, expiresAt: session.expires_at });
   }, [authUrl, value, setValue]);
 
   useEffect(() => {

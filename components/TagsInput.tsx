@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Tags, { TagifyBaseReactProps } from '@yaireo/tagify/dist/react.tagify';
-import '@yaireo/tagify/dist/tagify.css';
 import { apiCall } from '@/utils/api-call';
-import { useDebounce } from 'react-use';
 import { Tag } from '@prisma/client';
 import Tagify from '@yaireo/tagify';
+import Tags, { TagifyBaseReactProps } from '@yaireo/tagify/dist/react.tagify';
+import '@yaireo/tagify/dist/tagify.css';
+import React, { useEffect, useRef, useState } from 'react';
+import { useDebounce } from 'react-use';
 
 export function TagsInput({
   className,
@@ -21,7 +21,7 @@ export function TagsInput({
       setDebouncedInput(input);
     },
     300,
-    [input]
+    [input],
   );
   const tagifyRef = useRef<Tagify<Tagify.TagData>>();
   useEffect(() => {
@@ -35,7 +35,7 @@ export function TagsInput({
           tagify?.settings?.whitelist?.splice(
             0,
             whitelist.length,
-            ...tags.map((t: Tag) => t.tag)
+            ...tags.map((t: Tag) => t.tag),
           );
         }
       } catch (error) {

@@ -1,17 +1,17 @@
+import { prisma } from '@/db/prisma';
+import { supabase } from '@/db/supabase';
+import { apiCall } from '@/utils/api-call';
+import { getOneParamFromQuery } from '@/utils/query-param';
+import type { user_role } from '@prisma/client';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { Button } from '@supabase/ui';
+import { GetServerSideProps } from 'next';
 import React from 'react';
-import {GetServerSideProps} from 'next';
-import type {User as SupabaseUser} from '@supabase/supabase-js';
-import type {user_role} from '@prisma/client';
-import {useForm} from 'react-hook-form';
-import {useToasts} from 'react-toast-notifications';
-import {Button} from '@supabase/ui';
-import {getOneParamFromQuery} from '@/utils/query-param';
-import {apiCall} from '@/utils/api-call';
-import {supabase} from '@/db/supabase';
-import {prisma} from '@/db/prisma';
+import { useForm } from 'react-hook-form';
+import { useToasts } from 'react-toast-notifications';
 
+import { AdminLayout } from '@/components/AdminLayout';
 import styles from '@/styles/Form.module.css';
-import {AdminLayout} from '@/components/AdminLayout';
 
 type FormInput = {
   role: user_role;
@@ -21,18 +21,18 @@ type Props = {
   editedUser: User;
 };
 
-export default function EditUser({user, editedUser}: Props) {
+export default function EditUser({ user, editedUser }: Props) {
   const form = useForm<FormInput>({
     defaultValues: {
       role: editedUser.role,
     },
   });
-  const {register, handleSubmit} = form;
+  const { register, handleSubmit } = form;
   const toast = useToasts();
   const onSubmit = handleSubmit(
     async (data) => {
-      const {role} = data;
-      const payload = {role};
+      const { role } = data;
+      const payload = { role };
       try {
         await apiCall(`/api/users/${editedUser.id}`, {
           method: 'PUT',
@@ -42,9 +42,9 @@ export default function EditUser({user, editedUser}: Props) {
       } catch (error: any) {
         const data = await error.response.json();
         if (data.errors) {
-          toast.addToast(data.errors[0].message, {appearance: 'error'});
+          toast.addToast(data.errors[0].message, { appearance: 'error' });
         } else {
-          toast.addToast(error.message, {appearance: 'error'});
+          toast.addToast(error.message, { appearance: 'error' });
         }
       }
     },
@@ -58,7 +58,8 @@ export default function EditUser({user, editedUser}: Props) {
   return (
     <AdminLayout userRole={user.user_metadata.role}>
       <form onSubmit={onSubmit}>
-        <style jsx>{`
+        <style jsx>
+          {`
           input[type='password'] {
             width: 20em;
           }
@@ -66,19 +67,20 @@ export default function EditUser({user, editedUser}: Props) {
           input[name='size'] {
             width: 6rem;
           }
-        `}</style>
-        <div className="flex flex-col max-w-5xl mx-auto w-full">
+        `}
+        </style>
+        <div className='flex flex-col max-w-5xl mx-auto w-full'>
           <label className={styles.label}>Role</label>
           <select {...register('role')} className={`${styles.input} w-32`}>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
+            <option value='admin'>Admin</option>
+            <option value='user'>User</option>
           </select>
           <div>
             <Button
               size={'medium'}
-              type="primary"
-              className="mr-2"
-              role="submit"
+              type='primary'
+              className='mr-2'
+              role='submit'
             >
               Update
             </Button>
@@ -101,13 +103,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
   params,
 }) => {
-  const {user} = await supabase.auth.api.getUserByCookie(req);
+  const { user } = await supabase.auth.api.getUserByCookie(req);
   if (!user) {
-    return {props: {}, redirect: {destination: '/signin', permanent: false}};
+    return { props: {}, redirect: { destination: '/signin', permanent: false } };
   }
 
   if (user.user_metadata.role !== 'admin') {
-    return {props: {user}, redirect: {destination: '/', permanent: false}};
+    return { props: { user }, redirect: { destination: '/', permanent: false } };
   }
 
   const uid = getOneParamFromQuery(params!, 'uid');

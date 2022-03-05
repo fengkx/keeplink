@@ -1,4 +1,4 @@
-import type {ParsedUrlQuery} from 'querystring';
+import type { ParsedUrlQuery } from 'querystring';
 
 export function getPagination(query: ParsedUrlQuery) {
   let page = query.page ?? '1';
@@ -8,6 +8,6 @@ export function getPagination(query: ParsedUrlQuery) {
 
   return {
     page: Number.parseInt(page, 10),
-    size: Number.parseInt(size, 10)
+    size: Number.parseInt(size, 10),
   };
 }

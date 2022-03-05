@@ -18,7 +18,7 @@ It doesn't have any social sharing featrue and You can [host your own instance](
 
 ## Demo Site
 
-Site: https://app.keeplink.cc  
+Site: https://app.keeplink.cc\
 Account email and password is `demo@keelink.cc`
 
 It is not a admin account, some admin feature like tag alias management are missing.
@@ -31,6 +31,5 @@ KeepLink is build with Supabase stack and Next.js, But It cannot depoly directly
 2. Vercel's API route has [10 seconds runtime limit](https://vercel.com/docs/platform/limits?query=limit#general-limits) for its hobby plain. Archiving page with headless chrome might reach this limit. Maybe it can be solved by [Supabase Workflows](https://supabase.io/blog/2021/04/02/supabase-workflows).
 
 [Detail Self Hosting Guide](https://github.com/fengkx/keeplink/wiki/Self-Hosting)
-
 
 More infomation is in https://github.com/fengkx/keeplink/wiki

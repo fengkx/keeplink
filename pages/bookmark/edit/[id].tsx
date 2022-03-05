@@ -1,22 +1,22 @@
-import React from 'react';
-import {Layout} from '@/components/Layout';
-import {GetServerSideProps} from 'next';
-import {supabase} from '@/db/supabase';
-import {prisma} from '@/db/prisma';
-import {Button} from '@supabase/ui';
-import {Controller, useForm} from 'react-hook-form';
-import {apiCall} from '@/utils/api-call';
-import {useRouter} from 'next/router';
-import {decode as decodeHtml} from 'he';
-import {User} from '@supabase/supabase-js';
-import {useToasts} from 'react-toast-notifications';
+import { Layout } from '@/components/Layout';
+import { TagsInput } from '@/components/TagsInput';
+import { prisma } from '@/db/prisma';
+import { supabase } from '@/db/supabase';
+import { apiCall } from '@/utils/api-call';
+import type { Tag } from '@prisma/client';
+import { User } from '@supabase/supabase-js';
+import { Button } from '@supabase/ui';
+import { decode as decodeHtml } from 'he';
+import { GetServerSideProps } from 'next';
 import Error from 'next/error';
-import {TagsInput} from '@/components/TagsInput';
-import type {Tag} from '@prisma/client';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { useToasts } from 'react-toast-notifications';
 
 import styles from '@/styles/Form.module.css';
 
-const Edit: React.FC<Props> = ({bookmark, user}) => {
+const Edit: React.FC<Props> = ({ bookmark, user }) => {
   type FormInput = {
     title: string;
     description: string;
@@ -26,32 +26,32 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
     defaultValues: {
       title: bookmark?.title ?? '',
       description: bookmark?.description ?? '',
-      tags: JSON.stringify(bookmark?.tags.map((t) => t.tag))
-    }
+      tags: JSON.stringify(bookmark?.tags.map((t) => t.tag)),
+    },
   });
   const router = useRouter();
   const toast = useToasts();
-  const {register, handleSubmit, control} = form;
+  const { register, handleSubmit, control } = form;
   const onSubmit = handleSubmit(async (data) => {
     try {
       const payload = {
         ...data,
         tags: Array.isArray(data.tags)
           ? data.tags
-          : JSON.parse(data.tags || '[]').map((t: {value: any} | string) => (typeof t === 'string' ? t : t.value))
+          : JSON.parse(data.tags || '[]').map((t: { value: any } | string) => (typeof t === 'string' ? t : t.value)),
       };
       console.log(payload);
       await apiCall(`/api/bookmarks/${bookmark?.id}`, {
         method: 'PUT',
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
       router.back();
     } catch (error: any) {
       const data = await error.response.json();
       if (data.errors) {
-        toast.addToast(data.errors[0].message, {appearance: 'error'});
+        toast.addToast(data.errors[0].message, { appearance: 'error' });
       } else {
-        toast.addToast(error.message, {appearance: 'error'});
+        toast.addToast(error.message, { appearance: 'error' });
       }
     }
   });
@@ -63,33 +63,33 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
     <Layout userRole={user.user_metadata.role}>
       <form
         onSubmit={onSubmit}
-        className="form flex flex-col h-96 justify-between"
+        className='form flex flex-col h-96 justify-between'
       >
-        <div className="flex flex-col max-w-5xl mx-auto w-full">
+        <div className='flex flex-col max-w-5xl mx-auto w-full'>
           <div className={styles.label}>URL</div>
-          <p className={`${styles.input} bg-gray-100`} id="url">
+          <p className={`${styles.input} bg-gray-100`} id='url'>
             {bookmark.url}
           </p>
-          <label htmlFor="title" className={styles.label}>
+          <label htmlFor='title' className={styles.label}>
             Title
           </label>
           <input className={styles.input} {...register('title')} />
-          <label htmlFor="description" className={styles.label}>
+          <label htmlFor='description' className={styles.label}>
             Description
           </label>
           <textarea
             className={`h-28 ${styles.input}`}
             {...register('description')}
           />
-          <label htmlFor="tags" className={styles.label}>
+          <label htmlFor='tags' className={styles.label}>
             Tags
           </label>
           <Controller
             control={control}
-            render={({field}) => {
+            render={({ field }) => {
               return (
                 <TagsInput
-                  onChange={(ev: {detail: {value: any}}) => {
+                  onChange={(ev: { detail: { value: any } }) => {
                     field.onChange(ev.detail.value);
                   }}
                   onBlur={field.onBlur}
@@ -102,17 +102,17 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
                     dropdown: {
                       caseSensitive: true,
                       maxItems: 20,
-                      enabled: 0
+                      enabled: 0,
                     },
-                    placeholder: 'Add Tags'
+                    placeholder: 'Add Tags',
                   }}
                 />
               );
             }}
-            name="tags"
+            name='tags'
           />
           <div>
-            <Button type="primary" className="mr-2" role="submit">
+            <Button type='primary' className='mr-2' role='submit'>
               Submit
             </Button>
             <Button
@@ -120,7 +120,7 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
                 event.preventDefault();
                 router.back();
               }}
-              type="secondary"
+              type='secondary'
             >
               Cancel
             </Button>
@@ -149,17 +149,17 @@ type Query = {
 };
 export const getServerSideProps: GetServerSideProps<Props, Query> = async ({
   req,
-  params
+  params,
 }) => {
-  const {user} = await supabase.auth.api.getUserByCookie(req);
+  const { user } = await supabase.auth.api.getUserByCookie(req);
   const id = Number.parseInt(params!.id, 10);
   if (!user) {
-    return {props: {}, redirect: {destination: '/signin', permanent: false}};
+    return { props: {}, redirect: { destination: '/signin', permanent: false } };
   }
 
   const data = await prisma.bookmark.findUnique({
     where: {
-      id
+      id,
     },
     select: {
       id: true,
@@ -172,20 +172,20 @@ export const getServerSideProps: GetServerSideProps<Props, Query> = async ({
         select: {
           title: true,
           url: true,
-          description: true
-        }
+          description: true,
+        },
       },
       tags: {
         select: {
           tag: {
             select: {
               id: true,
-              tag: true
-            }
-          }
-        }
-      }
-    }
+              tag: true,
+            },
+          },
+        },
+      },
+    },
   });
   if (data) {
     const bookmark = {
@@ -196,18 +196,18 @@ export const getServerSideProps: GetServerSideProps<Props, Query> = async ({
       title: data.title ?? data.link.title,
       description: decodeHtml(data.description ?? data.link.description ?? ''),
       url: data.link.url,
-      tags: data.tags.map((t) => ({tag: t.tag.tag, id: t.tag.id}))
+      tags: data.tags.map((t) => ({ tag: t.tag.tag, id: t.tag.id })),
     };
     return {
       props: {
         user,
-        bookmark
-      }
+        bookmark,
+      },
     };
   }
 
   return {
-    props: {user}
+    props: { user },
   };
 };
 

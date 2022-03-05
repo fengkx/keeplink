@@ -1,59 +1,59 @@
-import {supabase} from '@/db/supabase';
-import {User} from '@supabase/supabase-js';
-import React, {useEffect, useMemo, useState} from 'react';
-import {Layout} from '@/components/Layout';
-import {GetServerSideProps} from 'next';
+import { BookmarkList } from '@/components/BookmarkList';
+import { Layout } from '@/components/Layout';
+import { Pagination } from '@/components/Pagination';
 import QuickAdd from '@/components/QuickAdd';
-import {BookmarkList} from '@/components/BookmarkList';
-import {prisma} from '@/db/prisma';
-import {getPagination} from '@/utils/get-pagination';
-import {decode as htmlDecode} from 'he';
-import {apiCall} from '@/utils/api-call';
+import type { Tag } from '@/components/TagCloud';
+import { TagCloud } from '@/components/TagCloud';
+import { prisma } from '@/db/prisma';
+import { supabase } from '@/db/supabase';
+import { apiCall } from '@/utils/api-call';
+import { getPagination } from '@/utils/get-pagination';
+import { User } from '@supabase/supabase-js';
+import { decode as htmlDecode } from 'he';
+import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useToasts } from 'react-toast-notifications';
 import useSWR from 'swr';
-import type {Tag} from '@/components/TagCloud';
-import {TagCloud} from '@/components/TagCloud';
-import {useRouter} from 'next/router';
-import {useToasts} from 'react-toast-notifications';
-import {Pagination} from '@/components/Pagination';
 
 function useTagCloud() {
-  const {data, error} = useSWR('/api/tags?tagcloud=1', async (key: string) => {
+  const { data, error } = useSWR('/api/tags?tagcloud=1', async (key: string) => {
     const resp = await apiCall(key);
     return resp.json();
   });
   return {
-    tags: (data ?? [].map((tag) => ({tag}))) as Tag[],
-    error
+    tags: (data ?? [].map((tag) => ({ tag }))) as Tag[],
+    error,
   };
 }
 
-const Home: React.FC<Props> = ({bookmarks, user}) => {
+const Home: React.FC<Props> = ({ bookmarks, user }) => {
   const [bookmarkList, setBookmarkList] = useState(bookmarks);
   useEffect(() => {
     setBookmarkList(bookmarks);
   }, [bookmarks]);
-  const {tags, error} = useTagCloud();
+  const { tags, error } = useTagCloud();
   const router = useRouter();
   const toast = useToasts();
   if (error) {
     toast.addToast((error.message as string) ?? 'Failed to load tagclound', {
-      appearance: 'error'
+      appearance: 'error',
     });
   }
 
   const pagination = useMemo(() => getPagination(router.query), [router.query]);
   return (
-    <Layout title="Bookmarks" userRole={user.user_metadata.role}>
-      <div className="max-w-5xl mx-auto">
+    <Layout title='Bookmarks' userRole={user.user_metadata.role}>
+      <div className='max-w-5xl mx-auto'>
         <QuickAdd
-          onSuccess={({bookmark}) => {
+          onSuccess={({ bookmark }) => {
             setBookmarkList([bookmark, ...bookmarkList]);
-            void router.push('/', {query: ''});
+            void router.push('/', { query: '' });
           }}
         />
       </div>
-      <div className="w-full lg:flex flex-row mt-6 justify-evenly lg:max-w-7xl mx-auto pb-6">
-        <section className="lg:w-2/3 xl:w-3/4 px-0 md:px-6 h-full">
+      <div className='w-full lg:flex flex-row mt-6 justify-evenly lg:max-w-7xl mx-auto pb-6'>
+        <section className='lg:w-2/3 xl:w-3/4 px-0 md:px-6 h-full'>
           <BookmarkList
             onDelete={(id) => {
               setBookmarkList(bookmarkList.filter((item) => item.id !== id));
@@ -67,9 +67,9 @@ const Home: React.FC<Props> = ({bookmarks, user}) => {
             size={pagination.size}
           />
         </section>
-        <section className="w-1/3 max-w-sm hidden lg:block pl-6">
-          <h2 className="border-b mb-3 pb-3 font-bold">Tags: </h2>
-          <TagCloud className="h-full" tagList={tags ?? []} />
+        <section className='w-1/3 max-w-sm hidden lg:block pl-6'>
+          <h2 className='border-b mb-3 pb-3 font-bold'>Tags:</h2>
+          <TagCloud className='h-full' tagList={tags ?? []} />
         </section>
       </div>
     </Layout>
@@ -94,24 +94,24 @@ export type Props = {
 };
 export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
-  query
+  query,
 }) => {
-  const {user} = await supabase.auth.api.getUserByCookie(req);
+  const { user } = await supabase.auth.api.getUserByCookie(req);
 
   if (!user) {
-    return {props: {}, redirect: {destination: '/signin', permanent: false}};
+    return { props: {}, redirect: { destination: '/signin', permanent: false } };
   }
 
-  const {page, size} = getPagination(query);
+  const { page, size } = getPagination(query);
 
   const data = await prisma.bookmark.findMany({
     take: size,
     skip: (page - 1) * size,
     where: {
-      user_id: user.id
+      user_id: user.id,
     },
     orderBy: {
-      createdAt: 'desc'
+      createdAt: 'desc',
     },
     select: {
       id: true,
@@ -125,11 +125,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
           description: true,
           url: true,
           id: true,
-          archive_stat: true
-        }
+          archive_stat: true,
+        },
       },
-      cached_tags_name: true
-    }
+      cached_tags_name: true,
+    },
   });
   const bookmarks = data.map((item) => ({
     id: item.id,
@@ -139,13 +139,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({
     url: item.link.url,
     createdAt: Math.floor(item.createdAt.getTime() / 1000),
     archive_stat: item.link.archive_stat,
-    tags: item.cached_tags_name?.split(',') ?? []
+    tags: item.cached_tags_name?.split(',') ?? [],
   }));
   return {
     props: {
       user,
-      bookmarks
-    }
+      bookmarks,
+    },
   };
 };
 

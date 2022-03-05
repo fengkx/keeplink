@@ -1,13 +1,13 @@
-import {NextApiRequest, NextApiResponse} from 'next';
-import {restful, RestfulApiHandler} from '@/utils/rest-helper';
-import {getPagination} from '@/utils/get-pagination';
-import {prisma} from '@/db/prisma';
-import type {Prisma} from '@prisma/client';
-import {getOneParamFromQuery} from '@/utils/query-param';
+import { prisma } from '@/db/prisma';
+import { getPagination } from '@/utils/get-pagination';
+import { getOneParamFromQuery } from '@/utils/query-param';
+import { restful, RestfulApiHandler } from '@/utils/rest-helper';
+import type { Prisma } from '@prisma/client';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 const read: RestfulApiHandler = async (req, res, user) => {
-  const {page, size} = getPagination(req.query);
-  const {tagcloud} = req.query;
+  const { page, size } = getPagination(req.query);
+  const { tagcloud } = req.query;
   const q = getOneParamFromQuery(req.query, 'q');
   const start = getOneParamFromQuery(req.query, 'start');
   if (tagcloud) {
@@ -19,9 +19,7 @@ const read: RestfulApiHandler = async (req, res, user) => {
                                                where user_id = ${user.id}
                                                group by (tag)
                                                order by cnt desc
-                                               offset ${
-                                                 page - 1
-                                               } limit ${size};`;
+                                               offset ${page - 1} limit ${size};`;
     res.status(200).json(result);
     return;
   }
@@ -59,15 +57,15 @@ const read: RestfulApiHandler = async (req, res, user) => {
       OR: [
         {
           tag: {
-            equals: q.toString()
-          }
+            equals: q.toString(),
+          },
         },
         {
           alias: {
-            has: q.toString()
-          }
-        }
-      ]
+            has: q.toString(),
+          },
+        },
+      ],
     };
   }
 
@@ -78,12 +76,12 @@ const read: RestfulApiHandler = async (req, res, user) => {
     select: {
       tag: true,
       id: true,
-      alias: true
-    }
+      alias: true,
+    },
   });
   res.status(200).json(result);
 };
 
 export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {read});
+  return restful({ req, res }, { read });
 }

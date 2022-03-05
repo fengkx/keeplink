@@ -1,12 +1,12 @@
-import {useRouter} from 'next/router';
-import {apiCall} from '@/utils/api-call';
-import {useEffect, useState} from 'react';
-import {useToggle} from 'react-use';
+import { apiCall } from '@/utils/api-call';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { useToggle } from 'react-use';
 
+import { supabase } from '@/db/supabase';
+import { RealtimeSubscription } from '@supabase/supabase-js';
 import 'placeholder-loading/dist/css/placeholder-loading.css';
-import {useToasts} from 'react-toast-notifications';
-import {RealtimeSubscription} from '@supabase/supabase-js';
-import {supabase} from '@/db/supabase';
+import { useToasts } from 'react-toast-notifications';
 
 type Props = {
   archive_stat: 'pending' | 'archived';
@@ -38,7 +38,7 @@ const Archive: React.FC<Props> = () => {
         toggleLoading(true);
         try {
           const resp = await apiCall(`/api/links/archive/${id}`, {
-            method: 'POST'
+            method: 'POST',
           });
           const data = await resp.json();
           if (loading) {
@@ -53,7 +53,7 @@ const Archive: React.FC<Props> = () => {
           const data = await error.response.json();
           toast.addToast(data.error, {
             appearance: 'error',
-            autoDismiss: false
+            autoDismiss: false,
           });
         }
       }
@@ -87,21 +87,21 @@ const Archive: React.FC<Props> = () => {
   }, [html, loading]);
   if (loading) {
     return (
-      <div className="container h-screen mx-auto">
-        <div className="ph-item h-full">
-          <div className="ph-col-12">
-            {[...Array.from({length: 3}).keys()].map((key) => (
-              <div key={key} className="h-1/3">
-                <div className="ph-picture" />
-                <div className="ph-row">
-                  <div className="ph-col-6 big" />
-                  <div className="ph-col-4 empty big" />
-                  <div className="ph-col-2 big" />
-                  <div className="ph-col-4" />
-                  <div className="ph-col-8 empty" />
-                  <div className="ph-col-6" />
-                  <div className="ph-col-6 empty" />
-                  <div className="ph-col-12" />
+      <div className='container h-screen mx-auto'>
+        <div className='ph-item h-full'>
+          <div className='ph-col-12'>
+            {[...Array.from({ length: 3 }).keys()].map((key) => (
+              <div key={key} className='h-1/3'>
+                <div className='ph-picture' />
+                <div className='ph-row'>
+                  <div className='ph-col-6 big' />
+                  <div className='ph-col-4 empty big' />
+                  <div className='ph-col-2 big' />
+                  <div className='ph-col-4' />
+                  <div className='ph-col-8 empty' />
+                  <div className='ph-col-6' />
+                  <div className='ph-col-6 empty' />
+                  <div className='ph-col-12' />
                 </div>
               </div>
             ))}

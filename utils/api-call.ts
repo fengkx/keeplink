@@ -1,6 +1,6 @@
 export async function apiCall(
   entryPoint: string,
-  init?: RequestInit
+  init?: RequestInit,
 ): Promise<Response> {
   const isServer = typeof window === 'undefined';
   const url = isServer
@@ -8,9 +8,9 @@ export async function apiCall(
     : entryPoint;
   const resp = await fetch(url, {
     headers: {
-      'content-type': 'application/json'
+      'content-type': 'application/json',
     },
-    ...init
+    ...init,
   });
   if (resp.status === 404) {
     throw new Error('404');

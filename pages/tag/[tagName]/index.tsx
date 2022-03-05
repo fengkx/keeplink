@@ -1,16 +1,13 @@
-import {decode as htmlDecode} from 'he';
-import {
-  BookMark,
-  getServerSideProps as noSearchServerSideProps,
-} from '@/pages/index';
-import {supabase} from '@/db/supabase';
-import {getPagination} from '@/utils/get-pagination';
-import {prisma} from '@/db/prisma';
+import { prisma } from '@/db/prisma';
+import { supabase } from '@/db/supabase';
+import { BookMark, getServerSideProps as noSearchServerSideProps } from '@/pages/index';
+import { getPagination } from '@/utils/get-pagination';
+import { decode as htmlDecode } from 'he';
 
 export const getServerSideProps: typeof noSearchServerSideProps = async (
   ctx,
 ) => {
-  const {req, query} = ctx;
+  const { req, query } = ctx;
   const tagName = Array.isArray(query.tagName)
     ? query.tagName[0]
     : query.tagName;
@@ -18,12 +15,12 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
     return noSearchServerSideProps(ctx);
   }
 
-  const {user} = await supabase.auth.api.getUserByCookie(req);
+  const { user } = await supabase.auth.api.getUserByCookie(req);
   if (!user) {
-    return {props: {}, redirect: {destination: '/signin', permanent: false}};
+    return { props: {}, redirect: { destination: '/signin', permanent: false } };
   }
 
-  const {page, size} = getPagination(query);
+  const { page, size } = getPagination(query);
 
   const results = await prisma.$queryRaw<BookMark[]>`select bookmarks.id,
                 bookmarks.link_id,
@@ -56,4 +53,4 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
 };
 
 // eslint-disable-next-line no-restricted-exports
-export {default} from '@/pages/index';
+export { default } from '@/pages/index';

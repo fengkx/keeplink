@@ -1,9 +1,9 @@
-import {Input} from '@supabase/ui';
-import {Search} from 'react-feather';
-import React, {useEffect, useMemo, useState} from 'react';
 import styles from '@/components/Navbar.module.css';
-import {useRouter} from 'next/router';
-import {getOneParamFromQuery} from '@/utils/query-param';
+import { getOneParamFromQuery } from '@/utils/query-param';
+import { Input } from '@supabase/ui';
+import { useRouter } from 'next/router';
+import React, { useEffect, useMemo, useState } from 'react';
+import { Search } from 'react-feather';
 
 const MainSearch: React.FC<React.HTMLAttributes<HTMLInputElement>> = () => {
   const [search, setSearch] = useState('');
@@ -16,7 +16,7 @@ const MainSearch: React.FC<React.HTMLAttributes<HTMLInputElement>> = () => {
     let path = `${router.pathname === '/' ? '/bookmark' : router.pathname}`;
     if (search) {
       path += '?';
-      path += new URLSearchParams({q: search}).toString();
+      path += new URLSearchParams({ q: search }).toString();
     }
 
     return path;
@@ -27,21 +27,21 @@ const MainSearch: React.FC<React.HTMLAttributes<HTMLInputElement>> = () => {
         ev.preventDefault();
         void router.push(searchPath);
       }}
-      className="pl-2 lg:pl-3 flex items-center flex-1"
+      className='pl-2 lg:pl-3 flex items-center flex-1'
       action={`${router.pathname} === '/` ? '/bookmark' : router.pathname}
-      method="GET"
+      method='GET'
     >
-      <div className="relative flex items-center w-full">
-        <Search className="absolute" size={'1em'} style={{zIndex: 1000}} />
+      <div className='relative flex items-center w-full'>
+        <Search className='absolute' size={'1em'} style={{ zIndex: 1000 }} />
         <Input
           value={search}
           onChange={(ev) => {
             setSearch(ev.target.value);
           }}
-          placeholder="Search"
+          placeholder='Search'
           size={'small'}
-          type="search"
-          name="q"
+          type='search'
+          name='q'
           className={styles.searchInput}
         />
       </div>
