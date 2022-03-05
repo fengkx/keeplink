@@ -7,6 +7,7 @@ specifiers:
   '@emotion/styled': ^11.8.1
   '@metascraper/helpers': ^5.25.8
   '@next/bundle-analyzer': ^12.1.0
+  '@next/eslint-plugin-next': ^12.1.0
   '@prisma/client': ^3.10.0
   '@supabase/supabase-js': ^1.30.7
   '@supabase/ui': ^0.36.4
@@ -93,6 +94,7 @@ dependencies:
   zod: 3.13.4
 
 devDependencies:
+  '@next/eslint-plugin-next': 12.1.0
   '@types/cookie': 0.4.1
   '@types/he': 1.1.2
   '@types/react': 17.0.39
@@ -2317,6 +2319,12 @@ packages:
     resolution: {integrity: sha512-nrIgY6t17FQ9xxwH3jj0a6EOiQ/WDHUos35Hghtr+SWN/ntHIQ7UpuvSi0vaLzZVHQWaDupKI+liO5vANcDeTQ==}
     dev: false
 
+  /@next/eslint-plugin-next/12.1.0:
+    resolution: {integrity: sha512-WFiyvSM2G5cQmh32t/SiQuJ+I2O+FHVlK/RFw5b1565O2kEM/36EXncjt88Pa+X5oSc+1SS+tWxowWJd1lqI+g==}
+    dependencies:
+      glob: 7.1.7
+    dev: true
+
   /@next/swc-android-arm64/12.1.0:
     resolution: {integrity: sha512-/280MLdZe0W03stA69iL+v6I+J1ascrQ6FrXBlXGCsGzrfMaGr7fskMa0T5AhQIVQD4nA/46QQWxG//DYuFBcA==}
     engines: {node: '>= 10'}
@@ -4473,6 +4481,17 @@ packages:
     engines: {node: '>=10.13.0'}
     dependencies:
       is-glob: 4.0.3
+    dev: true
+
+  /glob/7.1.7:
+    resolution: {integrity: sha512-OvD9ENzPLbegENnYP5UUfJIirTg4+XwMWGaQfQTY0JenxNvvIKP3U3/tAQSPIu/lHxXYSZmpXlUHeqAIdKzBLQ==}
+    dependencies:
+      fs.realpath: 1.0.0
+      inflight: 1.0.6
+      inherits: 2.0.4
+      minimatch: 3.1.2
+      once: 1.4.0
+      path-is-absolute: 1.0.1
     dev: true
 
   /glob/7.2.0:
