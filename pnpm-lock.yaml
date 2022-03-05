@@ -43,8 +43,8 @@ specifiers:
   postcss: ^8.4.7
   prettier: ^2.5.1
   prisma: ^3.10.0
-  react: '17'
-  react-dom: '17'
+  react: ^17.0.2
+  react-dom: ^17.0.2
   react-feather: ^2.0.9
   react-hook-form: ^7.27.1
   react-icons: ^4.3.1
@@ -55,7 +55,7 @@ specifiers:
   tailwindcss: ^3.0.23
   ts-node: ^10.6.0
   typescript: ^4.6.2
-  user-agents: ^1.0.945
+  user-agents: ^1.0.946
   zod: ^3.13.4
 
 dependencies:
@@ -90,7 +90,7 @@ dependencies:
   react-use: 17.3.2_react-dom@17.0.2+react@17.0.2
   single-file: github.com/gildas-lormeau/SingleFile/69a69a8f0a0bb4631fb2a327884d0df4fe9d492e
   swr: 1.2.2_react@17.0.2
-  user-agents: 1.0.945
+  user-agents: 1.0.946
   zod: 3.13.4
 
 devDependencies:
@@ -2972,7 +2972,7 @@ packages:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.2
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -4208,7 +4208,7 @@ packages:
     engines: {node: '>= 10.17.0'}
     hasBin: true
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.2
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
@@ -4649,7 +4649,7 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.3
+      debug: 4.3.2
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -7291,8 +7291,8 @@ packages:
       react: 17.0.2
     dev: false
 
-  /user-agents/1.0.945:
-    resolution: {integrity: sha512-dbmgtxeWzyyI10dKeWt3xBhbobkDf4qqWe1T1SzJ5ATRfgPokrt8zri29AZCHtzJRuXk96+s7OhV+UPJZ39UFA==}
+  /user-agents/1.0.946:
+    resolution: {integrity: sha512-bMWsWzsThbPk4sh97ZfniMXd5ybcki33lzu2M86b1QXBnsLZC3kGj3X1j5MKNKH0geMD7aUPJWzSRajnOW6YwA==}
     dependencies:
       dot-json: 1.2.2
       lodash.clonedeep: 4.5.0

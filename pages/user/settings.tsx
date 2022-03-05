@@ -143,13 +143,15 @@ const Settings: React.FC<Props> = ({ user, userData }) => {
               className='mt-2 mt-0 md:ml-4 md:pt-1 md:-mb-1'
               onClick={async (ev) => {
                 ev.preventDefault();
-                const { data, error } = await supabase.rpc('gen_random_uuid');
+                const { data, error } = await supabase.rpc<string>('gen_random_uuid');
+
                 if (error) {
                   toast({ description: error.message, status: 'error' });
                   return;
                 }
 
-                form.setValue('api_token', data![0].gen_random_uuid, {
+                // @ts-expect-error @supabase/supabase-js 1.30.7 return data as non array value
+                form.setValue('api_token', data, {
                   shouldDirty: true,
                 });
               }}
