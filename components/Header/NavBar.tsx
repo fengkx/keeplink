@@ -72,50 +72,52 @@ function NavContetent({ userRole }: NavBarProps) {
           </Flex>
 
           <ButtonGroup variant="ghost" size="md" display={['none', 'block']}>
-            <NextLink href="/user/settings">
+            <NextLink href="/user/settings" passHref>
               <Button leftIcon={<Icon as={MdOutlineSettings} />} >
                 Setting
               </Button>
             </NextLink>
             {userRole === 'admin'
-              && <NextLink href="/admin/users">
+              && <NextLink href="/admin/users" passHref>
                 <Button leftIcon={<Icon as={MdPersonOutline} />} >
                   Admin
                 </Button>
               </NextLink>
             }
-            <NextLink href="/logout">
+            <NextLink href="/logout" passHref>
               <Button leftIcon={<Icon as={MdOutlineLogout} />} aria-label="log out">
                 Logout
               </Button>
             </NextLink>
 
           </ButtonGroup>
-          <Menu isLazy>
-            <MenuButton as={IconButton} icon={<Icon as={MdMenu} />} variant="ghost" />
-            <Portal>
-              <MenuList >
-                <NextLink href="/user/settings">
-                  <MenuItem as={Link} icon={<Icon as={MdOutlineSettings} />}>
-                    Setting
-                  </MenuItem>
-                </NextLink>
-
-                {userRole === 'admin'
-                  && <NextLink href="/admin/users">
-                    <MenuItem as={Link} icon={<Icon as={MdPersonOutline} />}>
-                      Admin
+          <Box display={['block', 'none', 'none']}>
+            <Menu isLazy>
+              <MenuButton as={IconButton} icon={<Icon as={MdMenu} />} variant="ghost" />
+              <Portal>
+                <MenuList >
+                  <NextLink href="/user/settings" passHref>
+                    <MenuItem as={Link} icon={<Icon as={MdOutlineSettings} />}>
+                      Setting
                     </MenuItem>
                   </NextLink>
-                }
-                <NextLink href="/logout">
-                  <MenuItem as={Link} icon={<Icon as={MdOutlineLogout} />}>
-                    Logout
-                  </MenuItem>
-                </NextLink>
-              </MenuList>
-            </Portal>
-          </Menu>
+
+                  {userRole === 'admin'
+                    && <NextLink href="/admin/users" passHref>
+                      <MenuItem as={Link} icon={<Icon as={MdPersonOutline} />}>
+                        Admin
+                      </MenuItem>
+                    </NextLink>
+                  }
+                  <NextLink href="/logout" passHref>
+                    <MenuItem as={Link} icon={<Icon as={MdOutlineLogout} />}>
+                      Logout
+                    </MenuItem>
+                  </NextLink>
+                </MenuList>
+              </Portal>
+            </Menu>
+          </Box>
 
         </Flex>
       </Flex>
