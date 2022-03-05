@@ -28,42 +28,38 @@ export const useAutoRefreshToken = () => {
   }, [value]);
 
   const doRefresh = useCallback(async () => {
-    const {refresh_token} = value.currentSession;
-    if (!refresh_token) {
+    const {refresh_token: refreshToken} = value.currentSession;
+    if (!refreshToken) {
       throw new Error('No current session.');
     }
 
-    try {
-      const resp = await fetch(`${authUrl}/token?grant_type=refresh_token`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'text/plain;charset=UTF-8',
-          apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-          authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`
-        },
-        body: JSON.stringify({refresh_token})
-      });
-      const data = await resp.json();
+    const resp = await fetch(`${authUrl}/token?grant_type=refresh_token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8',
+        apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!}`
+      },
+      body: JSON.stringify({refresh_token: refreshToken})
+    });
+    const data = await resp.json();
 
-      const session = {...data};
-      if (session.expires_in) {
-        const timeNow = Math.round(Date.now() / 1000);
+    const session = {...data};
+    if (session.expires_in) {
+      const timeNow = Math.round(Date.now() / 1000);
 
-        session.expires_at = Number.parseInt(session.expires_in, 10) + timeNow;
-      }
-
-      fetch('/api/auth', {
-        method: 'POST',
-        headers: new Headers({'Content-Type': 'application/json'}),
-        credentials: 'same-origin',
-        body: JSON.stringify({event: 'SIGNED_IN', session})
-      }).catch((error) => {
-        console.error(error);
-      });
-      setValue({currentSession: session, expiresAt: session.expires_at});
-    } catch (error) {
-      throw error;
+      session.expires_at = Number.parseInt(session.expires_in, 10) + timeNow;
     }
+
+    fetch('/api/auth', {
+      method: 'POST',
+      headers: new Headers({'Content-Type': 'application/json'}),
+      credentials: 'same-origin',
+      body: JSON.stringify({event: 'SIGNED_IN', session})
+    }).catch((error) => {
+      console.error(error);
+    });
+    setValue({currentSession: session, expiresAt: session.expires_at});
   }, [authUrl, value, setValue]);
 
   useEffect(() => {

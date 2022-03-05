@@ -23,7 +23,7 @@ export const Navbar: React.FC<
     ['click']
   );
   return (
-    <nav className={`flex flex-row justify-between mb-10`}>
+    <nav className={'flex flex-row justify-between mb-10'}>
       <style jsx>{`
         #nav-menu-toggler:checked ~ .dropdown {
           display: block;

@@ -1,10 +1,10 @@
-import React, {useEffect, useRef, useState} from 'react';
-// @ts-expect-error
-import Tags from '@yaireo/tagify/dist/react.tagify';
+import React, { useEffect, useRef, useState } from 'react';
+import Tags, { TagifyBaseReactProps } from '@yaireo/tagify/dist/react.tagify';
 import '@yaireo/tagify/dist/tagify.css';
-import {apiCall} from '@/utils/api-call';
-import {useDebounce} from 'react-use';
-import {Tag} from '@prisma/client';
+import { apiCall } from '@/utils/api-call';
+import { useDebounce } from 'react-use';
+import { Tag } from '@prisma/client';
+import Tagify from '@yaireo/tagify';
 
 export function TagsInput({
   className,
@@ -12,8 +12,8 @@ export function TagsInput({
   onBlur,
   name,
   settings,
-  onChange
-}: any) {
+  onChange,
+}: TagifyBaseReactProps) {
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
   useDebounce(
@@ -23,18 +23,21 @@ export function TagsInput({
     300,
     [input]
   );
+  const tagifyRef = useRef<Tagify<Tagify.TagData>>();
   useEffect(() => {
     async function fetcher() {
       try {
         const resp = await apiCall(`/api/tags?start=${debouncedInput}`);
         const tags = await resp.json();
         const tagify = tagifyRef.current;
-        const whitelist = tagify.settings.whitelist;
-        tagify.settings.whitelist.splice(
-          0,
-          whitelist.length,
-          ...tags.map((t: Tag) => t.tag)
-        );
+        if (tagify) {
+          const whitelist = tagify.settings.whitelist ?? [];
+          tagify?.settings?.whitelist?.splice(
+            0,
+            whitelist.length,
+            ...tags.map((t: Tag) => t.tag)
+          );
+        }
       } catch (error) {
         console.error(error);
       }
@@ -44,7 +47,6 @@ export function TagsInput({
       void fetcher();
     }
   }, [debouncedInput]);
-  const tagifyRef = useRef<any>();
   useEffect(() => {
     const onInput = (ev: CustomEvent) => {
       const input = ev.detail.value;

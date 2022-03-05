@@ -5,10 +5,6 @@ import {prisma} from '@/db/prisma';
 import type {Prisma} from '@prisma/client';
 import {getOneParamFromQuery} from '@/utils/query-param';
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {read});
-}
-
 const read: RestfulApiHandler = async (req, res, user) => {
   const {page, size} = getPagination(req.query);
   const {tagcloud} = req.query;
@@ -38,7 +34,7 @@ const read: RestfulApiHandler = async (req, res, user) => {
             from tags
             where tag = ${q}
                or alias @> ARRAY [${q}]
-               or lower_tag LIKE ${start + '%'}
+               or lower_tag LIKE ${`${start}%`}
             limit ${size} offset ${(page - 1) * size}
         `;
     res.status(200).json(result);
@@ -51,7 +47,7 @@ const read: RestfulApiHandler = async (req, res, user) => {
                        tag,
                        alias
                 from tags
-                where lower_tag LIKE ${start + '%'}
+                where lower_tag LIKE ${`${start}%`}
                 limit ${size} offset ${(page - 1) * size}`;
     res.status(200).json(result);
     return;
@@ -87,3 +83,7 @@ const read: RestfulApiHandler = async (req, res, user) => {
   });
   res.status(200).json(result);
 };
+
+export default async function (req: NextApiRequest, res: NextApiResponse) {
+  return restful({req, res}, {read});
+}

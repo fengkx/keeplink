@@ -4,10 +4,6 @@ import {prisma} from '@/db/prisma';
 import * as z from 'zod';
 import {getOneParamFromQuery} from '@/utils/query-param';
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {update});
-}
-
 const update: RestfulApiHandler = async (req, res, user) => {
   const uid = getOneParamFromQuery(req.query, 'uid');
 
@@ -36,3 +32,7 @@ const update: RestfulApiHandler = async (req, res, user) => {
   });
   res.status(200).json(updated);
 };
+
+export default async function (req: NextApiRequest, res: NextApiResponse) {
+  return restful({req, res}, {update});
+}

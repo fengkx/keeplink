@@ -17,7 +17,7 @@ import {useToasts} from 'react-toast-notifications';
 import {Pagination} from '@/components/Pagination';
 
 function useTagCloud() {
-  const {data, error} = useSWR(`/api/tags?tagcloud=1`, async (key: string) => {
+  const {data, error} = useSWR('/api/tags?tagcloud=1', async (key: string) => {
     const resp = await apiCall(key);
     return resp.json();
   });

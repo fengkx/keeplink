@@ -55,4 +55,5 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
   };
 };
 
+// eslint-disable-next-line no-restricted-exports
 export {default} from '@/pages/index';

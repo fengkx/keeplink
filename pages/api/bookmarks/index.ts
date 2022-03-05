@@ -6,10 +6,6 @@ import {getPagination} from '@/utils/get-pagination';
 import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
 import * as z from 'zod';
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
-  await restful({req, res}, {create, read});
-}
-
 const read: RestfulApiHandler = async (req, res, user) => {
   const {size, page} = getPagination(req.query);
   const data = await prisma.bookmark.findMany({
@@ -127,8 +123,8 @@ const create: RestfulApiHandler = async (req, res, user) => {
     );
   } catch (error) {
     if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === 'P2002'
+      error instanceof PrismaClientKnownRequestError
+      && error.code === 'P2002'
     ) {
       const link = await prisma.link.findUnique({
         where: {
@@ -157,3 +153,7 @@ const create: RestfulApiHandler = async (req, res, user) => {
     }
   }
 };
+
+export default async function (req: NextApiRequest, res: NextApiResponse) {
+  await restful({req, res}, {create, read});
+}

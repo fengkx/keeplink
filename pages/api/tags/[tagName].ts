@@ -4,10 +4,6 @@ import {prisma} from '@/db/prisma';
 import {getOneParamFromQuery} from '@/utils/query-param';
 import * as z from 'zod';
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {update, del});
-}
-
 const update: RestfulApiHandler = async (req, res) => {
   const tagName = getOneParamFromQuery(req.query, 'tagName');
   const schema = z.object({
@@ -37,7 +33,11 @@ const del: RestfulApiHandler = async (req, res, user) => {
   }
 
   const tagName = getOneParamFromQuery(req.query, 'tagName');
-  const deleted =
-    await prisma.$executeRaw`DELETE FROM tags WHERE tag=${tagName}`;
+  const deleted
+    = await prisma.$executeRaw`DELETE FROM tags WHERE tag=${tagName}`;
   res.status(200).json(deleted);
 };
+
+export default async function (req: NextApiRequest, res: NextApiResponse) {
+  return restful({req, res}, {update, del});
+}

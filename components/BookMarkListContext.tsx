@@ -1,10 +1,12 @@
-/* eslint @typescript-eslint/no-empty-function: 0 */
-import React from 'react';
+import {createContext} from 'react';
 
-export const BookMarkListContext = React.createContext<{
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = () => {};
+
+export const BookMarkListContext = createContext<{
   formatTime: (timestamp: number) => string;
   onDelete: (id: number) => void;
 }>({
-  onDelete: () => {},
+  onDelete: noop,
   formatTime: () => ''
 });

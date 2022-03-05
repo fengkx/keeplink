@@ -4,10 +4,6 @@ import * as z from 'zod';
 import {restful, RestfulApiHandler} from '@/utils/rest-helper';
 import {prisma} from '@/db/prisma';
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {update});
-}
-
 const update: RestfulApiHandler = async (req, res, user) => {
   const schema = z.object({
     role: z.literal('admin').or(z.literal('user')).optional(),
@@ -38,3 +34,7 @@ const update: RestfulApiHandler = async (req, res, user) => {
   });
   res.status(200).json(updated);
 };
+
+export default async function (req: NextApiRequest, res: NextApiResponse) {
+  return restful({req, res}, {update});
+}

@@ -38,9 +38,7 @@ const Edit: React.FC<Props> = ({bookmark, user}) => {
         ...data,
         tags: Array.isArray(data.tags)
           ? data.tags
-          : JSON.parse(data.tags || '[]').map((t: {value: any} | string) =>
-              typeof t === 'string' ? t : t.value
-            )
+          : JSON.parse(data.tags || '[]').map((t: {value: any} | string) => (typeof t === 'string' ? t : t.value))
       };
       console.log(payload);
       await apiCall(`/api/bookmarks/${bookmark?.id}`, {

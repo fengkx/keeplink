@@ -46,16 +46,16 @@ const Settings: React.FC<Props> = ({user, userData}) => {
   }, []);
   const onSubmit = handleSubmit(
     async (data) => {
-      const {password, password_confirm, api_token, ...settings} = data;
-      if (password || password_confirm) {
-        if (password_confirm === password) {
+      const {password, password_confirm: passwordConfirm, api_token: apiToken, ...settings} = data;
+      if (password || passwordConfirm) {
+        if (passwordConfirm === password) {
           try {
             const user = supabase.auth.user();
             if (
-              process.env.NEXT_PUBLIC_LOCK_ACCOUNT_FRONTEND &&
-              user &&
-              user.email &&
-              process.env.NEXT_PUBLIC_LOCK_ACCOUNT_FRONTEND.includes(user.email)
+              process.env.NEXT_PUBLIC_LOCK_ACCOUNT_FRONTEND
+              && user
+              && user.email
+              && process.env.NEXT_PUBLIC_LOCK_ACCOUNT_FRONTEND.includes(user.email)
             ) {
               toast.addToast(
                 'This is account is locked cannot change password',
@@ -74,11 +74,11 @@ const Settings: React.FC<Props> = ({user, userData}) => {
         }
       }
 
-      if (Object.keys(settings).length > 0 || api_token) {
+      if (Object.keys(settings).length > 0 || apiToken) {
         try {
           await apiCall('/api/pusers', {
             method: 'PUT',
-            body: JSON.stringify({settings, api_token})
+            body: JSON.stringify({settings, api_token: apiToken})
           });
           toast.addToast('API Token saved');
         } catch (error: any) {

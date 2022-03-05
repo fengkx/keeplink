@@ -18,10 +18,6 @@ interface Metadata {
   url: string;
 }
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
-  return restful({req, res}, {create, read});
-}
-
 function extractUpdate(
   metadata: Metadata,
   link: Link,
@@ -79,9 +75,9 @@ const create: RestfulApiHandler = async (req, res, user) => {
         });
       } catch (error) {
         if (
-          error instanceof PrismaClientKnownRequestError &&
-          error.code === 'P2002' &&
-          (error.meta as unknown as any)?.target?.includes('url')
+          error instanceof PrismaClientKnownRequestError
+          && error.code === 'P2002'
+          && (error.meta as unknown as any)?.target?.includes('url')
         ) {
           const existedLink = await prisma.link.findUnique({
             where: {url: updated.url},
@@ -203,3 +199,7 @@ const read: RestfulApiHandler = async (req, res) => {
     res.status(200).send(link.archive);
   }
 };
+
+export default async function (req: NextApiRequest, res: NextApiResponse) {
+  return restful({req, res}, {create, read});
+}
