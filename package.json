@@ -11,6 +11,9 @@
     "start": "next start"
   },
   "dependencies": {
+    "@chakra-ui/react": "^1.8.6",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
     "@metascraper/helpers": "^5.25.8",
     "@next/bundle-analyzer": "^12.1.0",
     "@prisma/client": "^3.10.0",
@@ -21,6 +24,7 @@
     "cookie": "^0.4.2",
     "date-fns": "^2.28.0",
     "execa": "^6.1.0",
+    "framer-motion": "^6",
     "he": "^1.2.0",
     "metascraper": "^5.25.8",
     "metascraper-description": "^5.25.8",
