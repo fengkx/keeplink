@@ -12,7 +12,7 @@ services:
       - 8000:8000/tcp
   auth:
     container_name: supabase-auth
-    image: supabase/gotrue:latest
+    image: supabase/gotrue:v1.11.0
     environment:
       GOTRUE_JWT_SECRET: 1513f583-979d-4f6a-9705-00635b34cc47
       GOTRUE_JWT_EXP: 86400
