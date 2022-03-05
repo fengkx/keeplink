@@ -2,8 +2,8 @@ lockfileVersion: 5.3
 
 specifiers:
   '@chakra-ui/react': ^1.8.6
-  '@emotion/react': ^11
-  '@emotion/styled': ^11
+  '@emotion/react': ^11.8.1
+  '@emotion/styled': ^11.8.1
   '@metascraper/helpers': ^5.25.8
   '@next/bundle-analyzer': ^12.1.0
   '@prisma/client': ^3.10.0
@@ -28,7 +28,7 @@ specifiers:
   eslint-import-resolver-typescript: ^2.5.0
   eslint-plugin-import: ^2.25.4
   execa: ^6.1.0
-  framer-motion: ^6
+  framer-motion: ^6.2.8
   he: ^1.2.0
   metascraper: ^5.25.8
   metascraper-description: ^5.25.8
@@ -2099,7 +2099,7 @@ packages:
   /@emotion/cache/11.7.1:
     resolution: {integrity: sha512-r65Zy4Iljb8oyjtLeCuBH8Qjiy107dOYC6SJq7g7GV5UCQWMObY4SJDPGFjiiVpPrOJ2hmJOoBiYTC7hwx9E2A==}
     dependencies:
-      '@emotion/memoize': 0.7.4
+      '@emotion/memoize': 0.7.5
       '@emotion/sheet': 1.1.0
       '@emotion/utils': 1.1.0
       '@emotion/weak-memoize': 0.2.5
@@ -2143,7 +2143,7 @@ packages:
   /@emotion/is-prop-valid/1.1.2:
     resolution: {integrity: sha512-3QnhqeL+WW88YjYbQL5gUIkthuMw7a0NGbZ7wfFVk2kg/CK5w8w5FFa0RzWjyY1+sujN0NWbtSHH6OJmWHtJpQ==}
     dependencies:
-      '@emotion/memoize': 0.7.4
+      '@emotion/memoize': 0.7.5
     dev: false
 
   /@emotion/memoize/0.7.4:
@@ -2192,7 +2192,7 @@ packages:
     resolution: {integrity: sha512-95MgNJ9+/ajxU7QIAruiOAdYNjxZX7G2mhgrtDWswA21VviYIRP1R5QilZ/bDY42xiKsaktP4egJb3QdYQZi1A==}
     dependencies:
       '@emotion/hash': 0.8.0
-      '@emotion/memoize': 0.7.4
+      '@emotion/memoize': 0.7.5
       '@emotion/unitless': 0.7.5
       '@emotion/utils': 1.1.0
       csstype: 3.0.11
@@ -2996,7 +2996,7 @@ packages:
     resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
     engines: {node: '>= 6.0.0'}
     dependencies:
-      debug: 4.3.2
+      debug: 4.3.3
     transitivePeerDependencies:
       - supports-color
     dev: false
@@ -3302,7 +3302,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001313
-      electron-to-chromium: 1.4.75
+      electron-to-chromium: 1.4.76
       escalade: 3.1.1
       node-releases: 2.0.2
       picocolors: 1.0.0
@@ -3915,8 +3915,8 @@ packages:
       jake: 10.8.2
     dev: false
 
-  /electron-to-chromium/1.4.75:
-    resolution: {integrity: sha512-LxgUNeu3BVU7sXaKjUDD9xivocQLxFtq6wgERrutdY/yIOps3ODOZExK1jg8DTEg4U8TUCb5MLGeWFOYuxjF3Q==}
+  /electron-to-chromium/1.4.76:
+    resolution: {integrity: sha512-3Vftv7cenJtQb+k00McEBZ2vVmZ/x+HEF7pcZONZIkOsESqAqVuACmBxMv0JhzX7u0YltU0vSqRqgBSTAhFUjA==}
 
   /emoji-regex/8.0.0:
     resolution: {integrity: sha512-MSjYzcWNOA0ewAHpz0MxpYFvwg6yjy1NG3xteoqz644VCo/RPgnr1/GGt+ic3iJTzQ8Eu3TdM14SawnVUmGE6A==}
@@ -4262,7 +4262,7 @@ packages:
     engines: {node: '>= 10.17.0'}
     hasBin: true
     dependencies:
-      debug: 4.3.3
+      debug: 4.3.2
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
@@ -4692,7 +4692,7 @@ packages:
     engines: {node: '>= 6'}
     dependencies:
       agent-base: 6.0.2
-      debug: 4.3.2
+      debug: 4.3.3
     transitivePeerDependencies:
       - supports-color
     dev: false
