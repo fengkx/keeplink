@@ -4,6 +4,7 @@ RUN apt-get update \
   && apt-get install -y --no-install-recommends \
       gcc \
       make \
+      systemtap-sdt-dev \
       libc-dev \
       postgresql-server-dev-$PG_MAJOR \
       wget \
@@ -24,7 +25,7 @@ RUN apt-get update \
   && cd /rum-master \
   && make USE_PGXS=1 \
   && make USE_PGXS=1 install \
-  && apt-get purge -y gcc make libc-dev postgresql-server-dev-$PG_MAJOR \
+  && apt-get purge -y gcc make libc-dev systemtap-sdt-dev postgresql-server-dev-$PG_MAJOR \
   && apt-get autoremove -y \
   && rm -rf \
     /zhparser-master \
