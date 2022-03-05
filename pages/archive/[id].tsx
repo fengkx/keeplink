@@ -6,7 +6,7 @@ import { useToggle } from 'react-use';
 import { supabase } from '@/db/supabase';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import 'placeholder-loading/dist/css/placeholder-loading.css';
-import { useToasts } from 'react-toast-notifications';
+import { useToast } from '@chakra-ui/react';
 
 type Props = {
   archive_stat: 'pending' | 'archived';
@@ -17,7 +17,7 @@ const Archive: React.FC<Props> = () => {
   const id = router.query.id!;
   const [html, setHTML] = useState('');
   const [loading, toggleLoading] = useToggle(true);
-  const toast = useToasts();
+  const toast = useToast();
   useEffect(() => {
     const fetcher = async () => {
       if (!id) {
@@ -51,9 +51,11 @@ const Archive: React.FC<Props> = () => {
           }
         } catch (error: any) {
           const data = await error.response.json();
-          toast.addToast(data.error, {
-            appearance: 'error',
-            autoDismiss: false,
+          toast({
+            description: data.error,
+            status: 'error',
+            duration: null,
+            isClosable: true
           });
         }
       }

@@ -13,7 +13,7 @@ import { decode as htmlDecode } from 'he';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useToasts } from 'react-toast-notifications';
+import { useToast } from '@chakra-ui/react';
 import useSWR from 'swr';
 
 function useTagCloud() {
@@ -34,10 +34,11 @@ const Home: React.FC<Props> = ({ bookmarks, user }) => {
   }, [bookmarks]);
   const { tags, error } = useTagCloud();
   const router = useRouter();
-  const toast = useToasts();
+  const toast = useToast();
   if (error) {
-    toast.addToast((error.message as string) ?? 'Failed to load tagclound', {
-      appearance: 'error',
+    toast({
+      description: (error.message as string) ?? 'Failed to load tagclound',
+      status: 'error',
     });
   }
 

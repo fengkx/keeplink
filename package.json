@@ -39,7 +39,6 @@
     "react-feather": "^2.0.9",
     "react-hook-form": "^7.27.1",
     "react-icons": "^4.3.1",
-    "react-toast-notifications": "^2.5.1",
     "react-use": "^17.3.2",
     "single-file": "github:gildas-lormeau/SingleFile",
     "swr": "^1.2.2",

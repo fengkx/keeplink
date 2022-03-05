@@ -8,7 +8,7 @@ import { Button } from '@supabase/ui';
 import { GetServerSideProps } from 'next';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useToasts } from 'react-toast-notifications';
+import { useToast } from '@chakra-ui/react';
 
 import { AdminLayout } from '@/components/AdminLayout';
 import styles from '@/styles/Form.module.css';
@@ -28,7 +28,7 @@ export default function EditUser({ user, editedUser }: Props) {
     },
   });
   const { register, handleSubmit } = form;
-  const toast = useToasts();
+  const toast = useToast();
   const onSubmit = handleSubmit(
     async (data) => {
       const { role } = data;
@@ -38,20 +38,20 @@ export default function EditUser({ user, editedUser }: Props) {
           method: 'PUT',
           body: JSON.stringify(payload),
         });
-        toast.addToast('Settings saved');
+        toast({ title: 'Settings saved' });
       } catch (error: any) {
         const data = await error.response.json();
         if (data.errors) {
-          toast.addToast(data.errors[0].message, { appearance: 'error' });
+          toast({ description: data.errors[0].message, status: 'error' });
         } else {
-          toast.addToast(error.message, { appearance: 'error' });
+          toast({ description: error.message, status: 'error' });
         }
       }
     },
     (err) => {
       const message = err.role?.message;
       if (message) {
-        toast.addToast(message);
+        toast({ description: message });
       }
     },
   );

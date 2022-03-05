@@ -3,7 +3,6 @@ import { Auth } from '@supabase/ui';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import React from 'react';
-import { ToastProvider } from 'react-toast-notifications';
 import 'tailwindcss/tailwind.css';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 
@@ -198,9 +197,7 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
       </Head>
       <ChakraProvider theme={theme}>
         <Auth.UserContextProvider supabaseClient={supabase}>
-          <ToastProvider placement={'top-center'} autoDismiss={true}>
-            <Component {...pageProps} />
-          </ToastProvider>
+          <Component {...pageProps} />
         </Auth.UserContextProvider>
       </ChakraProvider>
     </>

@@ -12,7 +12,7 @@ import Error from 'next/error';
 import { useRouter } from 'next/router';
 import React from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useToasts } from 'react-toast-notifications';
+import { useToast } from '@chakra-ui/react';
 
 import styles from '@/styles/Form.module.css';
 
@@ -30,7 +30,7 @@ const Edit: React.FC<Props> = ({ bookmark, user }) => {
     },
   });
   const router = useRouter();
-  const toast = useToasts();
+  const toast = useToast();
   const { register, handleSubmit, control } = form;
   const onSubmit = handleSubmit(async (data) => {
     try {
@@ -49,9 +49,9 @@ const Edit: React.FC<Props> = ({ bookmark, user }) => {
     } catch (error: any) {
       const data = await error.response.json();
       if (data.errors) {
-        toast.addToast(data.errors[0].message, { appearance: 'error' });
+        toast({ status: 'error', description: data.errors[0].message });
       } else {
-        toast.addToast(error.message, { appearance: 'error' });
+        toast({ description: error.message, status: 'error' });
       }
     }
   });

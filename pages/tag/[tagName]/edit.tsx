@@ -14,7 +14,7 @@ import styles from '@/styles/Form.module.css';
 import type { Tag } from '@prisma/client';
 import { User } from '@supabase/supabase-js';
 import Error from 'next/error';
-import { useToasts } from 'react-toast-notifications';
+import { useToast } from '@chakra-ui/react';
 
 const Edit: React.FC<Props> = ({ tag, user }) => {
   type FormInput = {
@@ -28,15 +28,15 @@ const Edit: React.FC<Props> = ({ tag, user }) => {
     },
   });
   const router = useRouter();
-  const toast = useToasts();
+  const toast = useToast();
   const handleApiError = useCallback(async (error) => {
     const data = await error.response.json();
     if (data.reason) {
-      toast.addToast(data.reason, { appearance: 'error' });
+      toast({ description: data.reason, status: 'error' });
     } else if (data.errors) {
-      toast.addToast(data.errors[0].message, { appearance: 'error' });
+      toast({ description: data.errors[0].message, status: 'error' });
     } else {
-      toast.addToast(error.message, { appearance: 'error' });
+      toast({ description: error.message, status: 'error' });
     }
   }, []);
   const onDelete = async () => {

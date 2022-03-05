@@ -10,7 +10,7 @@ import styles from '@/styles/Form.module.css';
 import { apiCall } from '@/utils/api-call';
 import { User } from '@supabase/supabase-js';
 import { Button } from '@supabase/ui';
-import { useToasts } from 'react-toast-notifications';
+import { useToast } from '@chakra-ui/react';
 
 type Props = {
   userData: PUser;
@@ -28,7 +28,7 @@ const Settings: React.FC<Props> = ({ user, userData }) => {
     defaultValues: { ...defaultSettings, api_token: userData.api_token },
   });
   const { register, handleSubmit } = form;
-  const toast = useToasts();
+  const toast = useToast();
   useEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -57,20 +57,19 @@ const Settings: React.FC<Props> = ({ user, userData }) => {
               && user.email
               && process.env.NEXT_PUBLIC_LOCK_ACCOUNT_FRONTEND.includes(user.email)
             ) {
-              toast.addToast(
-                'This is account is locked cannot change password',
-                { appearance: 'info' },
+              toast(
+                { status: 'info', title: 'This is account is locked cannot change password' },
               );
               return;
             }
 
             await supabase.auth.update({ password });
-            toast.addToast('Password changed');
+            toast({ title: 'Password changed' });
           } catch (error: any) {
-            toast.addToast(error.message, { appearance: 'error' });
+            toast({ description: error.message, status: 'error' });
           }
         } else {
-          toast.addToast('Password not the same', { appearance: 'error' });
+          toast({ title: 'Password not the same', status: 'error' });
         }
       }
 
@@ -80,14 +79,14 @@ const Settings: React.FC<Props> = ({ user, userData }) => {
             method: 'PUT',
             body: JSON.stringify({ settings, api_token: apiToken }),
           });
-          toast.addToast('API Token saved');
+          toast({ title: 'API Token saved' });
         } catch (error: any) {
           const resp = error.response;
           const data = await resp.json();
           if (data.errors) {
-            toast.addToast(data.errors[0].message, { appearance: 'error' });
+            toast({ status: 'error', description: data.errors[0].message });
           } else {
-            toast.addToast(error.message, { appearance: 'error' });
+            toast({ description: error.message, status: 'error' });
           }
         }
       }
@@ -95,7 +94,7 @@ const Settings: React.FC<Props> = ({ user, userData }) => {
     (err) => {
       const message = err.password?.message ?? err.password_confirm?.message;
       if (message) {
-        toast.addToast(message);
+        toast({ title: message });
       }
     },
   );
@@ -146,7 +145,7 @@ const Settings: React.FC<Props> = ({ user, userData }) => {
                 ev.preventDefault();
                 const { data, error } = await supabase.rpc('gen_random_uuid');
                 if (error) {
-                  toast.addToast(error.message, { appearance: 'error' });
+                  toast({ description: error.message, status: 'error' });
                   return;
                 }
 
