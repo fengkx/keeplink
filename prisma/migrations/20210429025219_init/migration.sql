@@ -122,7 +122,7 @@ begin
         return new;
     else
         insert into public.pusers ("id", "role")
-        values (new.id, 'admin'::user_role);
+        values (new.id, 'admin');
         return new;
     end if;
 end;
