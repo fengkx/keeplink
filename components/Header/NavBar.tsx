@@ -10,10 +10,17 @@ import {
   Button,
   Heading,
   ButtonGroup,
+  Icon,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  Portal,
 } from '@chakra-ui/react';
 import { Search } from './Search';
 import { user_role } from '@prisma/client';
-import { ArrowBackIcon, BellIcon, SettingsIcon } from '@chakra-ui/icons';
+import { MdOutlineLogout, MdPersonOutline, MdOutlineSettings, MdMenu } from 'react-icons/md';
 
 interface NavBarProps {
   userRole: user_role
@@ -64,26 +71,51 @@ function NavContetent({ userRole }: NavBarProps) {
             <Search maxW={'xl'} />
           </Flex>
 
-          <ButtonGroup variant="ghost" size="md">
+          <ButtonGroup variant="ghost" size="md" display={['none', 'block']}>
             <NextLink href="/user/settings">
-              <Button leftIcon={<SettingsIcon />} >
+              <Button leftIcon={<Icon as={MdOutlineSettings} />} >
                 Setting
               </Button>
             </NextLink>
             {userRole === 'admin'
               && <NextLink href="/admin/users">
-                <Button leftIcon={<BellIcon />} >
+                <Button leftIcon={<Icon as={MdPersonOutline} />} >
                   Admin
                 </Button>
               </NextLink>
             }
             <NextLink href="/logout">
-              <Button leftIcon={<ArrowBackIcon />} aria-label="log out">
+              <Button leftIcon={<Icon as={MdOutlineLogout} />} aria-label="log out">
                 Logout
               </Button>
             </NextLink>
 
           </ButtonGroup>
+          <Menu isLazy>
+            <MenuButton as={IconButton} icon={<Icon as={MdMenu} />} variant="ghost" />
+            <Portal>
+              <MenuList >
+                <NextLink href="/user/settings">
+                  <MenuItem as={Link} icon={<Icon as={MdOutlineSettings} />}>
+                    Setting
+                  </MenuItem>
+                </NextLink>
+
+                {userRole === 'admin'
+                  && <NextLink href="/admin/users">
+                    <MenuItem as={Link} icon={<Icon as={MdPersonOutline} />}>
+                      Admin
+                    </MenuItem>
+                  </NextLink>
+                }
+                <NextLink href="/logout">
+                  <MenuItem as={Link} icon={<Icon as={MdOutlineLogout} />}>
+                    Logout
+                  </MenuItem>
+                </NextLink>
+              </MenuList>
+            </Portal>
+          </Menu>
 
         </Flex>
       </Flex>

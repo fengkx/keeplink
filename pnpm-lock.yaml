@@ -46,6 +46,7 @@ specifiers:
   react-dom: '17'
   react-feather: ^2.0.9
   react-hook-form: ^7.27.1
+  react-icons: ^4.3.1
   react-toast-notifications: ^2.5.1
   react-use: ^17.3.2
   simple-git-hooks: ^2.7.0
@@ -85,6 +86,7 @@ dependencies:
   react-dom: 17.0.2_react@17.0.2
   react-feather: 2.0.9_react@17.0.2
   react-hook-form: 7.27.1_react@17.0.2
+  react-icons: 4.3.1_react@17.0.2
   react-toast-notifications: 2.5.1_react-dom@17.0.2+react@17.0.2
   react-use: 17.3.2_react-dom@17.0.2+react@17.0.2
   single-file: github.com/gildas-lormeau/SingleFile/69a69a8f0a0bb4631fb2a327884d0df4fe9d492e
@@ -6242,6 +6244,14 @@ packages:
     engines: {node: '>=12.22.0'}
     peerDependencies:
       react: ^16.8.0 || ^17
+    dependencies:
+      react: 17.0.2
+    dev: false
+
+  /react-icons/4.3.1_react@17.0.2:
+    resolution: {integrity: sha512-cB10MXLTs3gVuXimblAdI71jrJx8njrJZmNMEMC+sQu5B/BIOmlsAjskdqpn81y8UBVEGuHODd7/ci5DvoSzTQ==}
+    peerDependencies:
+      react: '*'
     dependencies:
       react: 17.0.2
     dev: false
