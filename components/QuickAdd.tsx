@@ -1,14 +1,14 @@
-import {Button, Input} from '@supabase/ui';
-import {Bookmark} from 'react-feather';
+import { apiCall } from '@/utils/api-call';
+import { Button, Input } from '@supabase/ui';
 import Link from 'next/link';
-import React, {useCallback, useState} from 'react';
-import {apiCall} from '@/utils/api-call';
-import {useToasts} from 'react-toast-notifications';
+import React, { useCallback, useState } from 'react';
+import { Bookmark } from 'react-feather';
+import { useToasts } from 'react-toast-notifications';
 
 type Props = {
   onSuccess: (data: any) => void;
 } & React.HTMLAttributes<HTMLInputElement>;
-const QuickAdd: React.FC<Props> = ({className, onSuccess}) => {
+const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
   const toast = useToasts();
   const [urlInput, setUrlInput] = useState('');
   const quickAddHandler = useCallback(
@@ -17,34 +17,34 @@ const QuickAdd: React.FC<Props> = ({className, onSuccess}) => {
       try {
         const resp = await apiCall('/api/bookmarks', {
           method: 'POST',
-          body: JSON.stringify({url: urlInput})
+          body: JSON.stringify({ url: urlInput }),
         });
         const data = await resp.json();
         onSuccess(data);
         setUrlInput('');
       } catch (error: any) {
-        const {data} = await error.response.json();
+        const { data } = await error.response.json();
         console.log(data);
         if (data.errors) {
-          toast.addToast(data.errors[0].message, {appearance: 'error'});
+          toast.addToast(data.errors[0].message, { appearance: 'error' });
         }
 
         if (data.bookmark_id) {
           toast.addToast(
-            <div className="text-lg font-semibold">
+            <div className='text-lg font-semibold'>
               Already existed in
               <Link href={`/bookmark/edit/${data.bookmark_id}`}>
-                <a> Here</a>
+                <a>Here</a>
               </Link>
             </div>,
             {
-              appearance: 'error'
-            }
+              appearance: 'error',
+            },
           );
         }
       }
     },
-    [urlInput]
+    [urlInput],
   );
   return (
     <form onSubmit={quickAddHandler}>
@@ -54,13 +54,13 @@ const QuickAdd: React.FC<Props> = ({className, onSuccess}) => {
           setUrlInput(v.target.value);
         }}
         className={className}
-        size="small"
+        size='small'
         icon={<Bookmark />}
-        placeholder="https://"
+        placeholder='https://'
         actions={[
-          <Button key={'quick add'} size="small" onClick={quickAddHandler}>
+          <Button key={'quick add'} size='small' onClick={quickAddHandler}>
             Quick Add
-          </Button>
+          </Button>,
         ]}
       />
     </form>

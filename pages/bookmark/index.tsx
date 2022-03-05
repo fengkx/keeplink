@@ -1,30 +1,25 @@
-import Home, {
-  BookMark,
-  getServerSideProps as noSearchServerSideProps
-} from '../index';
-import {supabase} from '@/db/supabase';
-import {getPagination} from '@/utils/get-pagination';
-import {prisma} from '@/db/prisma';
-import {decode as htmlDecode} from 'he';
-
-export default Home;
+import { prisma } from '@/db/prisma';
+import { supabase } from '@/db/supabase';
+import { getPagination } from '@/utils/get-pagination';
+import { decode as htmlDecode } from 'he';
+import { BookMark, getServerSideProps as noSearchServerSideProps } from '../index';
 
 export const getServerSideProps: typeof noSearchServerSideProps = async (
-  ctx
+  ctx,
 ) => {
-  const {req, query} = ctx;
+  const { req, query } = ctx;
   const q = query.q;
   if (!q) {
     return noSearchServerSideProps(ctx);
   }
 
-  const {user} = await supabase.auth.api.getUserByCookie(req);
+  const { user } = await supabase.auth.api.getUserByCookie(req);
   if (!user) {
-    return {props: {}, redirect: {destination: '/signin', permanent: false}};
+    return { props: {}, redirect: { destination: '/signin', permanent: false } };
   }
 
-  const {page, size} = getPagination(query);
-  const results = await prisma.$queryRaw`select id,
+  const { page, size } = getPagination(query);
+  const results = await prisma.$queryRaw<BookMark[]>`select id,
                 link_id,
                 title,
                 description,
@@ -61,8 +56,11 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
         ...bm,
         description: htmlDecode(bm.description ?? ''),
         createdAt: new Date(bm.created_at!).getTime() / 1000,
-        tags: bm.cached_tags_name?.split(',') ?? []
-      }))
-    }
+        tags: bm.cached_tags_name?.split(',') ?? [],
+      })),
+    },
   };
 };
+
+// eslint-disable-next-line no-restricted-exports
+export { default } from '../index';

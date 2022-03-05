@@ -1,17 +1,17 @@
+import { prisma } from '@/db/prisma';
+import { supabase } from '@/db/supabase';
+import { apiCall } from '@/utils/api-call';
+import { getOneParamFromQuery } from '@/utils/query-param';
+import type { user_role } from '@prisma/client';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { Button } from '@supabase/ui';
+import { GetServerSideProps } from 'next';
 import React from 'react';
-import {GetServerSideProps} from 'next';
-import {prisma} from '@/db/prisma';
-import type {User as SupabaseUser} from '@supabase/supabase-js';
-import type {user_role} from '@prisma/client';
-import {getOneParamFromQuery} from '@/utils/query-param';
-import {useForm} from 'react-hook-form';
-import {useToasts} from 'react-toast-notifications';
-import {apiCall} from '@/utils/api-call';
-import {supabase} from '@/db/supabase';
-import {Button} from '@supabase/ui';
+import { useForm } from 'react-hook-form';
+import { useToasts } from 'react-toast-notifications';
 
+import { AdminLayout } from '@/components/AdminLayout';
 import styles from '@/styles/Form.module.css';
-import {AdminLayout} from '@/components/AdminLayout';
 
 type FormInput = {
   role: user_role;
@@ -21,30 +21,30 @@ type Props = {
   editedUser: User;
 };
 
-export default function EditUser({user, editedUser}: Props) {
+export default function EditUser({ user, editedUser }: Props) {
   const form = useForm<FormInput>({
     defaultValues: {
-      role: editedUser.role
-    }
+      role: editedUser.role,
+    },
   });
-  const {register, handleSubmit} = form;
+  const { register, handleSubmit } = form;
   const toast = useToasts();
   const onSubmit = handleSubmit(
     async (data) => {
-      const {role} = data;
-      const payload = {role};
+      const { role } = data;
+      const payload = { role };
       try {
         await apiCall(`/api/users/${editedUser.id}`, {
           method: 'PUT',
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
         toast.addToast('Settings saved');
       } catch (error: any) {
         const data = await error.response.json();
         if (data.errors) {
-          toast.addToast(data.errors[0].message, {appearance: 'error'});
+          toast.addToast(data.errors[0].message, { appearance: 'error' });
         } else {
-          toast.addToast(error.message, {appearance: 'error'});
+          toast.addToast(error.message, { appearance: 'error' });
         }
       }
     },
@@ -53,12 +53,13 @@ export default function EditUser({user, editedUser}: Props) {
       if (message) {
         toast.addToast(message);
       }
-    }
+    },
   );
   return (
     <AdminLayout userRole={user.user_metadata.role}>
       <form onSubmit={onSubmit}>
-        <style jsx>{`
+        <style jsx>
+          {`
           input[type='password'] {
             width: 20em;
           }
@@ -66,19 +67,20 @@ export default function EditUser({user, editedUser}: Props) {
           input[name='size'] {
             width: 6rem;
           }
-        `}</style>
-        <div className="flex flex-col max-w-5xl mx-auto w-full">
+        `}
+        </style>
+        <div className='flex flex-col max-w-5xl mx-auto w-full'>
           <label className={styles.label}>Role</label>
           <select {...register('role')} className={`${styles.input} w-32`}>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
+            <option value='admin'>Admin</option>
+            <option value='user'>User</option>
           </select>
           <div>
             <Button
               size={'medium'}
-              type="primary"
-              className="mr-2"
-              role="submit"
+              type='primary'
+              className='mr-2'
+              role='submit'
             >
               Update
             </Button>
@@ -99,37 +101,38 @@ type User = {
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({
   req,
-  params
+  params,
 }) => {
-  const {user} = await supabase.auth.api.getUserByCookie(req);
+  const { user } = await supabase.auth.api.getUserByCookie(req);
   if (!user) {
-    return {props: {}, redirect: {destination: '/signin', permanent: false}};
+    return { props: {}, redirect: { destination: '/signin', permanent: false } };
   }
 
   if (user.user_metadata.role !== 'admin') {
-    return {props: {user}, redirect: {destination: '/', permanent: false}};
+    return { props: { user }, redirect: { destination: '/', permanent: false } };
   }
 
   const uid = getOneParamFromQuery(params!, 'uid');
-  const usersData = await prisma.$queryRaw`
+  const usersData = await prisma.$queryRaw<SupabaseUser[]>`
         SELECT pusers.id, raw_app_meta_data as app_metadata, last_sign_in_at, email, pusers.role
         FROM auth.users
                  LEFT JOIN pusers ON auth.users.id = pusers.id
         WHERE auth.users.id = ${uid}
     `;
-  const users: User[] = usersData.map((u: Partial<SupabaseUser>) => ({
+  const users: User[] = usersData.map((u: SupabaseUser) => ({
     id: u.id,
-    provider: u.app_metadata?.provider,
-    email: u.email,
+    provider: u.app_metadata?.provider ?? '',
+    email: u.email!,
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     last_sign_in_at: Math.floor(
-      new Date(u.last_sign_in_at ?? '1970-01-01 00:00:00').getTime() / 1000
+      new Date(u.last_sign_in_at ?? '1970-01-01 00:00:00').getTime() / 1000,
     ),
-    role: u.role
+    role: u.role as user_role,
   }));
   return {
     props: {
       editedUser: users[0],
-      user
-    }
+      user,
+    },
   };
 };

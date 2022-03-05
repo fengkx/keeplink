@@ -1,8 +1,8 @@
-import {ParsedUrlQuery} from 'querystring';
+import { ParsedUrlQuery } from 'querystring';
 
 export function getOneParamFromQuery<T = string>(
   query: ParsedUrlQuery,
-  key = 'id'
+  key = 'id',
 ): T {
   let param = query[key];
   if (!param) return '' as unknown as T;

@@ -18,19 +18,19 @@ model Bookmark {
   cached_tags_name            String?
   cached_tags_with_alias_name String?
   tsv                         Unsupported("tsvector")?
-  link                        Link                     @relation(fields: [link_id], references: [id])
-  user                        User                     @relation(fields: [user_id], references: [id])
+  link                        Link                     @relation(fields: [link_id], references: [id], onDelete: Cascade)
+  user                        User                     @relation(fields: [user_id], references: [id], onDelete: Cascade)
   tags                        Tagging[]
 
-  @@unique([user_id, link_id], name: "bookmark_user_link_id")
-  @@index([tsv], name: "bookmark_tsv_search")
-  @@index([link_id], name: "link_id")
+  @@unique([user_id, link_id], name: "bookmark_user_link_id", map: "bookmark_user_link_id")
+  @@index([tsv], map: "bookmark_tsv_search")
+  @@index([link_id], map: "link_id")
   @@map("bookmarks")
 }
 
 model Link {
   id           Int                      @id @default(autoincrement())
-  url          String                   @unique
+  url          String                   @unique(map: "links.url_unique")
   title        String?
   favicon      String?
   description  String?
@@ -41,7 +41,7 @@ model Link {
   tsv          Unsupported("tsvector")?
   bookmarks    Bookmark[]
 
-  @@index([tsv], name: "link_tsv_search")
+  @@index([tsv], map: "link_tsv_search")
   @@map("links")
 }
 
@@ -49,21 +49,21 @@ model User {
   id        String     @id @db.Uuid
   role      user_role  @default(user)
   settings  Json       @default("{}")
+  api_token String     @unique @db.Uuid
   bookmarks Bookmark[]
-  api_token String     @unique @default(uuid())
 
   @@map("pusers")
 }
 
 model Tag {
   id        Int                     @id @default(autoincrement())
-  tag       String                  @unique
+  tag       String                  @unique(map: "tags.tag_unique")
   lower_tag Unsupported("TEXT")?
   tsq       Unsupported("tsquery")?
   alias     String[]
   Tagging   Tagging[]
 
-  @@index([alias], name: "tags_alias_idx")
+  @@index([alias])
   @@map("tags")
 }
 
@@ -71,10 +71,10 @@ model Tagging {
   id          Int      @id @default(autoincrement())
   tag_id      Int
   bookmark_id Int
-  bookmark    Bookmark @relation(fields: [bookmark_id], references: [id])
-  tag         Tag      @relation(fields: [tag_id], references: [id])
+  bookmark    Bookmark @relation(fields: [bookmark_id], references: [id], onDelete: Cascade)
+  tag         Tag      @relation(fields: [tag_id], references: [id], onDelete: Cascade)
 
-  @@unique([tag_id, bookmark_id], name: "tag_bookmark_id")
+  @@unique([tag_id, bookmark_id], name: "tag_bookmark_id", map: "tag_bookmark_id")
   @@map("taggings")
 }
 

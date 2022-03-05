@@ -1,19 +1,22 @@
 module.exports = {
-  purge: ['./pages/**/*.{js,ts,jsx,tsx}', './components/**/*.{js,ts,jsx,tsx}'],
-  darkMode: 'class', // Or 'media' or 'class'
+  content: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './components/**/*.{js,ts,jsx,tsx}',
+  ],
+  darkMode: 'class',
   theme: {
     extend: {
       typography: {
         DEFAULT: {
           css: {
             'code::before': {
-              content: '""'
+              content: '""',
             },
             'code::after': {
-              content: '""'
-            }
-          }
-        }
+              content: '""',
+            },
+          },
+        },
       },
       colors: {
         transparent: 'transparent',
@@ -31,7 +34,7 @@ module.exports = {
           600: '#2a2a2a',
           700: '#1f1f1f',
           800: '#181818',
-          900: '#0f0f0f'
+          900: '#0f0f0f',
         },
 
         brand: {
@@ -44,7 +47,7 @@ module.exports = {
           600: '#65D9A5',
           700: '#3ECF8E',
           800: '#24b47e', // Green-500 in dashboard
-          900: '#2c9c6a'
+          900: '#2c9c6a',
         },
 
         gray: {
@@ -65,7 +68,7 @@ module.exports = {
           600: '#2a2a2a',
           700: '#1f1f1f',
           800: '#181818',
-          900: '#0f0f0f'
+          900: '#0f0f0f',
         },
         red: {
           100: '#fff5f5',
@@ -76,7 +79,7 @@ module.exports = {
           600: '#e53e3e',
           700: '#c53030',
           800: '#9b2c2c',
-          900: '#742a2a'
+          900: '#742a2a',
         },
         orange: {
           100: '#fffaf0',
@@ -87,7 +90,7 @@ module.exports = {
           600: '#dd6b20',
           700: '#c05621',
           800: '#9c4221',
-          900: '#7b341e'
+          900: '#7b341e',
         },
         yellow: {
           100: '#fffff0',
@@ -98,7 +101,7 @@ module.exports = {
           600: '#d69e2e',
           700: '#b7791f',
           800: '#975a16',
-          900: '#744210'
+          900: '#744210',
         },
         green: {
           100: '#f0fff4',
@@ -109,7 +112,7 @@ module.exports = {
           600: '#38a169',
           700: '#2f855a',
           800: '#276749',
-          900: '#22543d'
+          900: '#22543d',
         },
         teal: {
           100: '#e6fffa',
@@ -120,7 +123,7 @@ module.exports = {
           600: '#319795',
           700: '#2c7a7b',
           800: '#285e61',
-          900: '#234e52'
+          900: '#234e52',
         },
         blue: {
           100: '#ebf8ff',
@@ -131,7 +134,7 @@ module.exports = {
           600: '#3182ce',
           700: '#2b6cb0',
           800: '#2c5282',
-          900: '#2a4365'
+          900: '#2a4365',
         },
         indigo: {
           100: '#ebf4ff',
@@ -142,7 +145,7 @@ module.exports = {
           600: '#5a67d8',
           700: '#4c51bf',
           800: '#434190',
-          900: '#3c366b'
+          900: '#3c366b',
         },
         purple: {
           100: '#faf5ff',
@@ -153,7 +156,7 @@ module.exports = {
           600: '#805ad5',
           700: '#6b46c1',
           800: '#553c9a',
-          900: '#44337a'
+          900: '#44337a',
         },
         pink: {
           100: '#fff5f7',
@@ -164,13 +167,13 @@ module.exports = {
           600: '#d53f8c',
           700: '#b83280',
           800: '#97266d',
-          900: '#702459'
-        }
-      }
-    }
+          900: '#702459',
+        },
+      },
+    },
   },
   variants: {
-    extend: {}
+    extend: {},
   },
-  plugins: [require('@tailwindcss/forms')]
+  plugins: [require('@tailwindcss/forms')],
 };

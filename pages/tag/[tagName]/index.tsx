@@ -1,17 +1,13 @@
-import Home, {
-  BookMark,
-  getServerSideProps as noSearchServerSideProps
-} from '@/pages/index';
-import {supabase} from '@/db/supabase';
-import {getPagination} from '@/utils/get-pagination';
-import {prisma} from '@/db/prisma';
-import {decode as htmlDecode} from 'he';
+import { prisma } from '@/db/prisma';
+import { supabase } from '@/db/supabase';
+import { BookMark, getServerSideProps as noSearchServerSideProps } from '@/pages/index';
+import { getPagination } from '@/utils/get-pagination';
+import { decode as htmlDecode } from 'he';
 
-export default Home;
 export const getServerSideProps: typeof noSearchServerSideProps = async (
-  ctx
+  ctx,
 ) => {
-  const {req, query} = ctx;
+  const { req, query } = ctx;
   const tagName = Array.isArray(query.tagName)
     ? query.tagName[0]
     : query.tagName;
@@ -19,14 +15,14 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
     return noSearchServerSideProps(ctx);
   }
 
-  const {user} = await supabase.auth.api.getUserByCookie(req);
+  const { user } = await supabase.auth.api.getUserByCookie(req);
   if (!user) {
-    return {props: {}, redirect: {destination: '/signin', permanent: false}};
+    return { props: {}, redirect: { destination: '/signin', permanent: false } };
   }
 
-  const {page, size} = getPagination(query);
+  const { page, size } = getPagination(query);
 
-  const results = await prisma.$queryRaw`select bookmarks.id,
+  const results = await prisma.$queryRaw<BookMark[]>`select bookmarks.id,
                 bookmarks.link_id,
                 COALESCE(bookmarks.title, links.title)             as title,
                 COALESCE(bookmarks.description, links.description) as description,
@@ -46,12 +42,15 @@ export const getServerSideProps: typeof noSearchServerSideProps = async (
     ...bm,
     description: htmlDecode(bm.description ?? ''),
     createdAt: Math.floor(new Date(bm.created_at!).getTime() / 1000),
-    tags: bm.cached_tags_name?.split(',') ?? []
+    tags: bm.cached_tags_name?.split(',') ?? [],
   }));
   return {
     props: {
       user,
-      bookmarks
-    }
+      bookmarks,
+    },
   };
 };
+
+// eslint-disable-next-line no-restricted-exports
+export { default } from '@/pages/index';

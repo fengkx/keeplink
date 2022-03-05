@@ -1,25 +1,21 @@
-import {NextApiRequest, NextApiResponse} from 'next';
-import {reason, restful, RestfulApiHandler} from '@/utils/rest-helper';
-import {prisma} from '@/db/prisma';
-import {decode as htmlDecode} from 'he';
-import {getPagination} from '@/utils/get-pagination';
-import {PrismaClientKnownRequestError} from '@prisma/client/runtime';
+import { prisma } from '@/db/prisma';
+import { getPagination } from '@/utils/get-pagination';
+import { reason, restful, RestfulApiHandler } from '@/utils/rest-helper';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
+import { decode as htmlDecode } from 'he';
+import { NextApiRequest, NextApiResponse } from 'next';
 import * as z from 'zod';
 
-export default async function (req: NextApiRequest, res: NextApiResponse) {
-  await restful({req, res}, {create, read});
-}
-
 const read: RestfulApiHandler = async (req, res, user) => {
-  const {size, page} = getPagination(req.query);
+  const { size, page } = getPagination(req.query);
   const data = await prisma.bookmark.findMany({
     take: size,
     skip: (page - 1) * size,
     where: {
-      user_id: user.id
+      user_id: user.id,
     },
     orderBy: {
-      createdAt: 'desc'
+      createdAt: 'desc',
     },
     select: {
       id: true,
@@ -33,11 +29,11 @@ const read: RestfulApiHandler = async (req, res, user) => {
           description: true,
           url: true,
           id: true,
-          archive_stat: true
-        }
+          archive_stat: true,
+        },
       },
-      cached_tags_name: true
-    }
+      cached_tags_name: true,
+    },
   });
   const bookmarks = data.map((item) => ({
     id: item.id,
@@ -47,13 +43,13 @@ const read: RestfulApiHandler = async (req, res, user) => {
     url: item.link.url,
     createdAt: Math.floor(item.createdAt.getTime() / 1000),
     archive_stat: item.link.archive_stat,
-    tags: item.cached_tags_name?.split(',') ?? []
+    tags: item.cached_tags_name?.split(',') ?? [],
   }));
   res.status(200).json(bookmarks);
 };
 
 const create: RestfulApiHandler = async (req, res, user) => {
-  const schema = z.object({url: z.string().url()});
+  const schema = z.object({ url: z.string().url() });
   const validation = schema.safeParse(req.body);
   if (!validation.success) {
     res.status(400).json(validation.error);
@@ -68,19 +64,19 @@ const create: RestfulApiHandler = async (req, res, user) => {
       data: {
         user: {
           connect: {
-            id: user.id
-          }
+            id: user.id,
+          },
         },
         link: {
           connectOrCreate: {
             where: {
-              url
+              url,
             },
             create: {
-              url
-            }
-          }
-        }
+              url,
+            },
+          },
+        },
       },
       select: {
         id: true,
@@ -89,8 +85,8 @@ const create: RestfulApiHandler = async (req, res, user) => {
         createdAt: true,
         tags: {
           select: {
-            tag: true
-          }
+            tag: true,
+          },
         },
         link: {
           select: {
@@ -98,10 +94,10 @@ const create: RestfulApiHandler = async (req, res, user) => {
             title: true,
             description: true,
             archive_stat: true,
-            url: true
-          }
-        }
-      }
+            url: true,
+          },
+        },
+      },
     });
     res.status(200).json({
       user,
@@ -113,47 +109,51 @@ const create: RestfulApiHandler = async (req, res, user) => {
         url: bookmark.link.url,
         createdAt: Math.floor(bookmark.createdAt.getTime() / 1000),
         archive_stat: bookmark.link.archive_stat,
-        tags: bookmark.tags.map((t) => t.tag)
-      }
+        tags: bookmark.tags.map((t) => t.tag),
+      },
     });
     await fetch(
       `${process.env.BASE_URL}/api/links/archive/${bookmark.link.id}?bookmark=${bookmark.id}`,
       {
         headers: {
-          cookie: req.headers.cookie!
+          cookie: req.headers.cookie!,
         },
-        method: 'POST'
-      }
+        method: 'POST',
+      },
     );
   } catch (error) {
     if (
-      error instanceof PrismaClientKnownRequestError &&
-      error.code === 'P2002'
+      error instanceof PrismaClientKnownRequestError
+      && error.code === 'P2002'
     ) {
       const link = await prisma.link.findUnique({
         where: {
-          url
+          url,
         },
-        select: {id: true}
+        select: { id: true },
       });
       const bookmark = await prisma.bookmark.findUnique({
         where: {
           bookmark_user_link_id: {
             user_id: user.id,
-            link_id: link!.id
-          }
+            link_id: link!.id,
+          },
         },
         select: {
-          id: true
-        }
+          id: true,
+        },
       });
       res.status(400).json({
         code: error.code,
         reason: reason(error),
-        data: {bookmark_id: bookmark!.id}
+        data: { bookmark_id: bookmark!.id },
       });
     } else {
       throw error;
     }
   }
 };
+
+export default async function (req: NextApiRequest, res: NextApiResponse) {
+  await restful({ req, res }, { create, read });
+}
