@@ -8,8 +8,7 @@
     "test": "npm run lint",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "prepare": "husky install"
+    "start": "next start"
   },
   "dependencies": {
     "@metascraper/helpers": "^5.25.8",
