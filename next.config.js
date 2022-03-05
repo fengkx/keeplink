@@ -2,7 +2,7 @@ const DuplicatePackageCheckerPlugin = require('duplicate-package-checker-webpack
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
 });
-const withPWA = require('next-pwa');
+const withPWA = process.env.NODE_ENV === 'development' ? (cfg) => cfg : require('next-pwa');
 module.exports = withBundleAnalyzer(
   withPWA({
     webpack: (config) => {
@@ -14,6 +14,11 @@ module.exports = withBundleAnalyzer(
     },
     future: {
       webpack5: true,
+    },
+    experimental: {
+      createRoot: true
+      // runtime: 'nodejs',
+      // serverComponents: true,
     },
     swcMinify: true,
     pwa: {
