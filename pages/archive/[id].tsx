@@ -1,7 +1,7 @@
 import { apiCall } from '@/utils/api-call';
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
-import { useToggle } from 'react-use';
+import { useToggle } from '@react-hookz/web';
 
 import { supabase } from '@/db/supabase';
 import { RealtimeSubscription } from '@supabase/supabase-js';

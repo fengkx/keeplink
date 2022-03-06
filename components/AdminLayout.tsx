@@ -1,6 +1,7 @@
 import { Layout } from '@/components/Layout';
+import { HStack, Link } from '@chakra-ui/react';
 import type { user_role } from '@prisma/client';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import React from 'react';
 
 type Props = {
@@ -12,14 +13,14 @@ export const AdminLayout: React.FC<React.PropsWithChildren<Props>> = ({
 }) => {
   return (
     <Layout userRole={userRole}>
-      <div className='max-w-4xl mx-auto text-brand-800 mb-2 border-b pb-4 sm:pb-6 px-8'>
-        <Link href='/admin/users'>
-          <a className='mr-8'>Users</a>
-        </Link>
-        <Link href='/admin/tags'>
-          <a>Tags</a>
-        </Link>
-      </div>
+      <HStack spacing={8} maxW={['5xl']} mx='auto' mb={2}>
+        <NextLink href='/admin/users' passHref>
+          <Link fontWeight={'semibold'} color='teal'>Users</Link>
+        </NextLink>
+        <NextLink href='/admin/tags' passHref>
+          <Link fontWeight={'semibold'} color='teal'>Tags</Link>
+        </NextLink>
+      </HStack>
       <div className='max-w-4xl mx-auto'>{children}</div>
     </Layout>
   );
