@@ -71,7 +71,7 @@ function NavContetent({ userRole }: NavBarProps) {
             <Search maxW={'xl'} />
           </Flex>
 
-          <ButtonGroup variant="ghost" size="md" display={['none', 'block']}>
+          <ButtonGroup variant="ghost" size="md" display={['none', 'none', 'block']}>
             <NextLink href="/user/settings" passHref>
               <Button leftIcon={<Icon as={MdOutlineSettings} />} >
                 Setting
@@ -91,7 +91,7 @@ function NavContetent({ userRole }: NavBarProps) {
             </Link>
 
           </ButtonGroup>
-          <Box display={['block', 'none', 'none']}>
+          <Box display={['block', 'block', 'none']}>
             <Menu isLazy>
               <MenuButton as={IconButton} icon={<Icon as={MdMenu} />} variant="ghost" />
               <Portal>

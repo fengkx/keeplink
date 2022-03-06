@@ -1,5 +1,6 @@
 import React from 'react';
 import { useToggle } from '@react-hookz/web';
+import { Button } from '@chakra-ui/react';
 
 export const ConfirmDelete: React.FC<{
   onDelete: () => void;
@@ -23,9 +24,9 @@ export const ConfirmDelete: React.FC<{
       <a className='mr-3 cursor-pointer' onClick={() => toggle()}>
         Cancel
       </a>
-      <a className='cursor-pointer text-red-600' onClick={onDelete}>
+      <Button color='red.600' onClick={onDelete}>
         Confirm
-      </a>
+      </Button>
     </span>
   );
 };

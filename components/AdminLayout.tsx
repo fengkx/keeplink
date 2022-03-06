@@ -13,7 +13,7 @@ export const AdminLayout: React.FC<React.PropsWithChildren<Props>> = ({
 }) => {
   return (
     <Layout userRole={userRole}>
-      <HStack spacing={8} maxW={['5xl']} mx='auto' mb={2}>
+      <HStack spacing={8} maxW={['xs', 'sm', '2xl', '5xl']} mx='auto' mb={2}>
         <NextLink href='/admin/users' passHref>
           <Link fontWeight={'semibold'} color='teal'>Users</Link>
         </NextLink>
