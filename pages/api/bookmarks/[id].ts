@@ -8,7 +8,8 @@ import { Tag } from '../../../types/model';
 const del: RestfulApiHandler = async (req, res) => {
   const id = getOneParamFromQuery<number>(req.query, 'id');
   // https://github.com/prisma/prisma/issues/2810
-  const deleted = await prisma.$executeRaw`DELETE FROM bookmarks WHERE id=${id}`;
+  const deleted
+    = await prisma.$executeRaw`DELETE FROM bookmarks WHERE id=${id}`;
   res.status(200).json(deleted);
 };
 
@@ -59,8 +60,8 @@ const update: RestfulApiHandler = async (req, res) => {
           },
         });
         return { input: t, matches: tags };
-      },
-    ),
+      }
+    )
   );
   const needNewTags = alias
     .filter((t) => t.matches.length === 0)

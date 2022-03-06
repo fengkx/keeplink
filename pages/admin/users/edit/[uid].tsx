@@ -4,11 +4,10 @@ import { apiCall } from '@/utils/api-call';
 import { getOneParamFromQuery } from '@/utils/query-param';
 import type { user_role } from '@prisma/client';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import { Button } from '@supabase/ui';
 import { GetServerSideProps } from 'next';
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { useToast } from '@chakra-ui/react';
+import { useToast, Button } from '@chakra-ui/react';
 
 import { AdminLayout } from '@/components/AdminLayout';
 import styles from '@/styles/Form.module.css';
@@ -77,9 +76,8 @@ export default function EditUser({ user, editedUser }: Props) {
           </select>
           <div>
             <Button
-              size={'medium'}
-              type='primary'
-              className='mr-2'
+              size='md'
+              mr={2}
               role='submit'
             >
               Update
