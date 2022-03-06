@@ -5,7 +5,8 @@ import { Button, Link, Input, InputGroup, InputLeftAddon, InputRightAddon, useTo
 import { MdOutlineLink } from 'react-icons/md';
 
 type Props = {
-  onSuccess: (data: unknown) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSuccess: (data: any) => void;
 } & React.HTMLAttributes<HTMLInputElement>;
 const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
   const toast = useToast();
@@ -50,7 +51,7 @@ const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
   );
   return (
     <form onSubmit={quickAddHandler}>
-      <InputGroup size='sm' colorScheme='brand' shadow="xs">
+      <InputGroup size='sm' shadow="xs">
         <InputLeftAddon children={<MdOutlineLink />} />
         <Input
           placeholder='https://'
@@ -58,8 +59,6 @@ const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
           onChange={(v) => {
             setUrlInput(v.target.value);
           }}
-
-          focusBorderColor='brand.700'
         />
         <InputRightAddon padding={0}>
           <Button
@@ -69,10 +68,10 @@ const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
           height="100%"
           width='100%'
           rounded={0}
-          bg={'brand.300'}
-          _hover={{bg: 'brand.300'}}
-          _focus={{bg: 'brand.300'}}
-          _active={{bg: 'brand.900'}}
+          // bg={'brand.300'}
+          // _hover={{bg: 'brand.300'}}
+          // _focus={{bg: 'brand.300'}}
+          // _active={{bg: 'brand.900'}}
           >
               Quick Add
             </Button>

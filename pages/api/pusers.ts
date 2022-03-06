@@ -16,17 +16,16 @@ const update: RestfulApiHandler = async (req, res, user) => {
     return;
   }
 
-  const { settings, role, api_token } = validation.data;
+  const { settings, role, api_token: apiToken } = validation.data;
   const data: Partial<User> & { api_token?: string } = {
     settings,
     role: 'user',
-    api_token,
+    api_token: apiToken,
   };
   if (user.role === 'admin') {
     data.role = role;
   }
 
-  console.log(data);
   const updated = await prisma.user.update({
     where: { id: user.id },
     // @ts-expect-error null is not inputJSONValue

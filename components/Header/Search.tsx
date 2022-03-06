@@ -41,7 +41,6 @@ export function Search(props: ChakraProps) {
           type="search"
           name='q'
           w='full'
-          focusBorderColor='brand.700'
           textAlign="left"
           value={search}
           onChange={(ev) => setSearch(ev.target.value)}

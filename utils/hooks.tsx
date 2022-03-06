@@ -1,4 +1,6 @@
+import { supabase } from '@/db/supabase';
 import { useNow } from '@/utils/useNow';
+import { useMountEffect } from '@react-hookz/web';
 import { formatDistance } from 'date-fns';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useLocalStorage } from 'react-use';
@@ -83,3 +85,21 @@ export const useAutoRefreshToken = () => {
     };
   }, [value, timeoutMillSeconds]);
 };
+
+export function useSyncTokenToCookie() {
+  useMountEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        fetch('/api/auth', {
+          method: 'POST',
+          headers: new Headers({ 'Content-Type': 'application/json' }),
+          credentials: 'same-origin',
+          body: JSON.stringify({ event, session }),
+        });
+      },
+    );
+    return () => {
+      authListener?.unsubscribe();
+    };
+  });
+}

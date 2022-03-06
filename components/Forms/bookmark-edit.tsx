@@ -12,7 +12,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import { TagsInput } from '@/components/TagsInput';
-import { Props } from './[id]';
+import { Props } from '@/pages/bookmark/edit/[id]';
 import { useRouter } from 'next/router';
 import { apiCall } from '@/utils/api-call';
 import { SetRequired } from 'type-fest';
@@ -21,14 +21,15 @@ export function Form({
   bookmark,
   ...restProps
 }: Omit<SetRequired<Props, 'bookmark'>, 'user'> & ChakraProps) {
+
+  const router = useRouter();
+  const toast = useToast();
+
   type FormInput = {
     title: string;
     description: string;
     tags: string;
   };
-
-  const router = useRouter();
-  const toast = useToast();
 
   const {
     register,
@@ -82,6 +83,7 @@ export function Form({
       <FormControl isInvalid={Boolean(errors.description)}>
         <FormLabel htmlFor="description">Description</FormLabel>
         <Textarea
+          id='description'
           placeholder="Description"
           resize="vertical"
           {...register('description')}

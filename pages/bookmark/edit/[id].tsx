@@ -7,7 +7,7 @@ import { decode as decodeHtml } from 'he';
 import { GetServerSideProps } from 'next';
 import Error from 'next/error';
 import React from 'react';
-import { Form } from './form';
+import { Form } from '@/components/Forms/bookmark-edit';
 
 const Edit: React.FC<Props> = ({ bookmark, user }) => {
   if (!bookmark) {

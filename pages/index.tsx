@@ -47,7 +47,7 @@ const Home: React.FC<Props> = ({ bookmarks, user }) => {
     <Layout title='Bookmarks' userRole={user.user_metadata.role}>
       <div className='max-w-5xl mx-auto'>
         <QuickAdd
-          onSuccess={({ bookmark }) => {
+          onSuccess={({bookmark}) => {
             setBookmarkList([bookmark, ...bookmarkList]);
             void router.push('/', { query: '' });
           }}

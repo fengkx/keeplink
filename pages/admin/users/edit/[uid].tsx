@@ -1,95 +1,29 @@
 import { prisma } from '@/db/prisma';
 import { supabase } from '@/db/supabase';
-import { apiCall } from '@/utils/api-call';
 import { getOneParamFromQuery } from '@/utils/query-param';
 import type { user_role } from '@prisma/client';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 import { GetServerSideProps } from 'next';
 import React from 'react';
-import { useForm } from 'react-hook-form';
-import { useToast, Button } from '@chakra-ui/react';
 
 import { AdminLayout } from '@/components/AdminLayout';
-import styles from '@/styles/Form.module.css';
+import { Form } from '@/components/Forms/admin-user-edit';
 
-type FormInput = {
-  role: user_role;
-};
 type Props = {
   user: SupabaseUser;
   editedUser: User;
 };
 
 export default function EditUser({ user, editedUser }: Props) {
-  const form = useForm<FormInput>({
-    defaultValues: {
-      role: editedUser.role,
-    },
-  });
-  const { register, handleSubmit } = form;
-  const toast = useToast();
-  const onSubmit = handleSubmit(
-    async (data) => {
-      const { role } = data;
-      const payload = { role };
-      try {
-        await apiCall(`/api/users/${editedUser.id}`, {
-          method: 'PUT',
-          body: JSON.stringify(payload),
-        });
-        toast({ title: 'Settings saved' });
-      } catch (error: any) {
-        const data = await error.response.json();
-        if (data.errors) {
-          toast({ description: data.errors[0].message, status: 'error' });
-        } else {
-          toast({ description: error.message, status: 'error' });
-        }
-      }
-    },
-    (err) => {
-      const message = err.role?.message;
-      if (message) {
-        toast({ description: message });
-      }
-    },
-  );
+
   return (
     <AdminLayout userRole={user.user_metadata.role}>
-      <form onSubmit={onSubmit}>
-        <style jsx>
-          {`
-          input[type='password'] {
-            width: 20em;
-          }
-
-          input[name='size'] {
-            width: 6rem;
-          }
-        `}
-        </style>
-        <div className='flex flex-col max-w-5xl mx-auto w-full'>
-          <label className={styles.label}>Role</label>
-          <select {...register('role')} className={`${styles.input} w-32`}>
-            <option value='admin'>Admin</option>
-            <option value='user'>User</option>
-          </select>
-          <div>
-            <Button
-              size='md'
-              mr={2}
-              role='submit'
-            >
-              Update
-            </Button>
-          </div>
-        </div>
-      </form>
+      <Form editedUser={editedUser} />
     </AdminLayout>
   );
 }
 
-type User = {
+export type User = {
   id: string;
   provider: string;
   email: string;

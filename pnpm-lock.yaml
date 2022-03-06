@@ -3,6 +3,7 @@ lockfileVersion: 5.3
 specifiers:
   '@chakra-ui/icons': ^1.1.7
   '@chakra-ui/react': ^1.8.6
+  '@chakra-ui/theme-tools': ^1.3.6
   '@emotion/react': ^11.8.1
   '@emotion/styled': ^11.8.1
   '@metascraper/helpers': ^5.25.8
@@ -67,6 +68,7 @@ specifiers:
 dependencies:
   '@chakra-ui/icons': 1.1.7_react@17.0.2
   '@chakra-ui/react': 1.8.6_189e00a0932443dc19f4914207ca4c5f
+  '@chakra-ui/theme-tools': 1.3.6
   '@emotion/react': 11.8.1_a0c521d4794c7ad97f5f4c1c4a7d5818
   '@emotion/styled': 11.8.1_d24c5a2cd50724e2cbcff1306f0cc72d
   '@metascraper/helpers': 5.25.8
