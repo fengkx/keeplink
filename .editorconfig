@@ -1,2 +1,7 @@
+[*.ts]
+indent_size=2
+quote_type = single
+
 [*.tsx]
 indent_size=2
+quote_type = single

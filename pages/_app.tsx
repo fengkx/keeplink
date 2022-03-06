@@ -1,10 +1,11 @@
-import { supabase } from '@/db/supabase';
-import { Auth } from '@supabase/ui';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import React from 'react';
 import 'tailwindcss/tailwind.css';
-import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { extendTheme } from '@chakra-ui/react';
+import {SaasProvider, AuthProvider} from '@saas-ui/react';
+import { createAuthService } from '@/utils/create-auth-service';
+import { supabase } from '@/db/supabase';
 
 const colors = {
   transparent: 'transparent',
@@ -195,11 +196,13 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         />
         <link rel='manifest' href='/site.webmanifest' />
       </Head>
-      <ChakraProvider theme={theme}>
-        <Auth.UserContextProvider supabaseClient={supabase}>
+      <SaasProvider theme={theme} >
+        <AuthProvider
+          {...createAuthService(supabase)}
+        >
           <Component {...pageProps} />
-        </Auth.UserContextProvider>
-      </ChakraProvider>
+        </AuthProvider>
+      </SaasProvider>
     </>
   );
 };

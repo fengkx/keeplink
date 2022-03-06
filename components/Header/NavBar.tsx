@@ -84,11 +84,11 @@ function NavContetent({ userRole }: NavBarProps) {
                 </Button>
               </NextLink>
             }
-            <NextLink href="/logout" passHref>
+            <Link href="/logout">
               <Button leftIcon={<Icon as={MdOutlineLogout} />} aria-label="log out">
                 Logout
               </Button>
-            </NextLink>
+            </Link>
 
           </ButtonGroup>
           <Box display={['block', 'none', 'none']}>
