@@ -15,7 +15,6 @@ specifiers:
   '@saas-ui/auth': ^0.6.1
   '@saas-ui/react': ^0.11.1
   '@supabase/supabase-js': ^1.30.7
-  '@supabase/ui': ^0.36.4
   '@tailwindcss/forms': ^0.5.0
   '@types/cookie': ^0.4.1
   '@types/he': ^1.1.2
@@ -79,7 +78,6 @@ dependencies:
   '@saas-ui/auth': 0.6.1_ae4b258d679467cd3105b6a0b1e43c4d
   '@saas-ui/react': 0.11.1_676638d442c282ff2afc1554b4be2747
   '@supabase/supabase-js': 1.30.7
-  '@supabase/ui': 0.36.4_react-dom@17.0.2+react@17.0.2
   '@tailwindcss/forms': 0.5.0_tailwindcss@3.0.23
   '@yaireo/tagify': 4.9.8
   cookie: 0.4.2
@@ -3246,20 +3244,6 @@ packages:
       '@supabase/storage-js': 1.6.4
     transitivePeerDependencies:
       - encoding
-    dev: false
-
-  /@supabase/ui/0.36.4_react-dom@17.0.2+react@17.0.2:
-    resolution: {integrity: sha512-7Wq4D/5269q1wpmSo8V57hhWEXB83eKKEW9NHBdSS7wnsAb9hK+m6D/DN8ImpSdybDheHOdT/C4xjc2W6luOxg==}
-    peerDependencies:
-      react: ^16.13.1 || ^17.0.1
-      react-dom: ^16.13.1 || ^17.0.1
-    dependencies:
-      lodash: 4.17.21
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-    optionalDependencies:
-      fsevents: 2.3.2
     dev: false
 
   /@surma/rollup-plugin-off-main-thread/2.2.3:
