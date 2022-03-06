@@ -44,7 +44,6 @@ specifiers:
   nano-staged: ^0.6.0
   next: ^12.1.0
   next-pwa: ^5.4.5
-  placeholder-loading: ^0.5.0
   postcss: ^8.4.7
   prettier: ^2.5.1
   prisma: ^3.10.0
@@ -91,7 +90,6 @@ dependencies:
   metascraper-url: 5.25.8
   next: 12.1.0_react-dom@17.0.2+react@17.0.2
   next-pwa: 5.4.5_next@12.1.0
-  placeholder-loading: 0.5.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-feather: 2.0.9_react@17.0.2
@@ -6576,10 +6574,6 @@ packages:
     engines: {node: '>=8'}
     dependencies:
       find-up: 4.1.0
-    dev: false
-
-  /placeholder-loading/0.5.0:
-    resolution: {integrity: sha512-7nhBjcdyhj/mdNiom0k3UBbwVL7M8jJj9uz9nODsWS319KJ+yWyhgFSc+Mwzf/oR/sprcQlcmEw43iqZ/I6rPw==}
     dev: false
 
   /popmotion/11.0.3:

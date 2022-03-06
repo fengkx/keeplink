@@ -5,8 +5,7 @@ import { useToggle } from '@react-hookz/web';
 
 import { supabase } from '@/db/supabase';
 import { RealtimeSubscription } from '@supabase/supabase-js';
-import 'placeholder-loading/dist/css/placeholder-loading.css';
-import { useToast } from '@chakra-ui/react';
+import { chakra, Box, SkeletonCircle, SkeletonText, useToast } from '@chakra-ui/react';
 
 type Props = {
   archive_stat: 'pending' | 'archived';
@@ -55,7 +54,7 @@ const Archive: React.FC<Props> = () => {
             description: data.error,
             status: 'error',
             duration: null,
-            isClosable: true
+            isClosable: true,
           });
         }
       }
@@ -82,30 +81,17 @@ const Archive: React.FC<Props> = () => {
       }
     };
   }, [id]);
-  useEffect(() => {
-    if (!loading) {
-      document.documentElement.innerHTML = html;
-    }
-  }, [html, loading]);
+
   if (loading) {
     return (
-      <div className='container h-screen mx-auto'>
-        <div className='ph-item h-full'>
-          <div className='ph-col-12'>
-            {[...Array.from({ length: 3 }).keys()].map((key) => (
-              <div key={key} className='h-1/3'>
-                <div className='ph-picture' />
-                <div className='ph-row'>
-                  <div className='ph-col-6 big' />
-                  <div className='ph-col-4 empty big' />
-                  <div className='ph-col-2 big' />
-                  <div className='ph-col-4' />
-                  <div className='ph-col-8 empty' />
-                  <div className='ph-col-6' />
-                  <div className='ph-col-6 empty' />
-                  <div className='ph-col-12' />
-                </div>
-              </div>
+      <div className="container h-screen mx-auto">
+        <div className="ph-item h-full">
+          <div className="ph-col-12">
+            {[...Array.from({ length: 4 }).keys()].map((key) => (
+              <Box key={key} padding="6" boxShadow="lg" bg="white">
+                <SkeletonCircle size="10" />
+                <SkeletonText mt="4" noOfLines={4} spacing="4" />
+              </Box>
             ))}
           </div>
         </div>
@@ -113,7 +99,14 @@ const Archive: React.FC<Props> = () => {
     );
   }
 
-  return <div>Archive {id}</div>;
+  return (
+    <chakra.iframe
+      w='full'
+      h='100vh'
+      sandbox="allow-top-navigation allow-orientation-lock allow-scripts"
+      srcDoc={html}
+  ></chakra.iframe>
+  );
 };
 
 export default Archive;

@@ -12,7 +12,12 @@ import { Pagination } from '@/components/Pagination';
 import { getPagination } from '@/utils/get-pagination';
 import Error from 'next/error';
 import { useRouter } from 'next/router';
-import 'placeholder-loading/dist/css/placeholder-loading.css';
+import {
+  Box,
+  SkeletonCircle,
+  SkeletonText,
+  Stack,
+} from '@chakra-ui/react';
 
 function useTagList() {
   const router = useRouter();
@@ -25,7 +30,7 @@ function useTagList() {
 
   const { data, error } = useSWR(
     `/api/tags?page=${page}&size=${size}&q=${router.query.q ?? ''}`,
-    fetcher,
+    fetcher
   );
   return { data, error, page, size };
 }
@@ -36,21 +41,14 @@ const TagsAdmin: React.FC<Props> = ({ user }) => {
   if (!data) {
     return (
       <AdminLayout userRole={user.user_metadata.role}>
-        {[...Array.from({ length: 4 }).keys()].map((key) => (
-          <div key={key} className='h-1/3 overflow-hidden'>
-            <div className='ph-picture' />
-            <div className='ph-row my-6'>
-              <div className='ph-col-6 big' />
-              <div className='ph-col-4 empty big' />
-              <div className='ph-col-2 big' />
-              <div className='ph-col-4' />
-              <div className='ph-col-8 empty' />
-              <div className='ph-col-6' />
-              <div className='ph-col-6 empty' />
-              <div className='ph-col-12' />
-            </div>
-          </div>
-        ))}
+        <Stack>
+          {[...Array.from({ length: 5 }).keys()].map((key) => (
+            <Box key={key} padding="6" boxShadow="lg" bg="white">
+              <SkeletonCircle size="10" />
+              <SkeletonText mt="4" noOfLines={4} spacing="4" />
+            </Box>
+          ))}
+        </Stack>
       </AdminLayout>
     );
   }
@@ -64,30 +62,30 @@ const TagsAdmin: React.FC<Props> = ({ user }) => {
       <ul>
         <style jsx>
           {`
-          .tag {
-            min-width: 6em;
-            text-align: right;
-          }
-        `}
+            .tag {
+              min-width: 6em;
+              text-align: right;
+            }
+          `}
         </style>
         {data.length === 0 && (
-          <div className='text-center mt-4 font-semibold text-xl'>
+          <div className="text-center mt-4 font-semibold text-xl">
             Tags is Empty
           </div>
         )}
         {data.map((tag) => (
-          <li key={tag.id} className='py-3.5 border-b'>
-            <div className='flex leading-10'>
+          <li key={tag.id} className="py-3.5 border-b">
+            <div className="flex leading-10">
               <Link href={`/tag/${tag.tag}`}>
-                <a className='inline-block tag font-bold hover:text-brand-800'>
+                <a className="inline-block tag font-bold hover:text-brand-800">
                   {tag.tag}
                 </a>
               </Link>
-              <div className='alias flex justify-between flex-1'>
-                <div className='ml-4 break-words flex-wrap flex'>
+              <div className="alias flex justify-between flex-1">
+                <div className="ml-4 break-words flex-wrap flex">
                   {tag.alias.map((alias) => (
                     <a
-                      className='leading-relaxed bg-gray-100 m-1 px-2 py-1'
+                      className="leading-relaxed bg-gray-100 m-1 px-2 py-1"
                       key={alias}
                     >
                       {alias}
@@ -95,7 +93,7 @@ const TagsAdmin: React.FC<Props> = ({ user }) => {
                   ))}
                 </div>
                 <Link href={`/tag/${tag.tag}/edit`}>
-                  <a className='h-full text-brand-300 mr-2'>Edit</a>
+                  <a className="h-full text-brand-300 mr-2">Edit</a>
                 </Link>
               </div>
             </div>
@@ -114,7 +112,10 @@ type Props = {
 export const getServerSideProps: GetServerSideProps = async ({ req }) => {
   const { user } = await supabase.auth.api.getUserByCookie(req);
   if (!user) {
-    return { props: {}, redirect: { destination: '/signin', permanent: false } };
+    return {
+      props: {},
+      redirect: { destination: '/signin', permanent: false },
+    };
   }
 
   if (user.user_metadata.role !== 'admin') {
