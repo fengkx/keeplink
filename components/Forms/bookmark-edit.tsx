@@ -120,7 +120,7 @@ export function Form({
       </FormControl>
       <HStack spacing={6}>
         <Button
-          colorScheme="brand"
+          colorScheme='teal'
           isLoading={isSubmitting}
           type="submit"
         >
