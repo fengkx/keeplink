@@ -10,6 +10,7 @@ import {
   RadioGroup,
   HStack,
   Radio,
+  FormErrorMessage,
 } from '@chakra-ui/react';
 import type { user_role } from '@prisma/client';
 import { User } from '@/pages/admin/users/edit/[uid]';
@@ -84,6 +85,7 @@ export function Form({ editedUser, ...restProps }: Props) {
             );
           }}
         />
+        <FormErrorMessage>{errors.role?.message}</FormErrorMessage>
       </FormControl>
       <HStack>
         <Button isLoading={isSubmitting} type='submit'>Update</Button>

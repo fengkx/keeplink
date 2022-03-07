@@ -5,6 +5,7 @@ import {
   Button,
   ChakraProps,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   HStack,
   Input,
@@ -82,6 +83,7 @@ export function Form({ tag, ...restProps }: Props) {
       <FormControl isInvalid={Boolean(errors.tag)}>
         <FormLabel htmlFor="tag">Tag</FormLabel>
         <Input id="tag" {...register('tag')} />
+        <FormErrorMessage>{errors.tag?.message}</FormErrorMessage>
       </FormControl>
       <FormControl isInvalid={Boolean(errors.alias)}>
         <FormLabel htmlFor="alias">Alias</FormLabel>
@@ -111,6 +113,7 @@ export function Form({ tag, ...restProps }: Props) {
           }}
           name="alias"
         />
+        <FormErrorMessage>{errors.alias?.message}</FormErrorMessage>
       </FormControl>
       <VStack spacing={8}>
         <HStack w="full">

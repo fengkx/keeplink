@@ -1,4 +1,4 @@
-import { Button, ChakraProps, FormControl, FormLabel, HStack, Input, InputGroup, InputRightAddon, Stack, useToast } from '@chakra-ui/react';
+import { Button, ChakraProps, FormControl, FormErrorMessage, FormLabel, HStack, Input, InputGroup, InputRightAddon, Stack, useToast } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { apiCall } from '@/utils/api-call';
 import { useSyncTokenToCookie } from '@/utils/hooks';
@@ -85,10 +85,12 @@ export function Form({userData, ...restProps}: FormProps) {
       <FormControl isInvalid={Boolean(errors.password)}>
         <FormLabel htmlFor='password'>Password</FormLabel>
         <Input id='password' {...register('password')} autoComplete='off' />
+        <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
       </FormControl>
       <FormControl isInvalid={Boolean(errors.password_confirm)}>
         <FormLabel htmlFor='password_confirm'>Password Confirmation</FormLabel>
         <Input id='password_confirm' type='password' {...register('password_confirm')} autoComplete='off' />
+        <FormErrorMessage>{errors.password_confirm?.message}</FormErrorMessage>
       </FormControl>
       <FormControl isInvalid={Boolean(errors.api_token)}>
         <FormLabel htmlFor='api_token'>API Token</FormLabel>
@@ -111,6 +113,7 @@ export function Form({userData, ...restProps}: FormProps) {
               }}>Refresh</Button>
         </InputRightAddon>
         </InputGroup>
+        <FormErrorMessage>{errors.api_token?.message}</FormErrorMessage>
       </FormControl>
       <HStack>
         <Button type='submit' isLoading={isSubmitting}>Update</Button>

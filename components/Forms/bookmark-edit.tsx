@@ -88,6 +88,7 @@ export function Form({
           resize="vertical"
           {...register('description')}
         />
+        <FormErrorMessage>{errors.description?.message}</FormErrorMessage>
       </FormControl>
       <FormControl isInvalid={Boolean(errors.tags)}>
         <FormLabel htmlFor="tags">Tags</FormLabel>
@@ -117,6 +118,7 @@ export function Form({
           }}
           name="tags"
         />
+        <FormErrorMessage>{errors.tags?.message}</FormErrorMessage>
       </FormControl>
       <HStack spacing={6}>
         <Button
