@@ -9,6 +9,7 @@ import {
   FormLabel,
   RadioGroup,
   HStack,
+  Radio,
 } from '@chakra-ui/react';
 import type { user_role } from '@prisma/client';
 import { User } from '@/pages/admin/users/edit/[uid]';
@@ -59,7 +60,7 @@ export function Form({ editedUser, ...restProps }: Props) {
   );
 
   return (
-    <Stack spacing={8} as="form" onSubmit={onSubmit}>
+    <Stack spacing={8} as="form" onSubmit={onSubmit} {...restProps}>
       <FormControl isInvalid={Boolean(errors.role)}>
         <FormLabel htmlFor="role">Role</FormLabel>
         <Controller
@@ -75,7 +76,10 @@ export function Form({ editedUser, ...restProps }: Props) {
                 value={field.value}
                 ref={field.ref}
               >
-                <Stack></Stack>
+                <Stack direction='row'>
+                  <Radio value='admin'>Admin</Radio>
+                  <Radio value='user'>User</Radio>
+                </Stack>
               </RadioGroup>
             );
           }}

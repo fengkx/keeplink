@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useRouter } from 'next/router';
 import {
+  Box,
   Button,
   ChakraProps,
   FormControl,
@@ -9,6 +10,7 @@ import {
   Input,
   Stack,
   useToast,
+  VStack,
 } from '@chakra-ui/react';
 import { apiCall } from '@/utils/api-call';
 import { Controller, useForm } from 'react-hook-form';
@@ -76,7 +78,7 @@ export function Form({ tag, ...restProps }: Props) {
   });
 
   return (
-    <Stack as="form" onSubmit={onSubmit}>
+    <Stack as="form" onSubmit={onSubmit} {...restProps}>
       <FormControl isInvalid={Boolean(errors.tag)}>
         <FormLabel htmlFor="tag">Tag</FormLabel>
         <Input id="tag" {...register('tag')} />
@@ -110,8 +112,8 @@ export function Form({ tag, ...restProps }: Props) {
           name="alias"
         />
       </FormControl>
-      <HStack spacing={8}>
-        <HStack>
+      <VStack spacing={8}>
+        <HStack w="full">
           <Button isLoading={isSubmitting} type="submit" colorScheme={'teal'}>
             Submit
           </Button>
@@ -125,15 +127,17 @@ export function Form({ tag, ...restProps }: Props) {
             Cancel
           </Button>
         </HStack>
-        <ConfirmDelete
-          Component={({ onClick }) => (
-            <Button onClick={onClick} color={'red.300'} ml={10}>
-              Delete
-            </Button>
-          )}
-          onDelete={onDelete}
-        />
-      </HStack>
+        <Box w="full">
+          <ConfirmDelete
+            Component={({ onClick }) => (
+              <Button onClick={onClick} colorScheme={'red'}>
+                Delete
+              </Button>
+            )}
+            onDelete={onDelete}
+          />
+        </Box>
+      </VStack>
     </Stack>
   );
 }

@@ -15,7 +15,7 @@ const Edit: React.FC<Props> = ({ tag, user }) => {
 
   return (
     <Layout userRole={user.user_metadata.role}>
-      <Form tag={tag} />
+      <Form tag={tag} maxW='lg' mx='auto' mt='8' />
     </Layout>
   );
 };

@@ -18,7 +18,7 @@ export default function EditUser({ user, editedUser }: Props) {
 
   return (
     <AdminLayout userRole={user.user_metadata.role}>
-      <Form editedUser={editedUser} />
+      <Form mt={10} editedUser={editedUser} />
     </AdminLayout>
   );
 }
