@@ -3,7 +3,7 @@ import { apiCall } from '@/utils/api-call';
 import type { Tag } from '@prisma/client';
 import { User } from '@supabase/supabase-js';
 import { GetServerSideProps } from 'next';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import React, { useCallback } from 'react';
 import useSWR from 'swr';
 
@@ -14,9 +14,13 @@ import Error from 'next/error';
 import { useRouter } from 'next/router';
 import {
   Box,
+  Flex,
+  List,
+  ListItem,
   SkeletonCircle,
   SkeletonText,
   Stack,
+  Link,
 } from '@chakra-ui/react';
 
 function useTagList() {
@@ -59,47 +63,39 @@ const TagsAdmin: React.FC<Props> = ({ user }) => {
 
   return (
     <AdminLayout userRole={user.user_metadata.role}>
-      <ul>
-        <style jsx>
-          {`
-            .tag {
-              min-width: 6em;
-              text-align: right;
-            }
-          `}
-        </style>
+      <List mt={8}>
         {data.length === 0 && (
           <div className="text-center mt-4 font-semibold text-xl">
             Tags is Empty
           </div>
         )}
         {data.map((tag) => (
-          <li key={tag.id} className="py-3.5 border-b">
-            <div className="flex leading-10">
-              <Link href={`/tag/${tag.tag}`}>
-                <a className="inline-block tag font-bold hover:text-brand-800">
+          <ListItem key={tag.id}>
+            <Flex align='center'>
+              <NextLink href={`/tag/${tag.tag}`} passHref>
+                <Link flexShrink={0}>
                   {tag.tag}
-                </a>
-              </Link>
-              <div className="alias flex justify-between flex-1">
-                <div className="ml-4 break-words flex-wrap flex">
+                </Link>
+              </NextLink>
+              <Flex justify={'space-between'} flex='1'>
+                <Flex ml={4} flexWrap='nowrap' align='center' width='full'>
                   {tag.alias.map((alias) => (
-                    <a
+                    <Link
                       className="leading-relaxed bg-gray-100 m-1 px-2 py-1"
                       key={alias}
                     >
                       {alias}
-                    </a>
+                    </Link>
                   ))}
-                </div>
-                <Link href={`/tag/${tag.tag}/edit`}>
-                  <a className="h-full text-brand-300 mr-2">Edit</a>
-                </Link>
-              </div>
-            </div>
-          </li>
+                </Flex>
+                <NextLink href={`/tag/${tag.tag}/edit`} passHref>
+                  <Link as={Flex} align='center' fontWeight='semibold' color='teal.400'>Edit</Link>
+                </NextLink>
+              </Flex>
+            </Flex>
+          </ListItem>
         ))}
-      </ul>
+      </List>
       <Pagination page={page} size={size} currentLen={data.length} />
     </AdminLayout>
   );
