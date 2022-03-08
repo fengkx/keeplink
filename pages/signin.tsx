@@ -13,22 +13,20 @@ const AuthBasic: React.FC<{ error: Error }> = () => {
 
   useMountEffect(() => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      async (event, session) => {
         // Send session to /api/auth route to set the auth cookie.
         // NOTE: this is only needed if you're doing SSR (getServerSideProps)!
-        fetch('/api/auth', {
-          method: 'POST',
-          headers: new Headers({ 'Content-Type': 'application/json' }),
-          credentials: 'same-origin',
-          body: JSON.stringify({ event, session }),
-        })
-          .then(async (res) => res.json())
-          .then(() => {
-            void router.push('/');
-          })
-          .catch((error) => {
-            console.error(error);
+        try {
+          await fetch('/api/auth', {
+            method: 'POST',
+            headers: new Headers({ 'Content-Type': 'application/json' }),
+            credentials: 'same-origin',
+            body: JSON.stringify({ event, session }),
           });
+          await router.push('/');
+        } catch (err) {
+          console.error(err);
+        }
       },
     );
     const user = supabase.auth.user();
@@ -47,9 +45,7 @@ const AuthBasic: React.FC<{ error: Error }> = () => {
       </Head>
       <main className='mx-auto max-w-3xl w-full lg:w-10/12 p-5'>
         <Auth
-          onSuccess={() => {
-            router.push('/');
-          }}
+          onSuccess={() => router.push('/')}
           onError={err => {
             toast({status: 'error', title: err.name, description: err.message});
           }}
