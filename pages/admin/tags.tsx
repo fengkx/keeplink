@@ -88,7 +88,7 @@ const TagsAdmin: React.FC<Props> = ({ user }) => {
                       px={2.5}
                       size='lg'
                       colorScheme='blackAlpha'
-                      rounded={false}
+                      rounded={0}
                     >
                       {alias}
                     </Tag>
