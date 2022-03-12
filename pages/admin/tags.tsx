@@ -1,6 +1,6 @@
 import { supabase } from '@/db/supabase';
 import { apiCall } from '@/utils/api-call';
-import type { Tag } from '@prisma/client';
+import type { Tag as ITag } from '@prisma/client';
 import { User } from '@supabase/supabase-js';
 import { GetServerSideProps } from 'next';
 import NextLink from 'next/link';
@@ -21,6 +21,8 @@ import {
   SkeletonText,
   Stack,
   Link,
+  Tag,
+  HStack
 } from '@chakra-ui/react';
 
 function useTagList() {
@@ -29,7 +31,7 @@ function useTagList() {
   const fetcher = useCallback(async (entry) => {
     const resp = await apiCall(entry);
     const data = await resp.json();
-    return data as Tag[];
+    return data as ITag[];
   }, []);
 
   const { data, error } = useSWR(
@@ -71,25 +73,29 @@ const TagsAdmin: React.FC<Props> = ({ user }) => {
         )}
         {data.map((tag) => (
           <ListItem key={tag.id}>
-            <Flex align='center'>
+            <Flex align='center' mb={2}>
               <NextLink href={`/tag/${tag.tag}`} passHref>
                 <Link flexShrink={0}>
                   {tag.tag}
                 </Link>
               </NextLink>
               <Flex justify={'space-between'} flex='1'>
-                <Flex ml={4} flexWrap='nowrap' align='center' width='full'>
+                <HStack ml={4} flexWrap='nowrap' align='center' width='full'>
                   {tag.alias.map((alias) => (
-                    <Link
-                      className="leading-relaxed bg-gray-100 m-1 px-2 py-1"
+                    <Tag as={Link}
                       key={alias}
+                      m={1}
+                      px={2.5}
+                      size='lg'
+                      colorScheme='blackAlpha'
+                      rounded={false}
                     >
                       {alias}
-                    </Link>
+                    </Tag>
                   ))}
-                </Flex>
+                </HStack>
                 <NextLink href={`/tag/${tag.tag}/edit`} passHref>
-                  <Link as={Flex} align='center' fontWeight='semibold' color='teal.400'>Edit</Link>
+                  <Link as={Flex} align='center' fontWeight='semibold' color='teal'>Edit</Link>
                 </NextLink>
               </Flex>
             </Flex>

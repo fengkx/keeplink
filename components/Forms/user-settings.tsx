@@ -116,7 +116,7 @@ export function Form({userData, ...restProps}: FormProps) {
         <FormErrorMessage>{errors.api_token?.message}</FormErrorMessage>
       </FormControl>
       <HStack>
-        <Button type='submit' isLoading={isSubmitting}>Update</Button>
+        <Button colorScheme='teal' type='submit' isLoading={isSubmitting}>Update</Button>
       </HStack>
     </Stack>
   );

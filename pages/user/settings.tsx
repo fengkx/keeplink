@@ -16,7 +16,7 @@ type Props = {
 const Settings: React.FC<Props> = ({ user, userData }) => {
   return (
     <Layout userRole={user.user_metadata.role}>
-      <Form userData={userData} maxW='3xl' mx={'auto'} />
+      <Form userData={userData} maxW='2xl' mx={'auto'} />
     </Layout>
   );
 };

@@ -43,7 +43,7 @@ export function NavBar({ userRole }: NavBarProps) {
 
 function NavContetent({ userRole }: NavBarProps) {
 
-  const logoTextColor = useColorModeValue('brand.800', 'brand.800');
+  const logoTextColor = useColorModeValue('teal.600', 'teal.600');
 
   return (
     <Box h="4.5rem" mx="auto" maxW="8xl">
@@ -55,7 +55,7 @@ function NavContetent({ userRole }: NavBarProps) {
         justifyContent="space-between"
       >
         <Flex align="center">
-          <NextLink href="/">
+          <NextLink href="/" passHref>
             <Link >
               <Heading as="h1" size="md" fontFamily='"Work Sans", sans-serif' color={logoTextColor}>KeepLink</Heading>
             </Link>

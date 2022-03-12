@@ -1,7 +1,15 @@
 import { apiCall } from '@/utils/api-call';
 import NextLink from 'next/link';
 import React, { useCallback, useState } from 'react';
-import { Button, Link, Input, InputGroup, InputLeftAddon, InputRightAddon, useToast } from '@chakra-ui/react';
+import {
+  Button,
+  Link,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  InputRightAddon,
+  useToast,
+} from '@chakra-ui/react';
 import { MdOutlineLink } from 'react-icons/md';
 
 type Props = {
@@ -29,32 +37,28 @@ const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
         }
 
         if (data.bookmark_id) {
-          toast(
-            {
-              description: (
-                <div className='text-lg font-semibold'>
-                  Already existed in&nbsp;
-                  <NextLink href={`/bookmark/edit/${data.bookmark_id}`} passHref>
-                    <Link color={'blue.500'}>
-                      Here
-                    </Link>
-                  </NextLink>
-                </div>
-              ),
-              status: 'error',
-            },
-          );
+          toast({
+            description: (
+              <div className="text-lg font-semibold">
+                Already existed in&nbsp;
+                <NextLink href={`/bookmark/edit/${data.bookmark_id}`} passHref>
+                  <Link color={'blue.500'}>Here</Link>
+                </NextLink>
+              </div>
+            ),
+            status: 'error',
+          });
         }
       }
     },
-    [urlInput],
+    [urlInput]
   );
   return (
     <form onSubmit={quickAddHandler}>
-      <InputGroup size='sm' shadow="xs">
+      <InputGroup size="sm" shadow="xs">
         <InputLeftAddon children={<MdOutlineLink />} />
         <Input
-          placeholder='https://'
+          placeholder="https://"
           value={urlInput}
           onChange={(v) => {
             setUrlInput(v.target.value);
@@ -62,19 +66,17 @@ const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
         />
         <InputRightAddon padding={0}>
           <Button
-          type='submit'
-          variant='solid'
-          size='sm'
-          height="100%"
-          width='100%'
-          rounded={0}
-          // bg={'brand.300'}
-          // _hover={{bg: 'brand.300'}}
-          // _focus={{bg: 'brand.300'}}
-          // _active={{bg: 'brand.900'}}
+            type="submit"
+            variant="solid"
+            size="sm"
+            height="100%"
+            width="100%"
+            rounded={0}
+            colorScheme="teal"
+            shadow={0}
           >
-              Quick Add
-            </Button>
+            Quick Add
+          </Button>
         </InputRightAddon>
       </InputGroup>
     </form>

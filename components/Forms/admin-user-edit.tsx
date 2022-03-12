@@ -27,7 +27,6 @@ export function Form({ editedUser, ...restProps }: Props) {
     },
   });
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
@@ -88,24 +87,8 @@ export function Form({ editedUser, ...restProps }: Props) {
         <FormErrorMessage>{errors.role?.message}</FormErrorMessage>
       </FormControl>
       <HStack>
-        <Button isLoading={isSubmitting} type='submit'>Update</Button>
+        <Button colorScheme='teal' isLoading={isSubmitting} type='submit'>Update</Button>
       </HStack>
     </Stack>
-  );
-  return (
-    <form onSubmit={onSubmit}>
-      <div className="flex flex-col max-w-5xl mx-auto w-full">
-        <label>Role</label>
-        <select {...register('role')} className={'w-32'}>
-          <option value="admin">Admin</option>
-          <option value="user">User</option>
-        </select>
-        <div>
-          <Button size="md" mr={2} role="submit">
-            Update
-          </Button>
-        </div>
-      </div>
-    </form>
   );
 }

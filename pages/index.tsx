@@ -13,7 +13,7 @@ import { decode as htmlDecode } from 'he';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useToast } from '@chakra-ui/react';
+import { Box, useToast } from '@chakra-ui/react';
 import useSWR from 'swr';
 
 function useTagCloud() {
@@ -68,10 +68,10 @@ const Home: React.FC<Props> = ({ bookmarks, user }) => {
             size={pagination.size}
           />
         </section>
-        <section className='w-1/3 max-w-sm hidden lg:block pl-6'>
+        <Box as='section' className='w-1/3 max-w-sm hidden lg:block pl-6'>
           <h2 className='border-b mb-3 pb-3 font-bold'>Tags:</h2>
-          <TagCloud className='h-full' tagList={tags ?? []} />
-        </section>
+          <TagCloud h='full' tagList={tags ?? []} />
+        </Box>
       </div>
     </Layout>
   );
