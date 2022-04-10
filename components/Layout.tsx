@@ -7,6 +7,7 @@ import { NavBar } from './Header/NavBar';
 type Props = {
   userRole: user_role;
   title?: string;
+  children: React.ReactNode;
 };
 export const Layout: React.FC<Props> = ({ children, userRole, title }) => {
   useAutoRefreshToken();

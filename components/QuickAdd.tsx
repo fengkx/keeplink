@@ -20,7 +20,7 @@ const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
   const toast = useToast();
   const [urlInput, setUrlInput] = useState('');
   const quickAddHandler = useCallback(
-    async (ev) => {
+    async (ev: any) => {
       ev.preventDefault();
       try {
         const resp = await apiCall('/api/bookmarks', {

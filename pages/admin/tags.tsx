@@ -28,7 +28,7 @@ import {
 function useTagList() {
   const router = useRouter();
   const { page, size } = getPagination(router.query);
-  const fetcher = useCallback(async (entry) => {
+  const fetcher = useCallback(async (entry: any) => {
     const resp = await apiCall(entry);
     const data = await resp.json();
     return data as ITag[];

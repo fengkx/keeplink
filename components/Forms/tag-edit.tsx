@@ -37,7 +37,7 @@ export function Form({ tag, ...restProps }: Props) {
   const router = useRouter();
   const toast = useToast();
 
-  const handleApiError = useCallback(async (error) => {
+  const handleApiError = useCallback(async (error: any) => {
     const data = await error.response.json();
     if (data.reason) {
       toast({ description: data.reason, status: 'error' });

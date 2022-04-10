@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 export const useFormatTime = () => {
   const now = useNow();
-  return useCallback((timestamp) => {
+  return useCallback((timestamp: number) => {
     return formatDistance(new Date(timestamp * 1000), now, { addSuffix: true });
   }, []);
 };
