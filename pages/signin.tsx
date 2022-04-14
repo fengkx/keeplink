@@ -2,7 +2,7 @@
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Auth } from '@saas-ui/auth';
+import { Auth } from '@saas-ui/react';
 import {useToast} from '@chakra-ui/react';
 import { useMountEffect } from '@react-hookz/web';
 import { supabase } from '@/db/supabase';

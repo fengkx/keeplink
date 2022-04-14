@@ -4,7 +4,7 @@ import React from 'react';
 import 'tailwindcss/tailwind.css';
 import { extendTheme } from '@chakra-ui/react';
 import {SaasProvider, AuthProvider} from '@saas-ui/react';
-import { createAuthService } from '@/utils/create-auth-service';
+import { createAuthService } from '@saas-ui/auth/services/supabase';
 import { supabase } from '@/db/supabase';
 
 import '../public/font/work_sans.css';
