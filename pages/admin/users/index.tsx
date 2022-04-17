@@ -3,10 +3,11 @@ import { prisma } from '@/db/prisma';
 import { supabase } from '@/db/supabase';
 import { getPagination } from '@/utils/get-pagination';
 import { useFormatTime } from '@/utils/hooks';
+import { Table, Tbody, Td, Th, Thead, Tr, Link} from '@chakra-ui/react';
 import { user_role } from '@prisma/client';
 import { User as SupabaseUser } from '@supabase/supabase-js';
 import { GetServerSideProps } from 'next';
-import Link from 'next/link';
+import NextLink from 'next/link';
 
 type Props = {
   user: SupabaseUser;
@@ -16,32 +17,32 @@ export default function AdminUsers({ user, users }: Props) {
   const formatTime = useFormatTime();
   return (
     <AdminLayout userRole={user.user_metadata.role}>
-      <table className='table-fixed w-full leading-loose break-words'>
-        <thead>
-          <tr>
-            <th className='w-2/6'>Email</th>
-            <th className='w-1/6 hidden sm:table-cell'>Provider</th>
-            <th className='w-1/6'>Role</th>
-            <th className='w-2/6'>Last Sign In</th>
-            <th className='w-1/6'>Actions</th>
-          </tr>
-        </thead>
-        <tbody className='text-center'>
+      <Table mt={9}>
+        <Thead>
+          <Tr>
+            <Th >Email</Th>
+            <Th display={['none', 'table-cell']}>Provider</Th>
+            <Th >Role</Th>
+            <Th >Last Sign In</Th>
+            <Th >Actions</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {users.map((u) => (
-            <tr key={u.id}>
-              <td>{u.email}</td>
-              <td className='hidden sm:table-cell'>{u.provider}</td>
-              <td>{u.role}</td>
-              <td>{formatTime(u.last_sign_in_at)}</td>
-              <td>
-                <Link href={`/admin/users/edit/${u.id}`}>
-                  <a className='text-brand-800'>Edit</a>
-                </Link>
-              </td>
-            </tr>
+            <Tr key={u.id}>
+              <Td>{u.email}</Td>
+              <Td display={['none', 'table-cell']}>{u.provider}</Td>
+              <Td>{u.role}</Td>
+              <Td>{formatTime(u.last_sign_in_at)}</Td>
+              <Td>
+                <NextLink href={`/admin/users/edit/${u.id}`} passHref>
+                  <Link color='teal'>Edit</Link>
+                </NextLink>
+              </Td>
+            </Tr>
           ))}
-        </tbody>
-      </table>
+        </Tbody>
+      </Table>
     </AdminLayout>
   );
 }

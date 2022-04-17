@@ -1,17 +1,30 @@
 FROM node:lts AS builder
 RUN apt update && apt install -y git build-essential
-WORKDIR /app
-COPY package.json prisma /app/
 RUN corepack enable
+
+RUN groupadd --system --gid 1001 nodejs
+RUN useradd --system --uid 1001 -G nodejs nextjs
+WORKDIR /home/nextjs
+RUN chown -R nextjs /home/nextjs
+USER nextjs
+COPY --chown=nextjs:nodejs package.json prisma /home/nextjs/
 RUN echo 'node-linker=hoisted' >> .npmrc
 RUN pnpm install --prefer-frozen-lockfile
 RUN pnpx prisma generate
 
 FROM node:lts AS app
 ENV NODE_PRODUCTION=true
-WORKDIR /app/
 RUN corepack enable
-COPY --from=builder /app/node_modules /app/node_modules
-COPY . /app/
-CMD ["sh", "/app/docker-entry.sh"]
+
+RUN groupadd --system --gid 1001 nodejs
+RUN useradd --system --uid 1001 -G nodejs nextjs
+WORKDIR /home/nextjs/
+COPY --from=builder --chown=nextjs:nodejs /home/nextjs/node_modules /home/nextjs/node_modules
+COPY --chown=nextjs:nodejs . /home/nextjs/
+RUN chown -R nextjs /home/nextjs
+USER nextjs
+ENV PORT=3000
+EXPOSE 3000
+
+CMD ["sh", "/home/nextjs/docker-entry.sh"]
 EXPOSE 3000

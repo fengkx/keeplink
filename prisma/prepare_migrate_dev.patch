@@ -1,0 +1,183 @@
+diff --git a/prisma/migrations/20210429025219_init/migration.sql b/prisma/migrations/20210429025219_init/migration.sql
+index 82b63f2..ff0d9c6 100644
+--- a/prisma/migrations/20210429025219_init/migration.sql
++++ b/prisma/migrations/20210429025219_init/migration.sql
+@@ -70,8 +70,8 @@ CREATE TABLE "bookmarks"
+ 
+ ALTER TABLE bookmarks
+     ENABLE ROW LEVEL SECURITY;
+-CREATE POLICY "bookmark_only_self" ON bookmarks
+-    FOR ALL USING (auth.uid() = user_id);
++-- CREATE POLICY "bookmark_only_self" ON bookmarks
++--     FOR ALL USING (auth.uid() = user_id);
+ 
+ -- CreateTable
+ CREATE TABLE "links"
+@@ -107,59 +107,59 @@ CREATE TABLE "pusers"
+ );
+ alter table pusers
+     enable row level security;
+-create policy "puser_only_view_self"
+-    on pusers for select
+-    using (auth.uid() = id);
+-
+--- inserts a row into public.users
+-create or replace function public.handle_new_user()
+-    returns trigger as
+-$$
+-begin
+-    if exists(select id from public.pusers limit 1) then
+-        insert into public.pusers (id)
+-        values (new.id);
+-        return new;
+-    else
+-        insert into public.pusers ("id", "role")
+-        values (new.id, 'admin'::user_role);
+-        return new;
+-    end if;
+-end;
+-$$ language plpgsql security definer;
+-
+--- trigger the function every time a user is created
+-create trigger on_auth_user_created
+-    after insert
+-    on auth.users
+-    for each row
+-execute procedure public.handle_new_user();
+-
+--- update user
+-create or replace function public.handle_user_setting()
+-    returns trigger as
+-$$
+-begin
+-    update auth.users
+-    set raw_user_meta_data=new.settings || jsonb_build_object('role', new.role::user_role)
+-    where id = new.id;
+-    return new;
+-end;
+-$$ language plpgsql security definer;
+-
+--- trigger the function every time user setting updated
+-create trigger on_user_setting_updated
+-    after update
+-    on pusers
+-    for each row
+-execute procedure public.handle_user_setting();
+-
+--- trigger the function every time user setting updated
+-create trigger on_user_setting_insert
+-    after insert
+-    on pusers
+-    for each row
+-execute procedure public.handle_user_setting();
++-- create policy "puser_only_view_self"
++--     on pusers for select
++--     using (auth.uid() = id);
++
++-- -- inserts a row into public.users
++-- create or replace function public.handle_new_user()
++--     returns trigger as
++-- $$
++-- begin
++--     if exists(select id from public.pusers limit 1) then
++--         insert into public.pusers (id)
++--         values (new.id);
++--         return new;
++--     else
++--         insert into public.pusers ("id", "role")
++--         values (new.id, 'admin'::user_role);
++--         return new;
++--     end if;
++-- end;
++-- $$ language plpgsql security definer;
++
++-- -- trigger the function every time a user is created
++-- create trigger on_auth_user_created
++--     after insert
++--     on auth.users
++--     for each row
++-- execute procedure public.handle_new_user();
++
++-- -- update user
++-- create or replace function public.handle_user_setting()
++--     returns trigger as
++-- $$
++-- begin
++--     update auth.users
++--     set raw_user_meta_data=new.settings || jsonb_build_object('role', new.role::user_role)
++--     where id = new.id;
++--     return new;
++-- end;
++-- $$ language plpgsql security definer;
++
++-- -- trigger the function every time user setting updated
++-- create trigger on_user_setting_updated
++--     after update
++--     on pusers
++--     for each row
++-- execute procedure public.handle_user_setting();
++
++-- -- trigger the function every time user setting updated
++-- create trigger on_user_setting_insert
++--     after insert
++--     on pusers
++--     for each row
++-- execute procedure public.handle_user_setting();
+ 
+ 
+ -- CreateTable
+diff --git a/prisma/migrations/20210502040805_narrow_privileges/migration.sql b/prisma/migrations/20210502040805_narrow_privileges/migration.sql
+index 70557e8..2ef1f63 100644
+--- a/prisma/migrations/20210502040805_narrow_privileges/migration.sql
++++ b/prisma/migrations/20210502040805_narrow_privileges/migration.sql
+@@ -4,21 +4,21 @@ REVOKE UPDATE, DELETE, INSERT
+     FROM anon, authenticated;
+ 
+ --- security pusers
+-drop policy "puser_only_view_self" on pusers;
+-CREATE POLICY "puser_only_self"
+-    ON pusers FOR ALL
+-    USING (auth.uid() = id);
++-- drop policy "puser_only_view_self" on pusers;
++-- CREATE POLICY "puser_only_self"
++--     ON pusers FOR ALL
++--     USING (auth.uid() = id);
+ 
+--- check uid for taggings
+-ALTER TABLE taggings ENABLE ROW LEVEL SECURITY;
+-CREATE POLICY "tagging_only_self"
+-    ON taggings FOR ALL
+-    USING (auth.uid() IN (SELECT user_id FROM bookmarks WHERE id=taggings.bookmark_id));
++-- -- check uid for taggings
++-- ALTER TABLE taggings ENABLE ROW LEVEL SECURITY;
++-- CREATE POLICY "tagging_only_self"
++--     ON taggings FOR ALL
++--     USING (auth.uid() IN (SELECT user_id FROM bookmarks WHERE id=taggings.bookmark_id));
+ 
+ --  _prisma_migrations is private
+-REVOKE ALL
+-    ON public._prisma_migrations
+-FROM anon, authenticated;
++-- REVOKE ALL
++--     ON public._prisma_migrations
++-- FROM anon, authenticated;
+ 
+ -- security links table
+ REVOKE ALL
+diff --git a/prisma/migrations/20210502054201_puser_privileges/migration.sql b/prisma/migrations/20210502054201_puser_privileges/migration.sql
+index dd255d3..e3f8c5e 100644
+--- a/prisma/migrations/20210502054201_puser_privileges/migration.sql
++++ b/prisma/migrations/20210502054201_puser_privileges/migration.sql
+@@ -1,8 +1,8 @@
+-DROP POLICY "puser_only_self" ON pusers;
++-- DROP POLICY "puser_only_self" ON pusers;
+ 
+-CREATE POLICY "puser_only_view_self"
+-    ON pusers FOR SELECT
+-    USING (auth.uid() = id);
++-- CREATE POLICY "puser_only_view_self"
++--     ON pusers FOR SELECT
++--     USING (auth.uid() = id);
+ 
+ CREATE POLICY "puser_not_update"
+     ON pusers FOR UPDATE

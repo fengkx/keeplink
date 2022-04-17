@@ -1,17 +1,21 @@
-import { supabase } from '@/db/supabase';
-import { Auth } from '@supabase/ui';
 import type { AppProps } from 'next/app';
 import Head from 'next/head';
 import React from 'react';
-import { ToastProvider } from 'react-toast-notifications';
 import 'tailwindcss/tailwind.css';
+import { extendTheme } from '@chakra-ui/react';
+import {SaasProvider, AuthProvider} from '@saas-ui/react';
+import { createAuthService } from '@saas-ui/auth/services/supabase';
+import { supabase } from '@/db/supabase';
+
+import '../public/font/work_sans.css';
+
+const theme = extendTheme();
 
 const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
         <title>KeepLink</title>
-        <link href='/font/work_sans.css' rel='stylesheet' />
         <meta
           name='description'
           content='Simple bookmark Service with tags and archive'
@@ -40,11 +44,13 @@ const MyApp: React.FC<AppProps> = ({ Component, pageProps }) => {
         />
         <link rel='manifest' href='/site.webmanifest' />
       </Head>
-      <Auth.UserContextProvider supabaseClient={supabase}>
-        <ToastProvider placement={'top-center'} autoDismiss={true}>
+      <SaasProvider theme={theme} >
+        <AuthProvider
+          {...createAuthService(supabase)}
+        >
           <Component {...pageProps} />
-        </ToastProvider>
-      </Auth.UserContextProvider>
+        </AuthProvider>
+      </SaasProvider>
     </>
   );
 };

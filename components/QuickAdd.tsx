@@ -1,18 +1,26 @@
 import { apiCall } from '@/utils/api-call';
-import { Button, Input } from '@supabase/ui';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import React, { useCallback, useState } from 'react';
-import { Bookmark } from 'react-feather';
-import { useToasts } from 'react-toast-notifications';
+import {
+  Button,
+  Link,
+  Input,
+  InputGroup,
+  InputLeftAddon,
+  InputRightAddon,
+  useToast,
+} from '@chakra-ui/react';
+import { MdOutlineLink } from 'react-icons/md';
 
 type Props = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onSuccess: (data: any) => void;
 } & React.HTMLAttributes<HTMLInputElement>;
 const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
-  const toast = useToasts();
+  const toast = useToast();
   const [urlInput, setUrlInput] = useState('');
   const quickAddHandler = useCallback(
-    async (ev) => {
+    async (ev: any) => {
       ev.preventDefault();
       try {
         const resp = await apiCall('/api/bookmarks', {
@@ -23,46 +31,54 @@ const QuickAdd: React.FC<Props> = ({ className, onSuccess }) => {
         onSuccess(data);
         setUrlInput('');
       } catch (error: any) {
-        const { data } = await error.response.json();
-        console.log(data);
-        if (data.errors) {
-          toast.addToast(data.errors[0].message, { appearance: 'error' });
+        const { data, issues } = await error.response.json();
+        if (issues) {
+          toast({ description: issues[0].message, status: 'error' });
         }
 
         if (data.bookmark_id) {
-          toast.addToast(
-            <div className='text-lg font-semibold'>
-              Already existed in
-              <Link href={`/bookmark/edit/${data.bookmark_id}`}>
-                <a>Here</a>
-              </Link>
-            </div>,
-            {
-              appearance: 'error',
-            },
-          );
+          toast({
+            description: (
+              <div className="text-lg font-semibold">
+                Already existed in&nbsp;
+                <NextLink href={`/bookmark/edit/${data.bookmark_id}`} passHref>
+                  <Link color={'blue.500'}>Here</Link>
+                </NextLink>
+              </div>
+            ),
+            status: 'error',
+          });
         }
       }
     },
-    [urlInput],
+    [urlInput]
   );
   return (
     <form onSubmit={quickAddHandler}>
-      <Input
-        value={urlInput}
-        onChange={(v) => {
-          setUrlInput(v.target.value);
-        }}
-        className={className}
-        size='small'
-        icon={<Bookmark />}
-        placeholder='https://'
-        actions={[
-          <Button key={'quick add'} size='small' onClick={quickAddHandler}>
+      <InputGroup size="sm" shadow="xs">
+        <InputLeftAddon children={<MdOutlineLink />} />
+        <Input
+          placeholder="https://"
+          value={urlInput}
+          onChange={(v) => {
+            setUrlInput(v.target.value);
+          }}
+        />
+        <InputRightAddon padding={0}>
+          <Button
+            type="submit"
+            variant="solid"
+            size="sm"
+            height="100%"
+            width="100%"
+            rounded={0}
+            colorScheme="teal"
+            shadow={0}
+          >
             Quick Add
-          </Button>,
-        ]}
-      />
+          </Button>
+        </InputRightAddon>
+      </InputGroup>
     </form>
   );
 };

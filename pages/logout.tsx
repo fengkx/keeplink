@@ -1,9 +1,11 @@
 import { supabase } from '@/db/supabase';
+import { noop } from '@/utils/const';
+import { useMountEffect } from '@react-hookz/web';
 import { GetServerSideProps } from 'next';
-import React, { useEffect } from 'react';
+import React from 'react';
 
 const Logout: React.FC = () => {
-  useEffect(() => {
+  useMountEffect(() => {
     supabase.auth
       .signOut()
       .then((res) => {
@@ -12,13 +14,17 @@ const Logout: React.FC = () => {
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  });
   return <div>{}</div>;
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ res }) => {
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   await supabase.auth.signOut();
-  res.setHeader('Set-Cookie', 'sb:token=deleted; path=/;maxAge=-1');
+  //  @ts-expect-error fix supabase redirect
+  res.redirect = noop;
+  supabase.auth.api.deleteAuthCookie(req, res, {
+    redirectTo: '/login'
+  });
   return {
     props: {},
     redirect: { permanent: false, destination: '/' },

@@ -2,11 +2,13 @@ import { BookMarkListContext } from '@/components/BookMarkListContext';
 import { ConfirmDelete } from '@/components/ConfirmDelete';
 import { supabase } from '@/db/supabase';
 import { apiCall } from '@/utils/api-call';
+import { chakra, Tag, TagLabel, TagLeftIcon, Link } from '@chakra-ui/react';
 import { RealtimeSubscription } from '@supabase/supabase-js';
 import { formatISO } from 'date-fns';
-import Link from 'next/link';
+import NextLink from 'next/link';
 import React, { useContext, useEffect, useState } from 'react';
 import { BookMark } from '../pages';
+import {FiHash} from 'react-icons/fi';
 
 export const BookmarkItem: React.FC<{ bookmark: BookMark }> = ({ bookmark }) => {
   const { onDelete, formatTime } = useContext(BookMarkListContext);
@@ -46,11 +48,6 @@ export const BookmarkItem: React.FC<{ bookmark: BookMark }> = ({ bookmark }) => 
         .item-meta li {
           margin-right: 0.75rem;
         }
-        .item-tags li:before {
-          content: '#';
-          display: inline;
-          margin-right: 1px;
-        }
       `}
       </style>
       <div className='item-content flex flex-col'>
@@ -70,11 +67,22 @@ export const BookmarkItem: React.FC<{ bookmark: BookMark }> = ({ bookmark }) => 
           <ul className='flex items-center'>
             {data.tags.map((tag: string) => {
               return (
-                <li className='inline-block bg-gray-100 p-0.5 mr-2' key={tag}>
-                  <Link href={`/tag/${tag}`}>
-                    <a>{tag}</a>
-                  </Link>
-                </li>
+                <chakra.li key={tag} mr={2}>
+                  <NextLink href={`/tag/${tag}`} passHref>
+                    <Tag
+                      as={Link}
+                      alignItems={'center'}
+                      rounded={0}
+                      colorScheme='gray'
+                      _hover={{
+                        textDecoration: 'none'
+                      }}
+                    >
+                      <TagLeftIcon as={FiHash} mr={0.5} />
+                      <TagLabel>{tag}</TagLabel>
+                    </Tag>
+                  </NextLink>
+                </chakra.li>
               );
             })}
           </ul>

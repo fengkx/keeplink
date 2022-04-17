@@ -4,7 +4,7 @@ import Tagify from '@yaireo/tagify';
 import Tags, { TagifyBaseReactProps } from '@yaireo/tagify/dist/react.tagify';
 import '@yaireo/tagify/dist/tagify.css';
 import React, { useEffect, useRef, useState } from 'react';
-import { useDebounce } from 'react-use';
+import { useDebouncedEffect } from '@react-hookz/web';
 
 export function TagsInput({
   className,
@@ -16,12 +16,13 @@ export function TagsInput({
 }: TagifyBaseReactProps) {
   const [input, setInput] = useState('');
   const [debouncedInput, setDebouncedInput] = useState('');
-  useDebounce(
+  useDebouncedEffect(
     () => {
       setDebouncedInput(input);
     },
-    300,
     [input],
+    300,
+    800
   );
   const tagifyRef = useRef<Tagify<Tagify.TagData>>();
   useEffect(() => {

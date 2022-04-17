@@ -1,11 +1,13 @@
+import { supabase } from '@/db/supabase';
 import { useNow } from '@/utils/useNow';
+import { useMountEffect, useLocalStorageValue } from '@react-hookz/web';
+import { Session } from '@supabase/supabase-js';
 import { formatDistance } from 'date-fns';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useLocalStorage } from 'react-use';
 
 export const useFormatTime = () => {
   const now = useNow();
-  return useCallback((timestamp) => {
+  return useCallback((timestamp: number) => {
     return formatDistance(new Date(timestamp * 1000), now, { addSuffix: true });
   }, []);
 };
@@ -13,22 +15,18 @@ export const useFormatTime = () => {
 export const useAutoRefreshToken = () => {
   const authUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1`;
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const [value, setValue] = useLocalStorage('supabase.auth.token', undefined, {
-    raw: false,
-    serializer: JSON.stringify,
-    deserializer: JSON.parse,
-  });
+  const [value, setValue] = useLocalStorageValue<{expiresAt?: number; currentSession?: Session}>('supabase.auth.token', null);
 
   const timeoutMillSeconds = useMemo(() => {
     const timeNow = Date.now();
     const expiresAt = (value?.expiresAt ?? 0) * 1000;
-    const expiresIn = (value?.currentSession.expires_in ?? 0) * 1000;
+    const expiresIn = (value?.currentSession?.expires_in ?? 0) * 1000;
     const refreshAhead = Math.floor(expiresIn * 0.75); // Refresh ahead 3 quarter of the token valid time
     return expiresAt - timeNow - refreshAhead;
   }, [value]);
 
   const doRefresh = useCallback(async () => {
-    const { refresh_token: refreshToken } = value.currentSession;
+    const refreshToken = value?.currentSession?.refresh_token;
     if (!refreshToken) {
       throw new Error('No current session.');
     }
@@ -44,11 +42,11 @@ export const useAutoRefreshToken = () => {
     });
     const data = await resp.json();
 
-    const session = { ...data };
+    const session: Session = { ...data };
     if (session.expires_in) {
       const timeNow = Math.round(Date.now() / 1000);
 
-      session.expires_at = Number.parseInt(session.expires_in, 10) + timeNow;
+      session.expires_at = session.expires_in + timeNow;
     }
 
     fetch('/api/auth', {
@@ -68,7 +66,7 @@ export const useAutoRefreshToken = () => {
         clearTimeout(timer.current);
       }
 
-      if (!value || !value.currentSession.refresh_token) return;
+      if (!value || !value.currentSession?.refresh_token) return;
       timer.current = setTimeout(() => {
         void doRefresh();
       }, timeoutMillSeconds);
@@ -83,3 +81,21 @@ export const useAutoRefreshToken = () => {
     };
   }, [value, timeoutMillSeconds]);
 };
+
+export function useSyncTokenToCookie() {
+  useMountEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        fetch('/api/auth', {
+          method: 'POST',
+          headers: new Headers({ 'Content-Type': 'application/json' }),
+          credentials: 'same-origin',
+          body: JSON.stringify({ event, session }),
+        });
+      },
+    );
+    return () => {
+      authListener?.unsubscribe();
+    };
+  });
+}

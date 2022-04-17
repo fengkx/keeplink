@@ -13,7 +13,7 @@ import { decode as htmlDecode } from 'he';
 import { GetServerSideProps } from 'next';
 import { useRouter } from 'next/router';
 import React, { useEffect, useMemo, useState } from 'react';
-import { useToasts } from 'react-toast-notifications';
+import { Box, useToast } from '@chakra-ui/react';
 import useSWR from 'swr';
 
 function useTagCloud() {
@@ -34,10 +34,11 @@ const Home: React.FC<Props> = ({ bookmarks, user }) => {
   }, [bookmarks]);
   const { tags, error } = useTagCloud();
   const router = useRouter();
-  const toast = useToasts();
+  const toast = useToast();
   if (error) {
-    toast.addToast((error.message as string) ?? 'Failed to load tagclound', {
-      appearance: 'error',
+    toast({
+      description: (error.message as string) ?? 'Failed to load tagclound',
+      status: 'error',
     });
   }
 
@@ -46,7 +47,7 @@ const Home: React.FC<Props> = ({ bookmarks, user }) => {
     <Layout title='Bookmarks' userRole={user.user_metadata.role}>
       <div className='max-w-5xl mx-auto'>
         <QuickAdd
-          onSuccess={({ bookmark }) => {
+          onSuccess={({bookmark}) => {
             setBookmarkList([bookmark, ...bookmarkList]);
             void router.push('/', { query: '' });
           }}
@@ -67,10 +68,10 @@ const Home: React.FC<Props> = ({ bookmarks, user }) => {
             size={pagination.size}
           />
         </section>
-        <section className='w-1/3 max-w-sm hidden lg:block pl-6'>
+        <Box as='section' className='w-1/3 max-w-sm hidden lg:block pl-6'>
           <h2 className='border-b mb-3 pb-3 font-bold'>Tags:</h2>
-          <TagCloud className='h-full' tagList={tags ?? []} />
-        </section>
+          <TagCloud h='full' tagList={tags ?? []} />
+        </Box>
       </div>
     </Layout>
   );

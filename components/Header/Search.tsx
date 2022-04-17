@@ -1,11 +1,10 @@
-import styles from '@/components/Navbar.module.css';
+import { chakra, ChakraProps, Input, InputGroup, InputLeftElement } from '@chakra-ui/react';
+import { SearchIcon } from '@chakra-ui/icons';
 import { getOneParamFromQuery } from '@/utils/query-param';
-import { Input } from '@supabase/ui';
+import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/router';
-import React, { useEffect, useMemo, useState } from 'react';
-import { Search } from 'react-feather';
 
-const MainSearch: React.FC<React.HTMLAttributes<HTMLInputElement>> = () => {
+export function Search(props: ChakraProps) {
   const [search, setSearch] = useState('');
   const router = useRouter();
   useEffect(() => {
@@ -22,31 +21,31 @@ const MainSearch: React.FC<React.HTMLAttributes<HTMLInputElement>> = () => {
     return path;
   }, [search, router]);
   return (
-    <form
+    <chakra.form
+      mx={5}
       onSubmit={(ev) => {
         ev.preventDefault();
         void router.push(searchPath);
       }}
       className='pl-2 lg:pl-3 flex items-center flex-1'
-      action={`${router.pathname} === '/` ? '/bookmark' : router.pathname}
+      // action={`${router.pathname}` === '/' ? '/bookmark' : router.pathname}
       method='GET'
+      {...props}
     >
-      <div className='relative flex items-center w-full'>
-        <Search className='absolute' size={'1em'} style={{ zIndex: 1000 }} />
-        <Input
-          value={search}
-          onChange={(ev) => {
-            setSearch(ev.target.value);
-          }}
+      <InputGroup size='md' inputMode="search" boxShadow="base" rounded="md" outline={0}>
+        <InputLeftElement pointerEvents="none">
+          <SearchIcon />
+        </InputLeftElement>
+        <Input size='md'
           placeholder='Search'
-          size={'small'}
-          type='search'
+          type="search"
           name='q'
-          className={styles.searchInput}
+          w='full'
+          textAlign="left"
+          value={search}
+          onChange={(ev) => setSearch(ev.target.value)}
         />
-      </div>
-    </form>
+      </InputGroup>
+    </chakra.form>
   );
-};
-
-export default MainSearch;
+}
