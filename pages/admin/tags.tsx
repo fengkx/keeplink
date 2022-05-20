@@ -80,7 +80,7 @@ const TagsAdmin: React.FC<Props> = ({ user }) => {
                 </Link>
               </NextLink>
               <Flex justify={'space-between'} flex='1'>
-                <HStack ml={4} align='center' width='full' style={{rowGap: '1ch'}} flexWrap='nowrap' gap={8}>
+                <HStack ml={4} align='center' width='full' style={{rowGap: '1ch'}} flexWrap='wrap' gap={8}>
                   {tag.alias.map((alias) => (
                     <Tag as={Link}
                       key={alias}
