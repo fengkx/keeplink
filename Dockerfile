@@ -1,4 +1,4 @@
-FROM node:lts AS builder
+FROM node:16.15.0 AS builder
 RUN apt update && apt install -y git build-essential
 RUN corepack enable
 
@@ -12,7 +12,7 @@ RUN echo 'node-linker=hoisted' >> .npmrc
 RUN pnpm install --prefer-frozen-lockfile
 RUN pnpx prisma generate
 
-FROM node:lts AS app
+FROM node:16.15.0 AS app
 ENV NODE_PRODUCTION=true
 RUN corepack enable
 
